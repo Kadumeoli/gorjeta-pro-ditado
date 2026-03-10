@@ -166,6 +166,13 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
       slug: 'marketing'
     },
     {
+      name: 'Gestão Estratégica',
+      path: '/gestao-estrategica',
+      icon: Target,
+      color: 'from-[#7D1F2C] to-[#D4AF37]',
+      slug: 'financeiro'
+    },
+    {
       name: 'Manual',
       path: '/manual',
       icon: BookOpen,

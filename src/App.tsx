@@ -22,6 +22,7 @@ const Recruitment = lazy(() => import('./pages/Recruitment'));
 const PreEntrevista = lazy(() => import('./pages/PreEntrevista'));
 const SolicitacaoPublica = lazy(() => import('./pages/SolicitacaoPublica'));
 const Marketing = lazy(() => import('./pages/Marketing'));
+const GestaoEstrategica = lazy(() => import('./pages/GestaoEstrategica'));
 const VisaoEstrategica = lazy(() => import('./pages/VisaoEstrategica'));
 const Entradas = lazy(() => import('./pages/Entradas'));
 import { useState } from 'react';
@@ -127,6 +128,7 @@ function AppContent() {
                   <Route path="/solicitacoes" element={<ProtectedRoute moduloSlug="solicitacoes"><Solicitacoes /></ProtectedRoute>} />
                   <Route path="/ocorrencias" element={<ProtectedRoute moduloSlug="ocorrencias"><Ocorrencias /></ProtectedRoute>} />
                   <Route path="/marketing" element={<ProtectedRoute moduloSlug="marketing"><Marketing /></ProtectedRoute>} />
+                  <Route path="/gestao-estrategica" element={<ProtectedRoute moduloSlug="financeiro"><GestaoEstrategica /></ProtectedRoute>} />
                   <Route path="/visao-estrategica" element={<ProtectedRoute moduloSlug="financeiro"><VisaoEstrategica /></ProtectedRoute>} />
                   <Route path="/entradas" element={<ProtectedRoute moduloSlug="financeiro"><Entradas /></ProtectedRoute>} />
                   <Route path="/manual" element={<ManualUsuario />} />
