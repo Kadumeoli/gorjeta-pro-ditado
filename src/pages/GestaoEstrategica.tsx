@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Target, AlertTriangle, CheckCircle, BarChart3, ChevronDown,
+  Target, TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
+  Clock, DollarSign, Users, Package, BarChart3, ChevronDown,
   ChevronRight, MessageSquare, Plus, Download, RefreshCw,
-  ArrowUp, ArrowDown, Minus
+  Zap, ShoppingCart, ArrowUp, ArrowDown, Minus
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar,
@@ -421,7 +422,7 @@ const GestaoEstrategica: React.FC = () => {
                     tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} />
                   <Tooltip formatter={(v: number) => [`R$ ${v.toLocaleString('pt-BR')}`, '']} />
                   <Area type="monotone" dataKey="Receita" stroke="#7D1F2C" strokeWidth={2} fill="url(#receitaGrad)" dot={false} />
-                  <Line type="monotone" dataKey="Meta" stroke="#D4AF37" strokeWidth={1.5} dot={false} strokeDasharray="5 3" />
+                  <Area type="monotone" dataKey="Meta" stroke="#D4AF37" strokeWidth={1.5} fill="none" dot={false} strokeDasharray="5 3" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
