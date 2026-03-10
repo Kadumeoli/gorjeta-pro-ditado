@@ -1,0 +1,237 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Calendar,
+  ArrowUpRight,
+  ArrowDownRight,
+  TrendingUp,
+  DollarSign
+} from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import dayjs from 'dayjs';
+
+interface ExtratoDia {
+  data: string;
+  saldo_anterior: number;
+  total_entradas: number;
+  total_saidas: number;
+  saldo_final: number;
+  qtd_entradas: number;
+  qtd_saidas: number;
+}
+
+const ResumoDia: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [resumo, setResumo] = useState<ExtratoDia | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchResumoDia();
+  }, [selectedDate]);
+
+  const fetchResumoDia = async () => {
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from('vw_extrato_consolidado')
+        .select('*')
+        .eq('data', selectedDate)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          setResumo({
+            data: selectedDate,
+            saldo_anterior: 0,
+            total_entradas: 0,
+            total_saidas: 0,
+            saldo_final: 0,
+            qtd_entradas: 0,
+            qtd_saidas: 0
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        setResumo(data);
+      }
+    } catch (err) {
+      console.error('Error fetching resumo:', err);
+      setResumo({
+        data: selectedDate,
+        saldo_anterior: 0,
+        total_entradas: 0,
+        total_saidas: 0,
+        saldo_final: 0,
+        qtd_entradas: 0,
+        qtd_saidas: 0
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Resumo do Dia</h2>
+      </div>
+
+      {/* Seletor de Data */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Selecione a Data
+        </label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7D1F2C] focus:border-transparent"
+        />
+      </div>
+
+      {/* Cards de Resumo */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]"></div>
+        </div>
+      ) : resumo ? (
+        <>
+          {/* Card de Saldo Anterior */}
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg shadow-md border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-700 mb-1">Saldo Anterior</p>
+                <p className={`text-3xl font-bold ${resumo.saldo_anterior >= 0 ? 'text-blue-900' : 'text-red-700'}`}>
+                  {formatCurrency(resumo.saldo_anterior)}
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Acumulado até {dayjs(selectedDate).subtract(1, 'day').format('DD/MM/YYYY')}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-blue-200 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-7 h-7 text-blue-700" />
+              </div>
+            </div>
+          </div>
+
+          {/* Cards de Movimentação do Dia */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Entradas do Dia</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {formatCurrency(resumo.total_entradas)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {resumo.qtd_entradas} lançamento(s)
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <ArrowUpRight className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Saídas do Dia</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {formatCurrency(resumo.total_saidas)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {resumo.qtd_saidas} lançamento(s)
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                  <ArrowDownRight className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Resultado do Dia</p>
+                  <p className={`text-2xl font-bold ${(resumo.total_entradas - resumo.total_saidas) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {formatCurrency(resumo.total_entradas - resumo.total_saidas)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Variação diária
+                  </p>
+                </div>
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                  (resumo.total_entradas - resumo.total_saidas) >= 0 ? 'bg-green-100' : 'bg-red-100'
+                }`}>
+                  <DollarSign className={`w-6 h-6 ${(resumo.total_entradas - resumo.total_saidas) >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card de Saldo Final */}
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-6 rounded-lg shadow-md border border-yellow-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-yellow-700 mb-1">Saldo Final do Dia</p>
+                <p className={`text-3xl font-bold ${resumo.saldo_final >= 0 ? 'text-yellow-900' : 'text-red-700'}`}>
+                  {formatCurrency(resumo.saldo_final)}
+                </p>
+                <p className="text-xs text-yellow-600 mt-1">
+                  Acumulado até {dayjs(selectedDate).format('DD/MM/YYYY')}
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-yellow-200 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-7 h-7 text-yellow-700" />
+              </div>
+            </div>
+          </div>
+
+          {/* Explicação da Conta */}
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
+            <h3 className="text-sm font-semibold text-gray-800 mb-2">Como é calculado:</h3>
+            <div className="space-y-1 text-sm text-gray-700">
+              <div className="flex justify-between items-center">
+                <span>Saldo Anterior:</span>
+                <span className="font-mono">{formatCurrency(resumo.saldo_anterior)}</span>
+              </div>
+              <div className="flex justify-between items-center text-green-600">
+                <span>+ Entradas do Dia:</span>
+                <span className="font-mono">+ {formatCurrency(resumo.total_entradas)}</span>
+              </div>
+              <div className="flex justify-between items-center text-red-600">
+                <span>- Saídas do Dia:</span>
+                <span className="font-mono">- {formatCurrency(resumo.total_saidas)}</span>
+              </div>
+              <div className="border-t border-gray-300 pt-2 mt-2 flex justify-between items-center font-semibold">
+                <span>= Saldo Final:</span>
+                <span className={`font-mono ${resumo.saldo_final >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {formatCurrency(resumo.saldo_final)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {/* Informação Adicional */}
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p className="text-sm text-blue-800">
+          <strong>Dica:</strong> Este é um resumo rápido do dia selecionado. Para ver o extrato completo com saldos acumulados,
+          acesse a aba "Extrato Diário".
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default ResumoDia;
