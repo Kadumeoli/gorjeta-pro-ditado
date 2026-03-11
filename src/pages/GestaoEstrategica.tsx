@@ -688,9 +688,23 @@ export default function GestaoEstrategica() {
     try {
       const hoje = new Date();
       const inicioMes    = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().split('T')[0];
+      const fimMes       = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1).toISOString().split('T')[0];
       const inicioMesAnt = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1).toISOString().split('T')[0];
       const fimMesAnt    = new Date(hoje.getFullYear(), hoje.getMonth(), 0).toISOString().split('T')[0];
       const inicio30d    = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+
+      // IDs das categorias de pessoal no contas_pagar
+      const CATS_PESSOAL = [
+        'c07bb17a-0ad5-4a86-adcf-090694ee9acb', // Salários Fixos
+        '6f030239-f3df-4ecd-a5c6-2aaa3992669b', // Extras e Freelancers
+        '710f7a66-6ab2-447a-b52e-68c431c7ed79', // Adiantamentos e Vales
+        'b570835e-2e96-4db1-9ba1-8b61aab8c0cc', // Férias
+        '3bbf5e7b-c2fa-48a8-b4da-598938269f99', // Rescisões
+        'a2878c92-6baf-4a83-81c5-67f22c9eb480', // Equipe e Pessoal
+        '81e42a86-bae1-446c-9940-89baf944aa68', // Comissões
+        '8b80240b-de17-4650-a4c0-e1bb037afa50', // Vale Transporte
+        '782d79ab-0f64-42d7-8f09-aa31188f7677', // Gorjetas de Garçom
+      ];
 
       const [
         { data: fcMes },
@@ -701,21 +715,30 @@ export default function GestaoEstrategica() {
         { data: fcSerie },
         { data: okrObjs },
         { data: saldosCrit },
+        { data: folhaPaga },
       ] = await Promise.all([
         supabase.from('fluxo_caixa').select('tipo,valor').gte('data', inicioMes),
         supabase.from('fluxo_caixa').select('tipo,valor').gte('data', inicioMesAnt).lte('data', fimMesAnt),
-        supabase.from('colaboradores').select('salario_fixo').eq('status', 'ativo'),
+        supabase.from('colaboradores').select('id').eq('status', 'ativo'),
         supabase.from('contas_pagar').select('saldo_restante').eq('status', 'em_aberto'),
-        supabase.from('eventos_fechados').select('valor_total').gte('data_evento', inicioMes),
+        supabase.from('eventos_fechados').select('valor_total').gte('data_evento', inicioMes).lt('data_evento', fimMes),
         supabase.from('fluxo_caixa').select('tipo,valor,data').gte('data', inicio30d).order('data'),
         supabase.from('okr_objetivos').select('*').is('deletado_em', null).order('criado_em'),
         supabase.from('saldos_estoque').select('id').lte('quantidade_atual', 0),
+        // Folha = soma do que foi efetivamente pago em categorias de pessoal com vencimento no mês
+        supabase
+          .from('contas_pagar')
+          .select('valor_pago')
+          .in('categoria_id', CATS_PESSOAL)
+          .gte('data_vencimento', inicioMes)
+          .lt('data_vencimento', fimMes)
+          .gt('valor_pago', 0),
       ]);
 
       const receitaMes = (fcMes || []).filter(r => r.tipo === 'entrada').reduce((a, b) => a + +b.valor, 0);
       const despesaMes = (fcMes || []).filter(r => r.tipo === 'saida').reduce((a, b) => a + +b.valor, 0);
       const receitaAnt = (fcAnt || []).filter(r => r.tipo === 'entrada').reduce((a, b) => a + +b.valor, 0);
-      const folha      = (colab || []).reduce((a, b) => a + +(b.salario_fixo || 0), 0);
+      const folha      = (folhaPaga || []).reduce((a, b) => a + +(b.valor_pago || 0), 0);
 
       setKpis({
         receita_mes:        receitaMes,
@@ -727,7 +750,7 @@ export default function GestaoEstrategica() {
         contas_em_aberto:   contasAb?.length || 0,
         valor_em_aberto:    (contasAb || []).reduce((a, b) => a + +(b.saldo_restante || 0), 0),
         eventos_mes:        evs?.length || 0,
-        receita_eventos:    (evs || []).reduce((a, b) => a + +(b.valor_total || 0), 0),
+        receita_eventos:    (evs || []).filter(e => +(e.valor_total || 0) > 0).reduce((a, b) => a + +(b.valor_total || 0), 0),
         itens_criticos:     saldosCrit?.length || 0,
       });
 
@@ -848,9 +871,9 @@ export default function GestaoEstrategica() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <KPICard titulo="Colaboradores"    valor={kpis?.colaboradores_ativos || 0} formato="number"   icon={Users}     loading={loading} />
-            <KPICard titulo="Folha Mensal"     valor={kpis?.folha_mensal || 0}          formato="currency" icon={Users}     loading={loading} />
-            <KPICard titulo="Eventos este Mês" valor={kpis?.eventos_mes || 0}           formato="number"   icon={Calendar}  loading={loading} />
-            <KPICard titulo="Receita Eventos"  valor={kpis?.receita_eventos || 0}       formato="currency" icon={Calendar}  loading={loading} />
+            <KPICard titulo="Pessoal Pago"     valor={kpis?.folha_mensal || 0}          formato="currency" icon={Users}     loading={loading} />
+            <KPICard titulo="Eventos Agendados" valor={kpis?.eventos_mes || 0}           formato="number"   icon={Calendar}  loading={loading} />
+            <KPICard titulo="Receita Prevista"  valor={kpis?.receita_eventos || 0}        formato="currency" icon={Calendar}  loading={loading} />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
