@@ -20,7 +20,7 @@ const pct = (a: number, b: number) => b === 0 ? 0 : ((a - b) / b) * 100;
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface FinData   { receita:number; despesa:number; saldo:number; receitaAnt:number; despesaAnt:number }
 interface RhData    { ativos:number; emFerias:number; afastados:number; salariosPagos:number; extrasPagos:number; gorjetasPagas:number }
-interface EstData   { valorTotal:number; zerados:number; criticos:number; cmvMes:number; cmvSemana:number }
+interface EstData   { valorTotal:number; zerados:number; criticos:number; comprasMes:number; comprasSemana:number }
 interface MusicData { totalMes:number; pago:number; aberto:number; contratacoes:number; pendentes:MusicItem[] }
 interface MusicItem { descricao:string; valor:number; saldo:number; vencimento:string }
 interface EventData { qtd:number; totalReceita:number; lista:EvItem[] }
@@ -145,8 +145,8 @@ export default function GestaoEstrategica() {
         supabase.from('contas_pagar').select('valor_pago').eq('categoria_id',CAT_EXT).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).gt('valor_pago',0),
         supabase.from('contas_pagar').select('valor_pago').eq('categoria_id',CAT_GOR).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).gt('valor_pago',0),
         supabase.from('saldos_estoque').select('quantidade_atual, itens_estoque!inner(custo_medio,estoque_minimo,status)').eq('itens_estoque.status','ativo'),
-        supabase.from('movimentacoes_estoque').select('quantidade, itens_estoque!inner(custo_medio)').eq('tipo_movimentacao','saida').gte('data_movimentacao',inicioMes).lt('data_movimentacao',fimMes),
-        supabase.from('movimentacoes_estoque').select('quantidade, itens_estoque!inner(custo_medio)').eq('tipo_movimentacao','saida').gte('data_movimentacao',inicio7d),
+        supabase.from('entradas_compras').select('valor_total').gte('data_compra',inicioMes).lt('data_compra',fimMes),
+        supabase.from('entradas_compras').select('valor_total').gte('data_compra',inicio7d),
         supabase.from('contas_pagar').select('descricao,valor_total,valor_pago,saldo_restante,data_vencimento,status').in('categoria_id',CATS_MUS).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).order('data_vencimento'),
         supabase.from('eventos_fechados').select('nome_evento,data_evento,valor_total,status_pagamento').gte('data_evento',inicioMes).lt('data_evento',fimMes).order('data_evento'),
         supabase.from('okr_objetivos').select('id,titulo,descricao,trimestre,responsavel,status,okr_key_results(meta_valor,valor_atual)').is('deletado_em',null).order('criado_em',{ascending:false}),
@@ -178,9 +178,9 @@ export default function GestaoEstrategica() {
         valEst+=q*cu;
         if(q<=0) zer++; else if(mn>0&&q<=mn) crit++;
       });
-      const cmvMes  = (cmvM||[]).reduce((a,b:any)=>a+(+b.quantidade*(+(b.itens_estoque?.custo_medio||0))),0);
-      const cmvSem  = (cmvS||[]).reduce((a,b:any)=>a+(+b.quantidade*(+(b.itens_estoque?.custo_medio||0))),0);
-      setEst({valorTotal:valEst,zerados:zer,criticos:crit,cmvMes,cmvSemana:cmvSem});
+      const comprasMes  = (cmvM||[]).reduce((a,b:any)=>a+ +b.valor_total,0);
+      const comprasSem  = (cmvS||[]).reduce((a,b:any)=>a+ +b.valor_total,0);
+      setEst({valorTotal:valEst,zerados:zer,criticos:crit,comprasMes,comprasSemana:comprasSem});
 
       // Músicos
       const mp = musicD||[];
@@ -234,7 +234,7 @@ export default function GestaoEstrategica() {
   // Indicadores derivados
   const margemPct  = fin&&fin.receita>0 ? (fin.saldo/fin.receita)*100 : 0;
   const rhPct      = fin&&fin.receita>0&&rh ? ((rh.salariosPagos+rh.extrasPagos+rh.gorjetasPagas)/fin.receita)*100 : 0;
-  const cmvVal     = cmvMode==='mensal'?(est?.cmvMes||0):(est?.cmvSemana||0);
+  const cmvVal     = cmvMode==='mensal'?(est?.comprasMes||0):(est?.comprasSemana||0);
   const cmvBase    = cmvMode==='mensal'?(fin?.receita||0):(fin?.receita||0)/4;
   const cmvPct     = cmvBase>0 ? (cmvVal/cmvBase)*100 : 0;
   const mesNome    = new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
@@ -365,7 +365,7 @@ export default function GestaoEstrategica() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Tile label={`CMV ${cmvMode==='mensal'?'Mensal':'Semanal'}`}
-            value={fmt(cmvVal)} sub={`${cmvPct.toFixed(1)}% receita`}
+            value={`${cmvPct.toFixed(1)}%`} sub={`Compras: ${fmt(cmvVal)}`}
             alert={cmvPct>35?'yellow':'green'} loading={loading}/>
           <Tile label="Valor em Estoque" value={fmt(est?.valorTotal||0)}  loading={loading}/>
           <Tile label="Itens Zerados"    value={`${est?.zerados||0}`}     alert={(est?.zerados||0)>10?'red':(est?.zerados||0)>0?'yellow':undefined} loading={loading}/>
