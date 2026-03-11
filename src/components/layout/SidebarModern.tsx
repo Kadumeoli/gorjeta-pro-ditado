@@ -33,7 +33,8 @@ import {
   Briefcase,
   Tag,
   ArrowLeftRight,
-  Target
+  Target,
+  LineChart
 } from 'lucide-react';
 
 interface SubModule {
@@ -76,20 +77,21 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
       color: 'from-green-500 to-emerald-600',
       slug: 'financeiro',
       subModules: [
-        { name: 'Fluxo de Caixa', path: '/finance?tab=0', tab: 0, icon: TrendingUp },
-        { name: 'Resumo do Dia', path: '/finance?tab=1', tab: 1, icon: Calendar },
-        { name: 'Extrato Diário', path: '/finance?tab=2', tab: 2, icon: FileText },
-        { name: 'Contas a Pagar', path: '/finance?tab=3', tab: 3, icon: CreditCard },
-        { name: 'Contas a Receber', path: '/finance?tab=4', tab: 4, icon: Receipt },
-        { name: 'Histórico e Estornos', path: '/finance?tab=5', tab: 5, icon: ArrowLeftRight },
-        { name: 'Categorizar Lançamentos', path: '/finance?tab=6', tab: 6, icon: Tag },
-        { name: 'Ficha Fornecedor', path: '/finance?tab=7', tab: 7, icon: Building2 },
-        { name: 'Kardex Fornecedor', path: '/finance?tab=8', tab: 8, icon: Activity },
-        { name: 'Kardex Completo', path: '/finance?tab=9', tab: 9, icon: FileText },
-        { name: 'Relatórios', path: '/finance?tab=10', tab: 10, icon: PieChart },
-        { name: 'Cadastros', path: '/finance?tab=11', tab: 11, icon: Settings },
-        { name: 'Visão Estratégica', path: '/visao-estrategica', icon: Target },
-        { name: 'Entradas (Previsto x Realizado)', path: '/entradas', icon: TrendingUp }
+        { name: 'Dashboard Financeiro',              path: '/financeiro',          icon: LineChart       },
+        { name: 'Fluxo de Caixa',                    path: '/finance?tab=0',       tab: 0,  icon: TrendingUp      },
+        { name: 'Resumo do Dia',                     path: '/finance?tab=1',       tab: 1,  icon: Calendar        },
+        { name: 'Extrato Diário',                    path: '/finance?tab=2',       tab: 2,  icon: FileText        },
+        { name: 'Contas a Pagar',                    path: '/finance?tab=3',       tab: 3,  icon: CreditCard      },
+        { name: 'Contas a Receber',                  path: '/finance?tab=4',       tab: 4,  icon: Receipt         },
+        { name: 'Histórico e Estornos',              path: '/finance?tab=5',       tab: 5,  icon: ArrowLeftRight  },
+        { name: 'Categorizar Lançamentos',           path: '/finance?tab=6',       tab: 6,  icon: Tag             },
+        { name: 'Ficha Fornecedor',                  path: '/finance?tab=7',       tab: 7,  icon: Building2       },
+        { name: 'Kardex Fornecedor',                 path: '/finance?tab=8',       tab: 8,  icon: Activity        },
+        { name: 'Kardex Completo',                   path: '/finance?tab=9',       tab: 9,  icon: FileText        },
+        { name: 'Relatórios',                        path: '/finance?tab=10',      tab: 10, icon: PieChart        },
+        { name: 'Cadastros',                         path: '/finance?tab=11',      tab: 11, icon: Settings        },
+        { name: 'Visão Estratégica',                 path: '/visao-estrategica',          icon: Target          },
+        { name: 'Entradas (Previsto x Realizado)',   path: '/entradas',                   icon: TrendingUp      },
       ]
     },
     {
@@ -99,16 +101,16 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
       color: 'from-purple-500 to-indigo-600',
       slug: 'estoque',
       subModules: [
-        { name: 'Dashboard', path: '/advanced-inventory?tab=0', tab: 0, icon: BarChart3 },
-        { name: 'Estoques', path: '/advanced-inventory?tab=1', tab: 1, icon: Warehouse },
-        { name: 'Itens', path: '/advanced-inventory?tab=2', tab: 2, icon: Package },
-        { name: 'Fichas Técnicas', path: '/advanced-inventory?tab=3', tab: 3, icon: ClipboardList },
-        { name: 'Compras', path: '/advanced-inventory?tab=4', tab: 4, icon: ShoppingCart },
-        { name: 'Produção', path: '/advanced-inventory?tab=5', tab: 5, icon: Factory },
-        { name: 'Relatórios', path: '/advanced-inventory?tab=6', tab: 6, icon: FileText },
-        { name: 'Movimentações', path: '/advanced-inventory?tab=8', tab: 8, icon: Activity },
-        { name: 'Kardex Produto', path: '/advanced-inventory?tab=10', tab: 10, icon: Activity },
-        { name: 'Contagem', path: '/advanced-inventory?tab=11', tab: 11, icon: ClipboardCheck }
+        { name: 'Dashboard',       path: '/advanced-inventory?tab=0',  tab: 0,  icon: BarChart3      },
+        { name: 'Estoques',        path: '/advanced-inventory?tab=1',  tab: 1,  icon: Warehouse      },
+        { name: 'Itens',           path: '/advanced-inventory?tab=2',  tab: 2,  icon: Package        },
+        { name: 'Fichas Técnicas', path: '/advanced-inventory?tab=3',  tab: 3,  icon: ClipboardList  },
+        { name: 'Compras',         path: '/advanced-inventory?tab=4',  tab: 4,  icon: ShoppingCart   },
+        { name: 'Produção',        path: '/advanced-inventory?tab=5',  tab: 5,  icon: Factory        },
+        { name: 'Relatórios',      path: '/advanced-inventory?tab=6',  tab: 6,  icon: FileText       },
+        { name: 'Movimentações',   path: '/advanced-inventory?tab=8',  tab: 8,  icon: Activity       },
+        { name: 'Kardex Produto',  path: '/advanced-inventory?tab=10', tab: 10, icon: Activity       },
+        { name: 'Contagem',        path: '/advanced-inventory?tab=11', tab: 11, icon: ClipboardCheck },
       ]
     },
     {
@@ -118,16 +120,16 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
       color: 'from-orange-500 to-amber-600',
       slug: 'rh',
       subModules: [
-        { name: 'Recrutamento & Seleção', path: '/recruitment', icon: UserPlus },
-        { name: 'Colaboradores', path: '/staff?tab=0', tab: 0, icon: Users },
-        { name: 'Escalas', path: '/staff?tab=1', tab: 1, icon: Calendar },
-        { name: 'Férias', path: '/staff?tab=2', tab: 2, icon: CalendarDays },
-        { name: 'Ocorrências', path: '/staff?tab=3', tab: 3, icon: AlertTriangle },
-        { name: 'Extras/Freelancers', path: '/staff?tab=4', tab: 4, icon: Users },
-        { name: 'Funções', path: '/staff?tab=5', tab: 5, icon: UserCog },
-        { name: 'Configurações', path: '/staff?tab=6', tab: 6, icon: Settings },
-        { name: 'Relatórios', path: '/staff?tab=7', tab: 7, icon: FileText },
-        { name: 'Gorjetas', path: '/staff?tab=8', tab: 8, icon: DollarSign }
+        { name: 'Recrutamento & Seleção', path: '/recruitment',      icon: UserPlus    },
+        { name: 'Colaboradores',          path: '/staff?tab=0', tab: 0, icon: Users      },
+        { name: 'Escalas',                path: '/staff?tab=1', tab: 1, icon: Calendar   },
+        { name: 'Férias',                 path: '/staff?tab=2', tab: 2, icon: CalendarDays },
+        { name: 'Ocorrências',            path: '/staff?tab=3', tab: 3, icon: AlertTriangle },
+        { name: 'Extras/Freelancers',     path: '/staff?tab=4', tab: 4, icon: Users      },
+        { name: 'Funções',                path: '/staff?tab=5', tab: 5, icon: UserCog    },
+        { name: 'Configurações',          path: '/staff?tab=6', tab: 6, icon: Settings   },
+        { name: 'Relatórios',             path: '/staff?tab=7', tab: 7, icon: FileText   },
+        { name: 'Gorjetas',               path: '/staff?tab=8', tab: 8, icon: DollarSign },
       ]
     },
     {
@@ -192,7 +194,10 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
   useEffect(() => {
     const currentModule = navigation.find(module =>
       location.pathname === module.path ||
-      (module.subModules && module.subModules.some(sub => location.pathname + location.search === sub.path))
+      (module.subModules && module.subModules.some(sub =>
+        location.pathname + location.search === sub.path ||
+        location.pathname === sub.path
+      ))
     );
     if (currentModule && currentModule.subModules) {
       setExpandedModule(currentModule.slug);
@@ -218,11 +223,12 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
         const isExpanded = expandedModule === module.slug;
         const isModuleActive = location.pathname === module.path ||
                               (hasSubModules && module.subModules!.some(sub =>
-                                location.pathname + location.search === sub.path
+                                location.pathname + location.search === sub.path ||
+                                location.pathname === sub.path
                               ));
 
         return (
-          <div key={module.slug} className="space-y-1">
+          <div key={module.slug + module.path} className="space-y-1">
             {/* Módulo Principal */}
             {hasSubModules ? (
               <button
@@ -237,11 +243,7 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
                   <module.icon className="w-5 h-5" />
                   <span>{module.name}</span>
                 </div>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    isExpanded ? 'rotate-180' : ''
-                  }`}
-                />
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
               </button>
             ) : (
               <Link
