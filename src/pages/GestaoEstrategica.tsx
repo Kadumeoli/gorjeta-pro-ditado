@@ -1,1041 +1,571 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Target, AlertTriangle, CheckCircle, BarChart3, ChevronDown, ChevronRight,
-  MessageSquare, Plus, RefreshCw, ArrowUp, ArrowDown, Minus, TrendingUp,
-  Users, Package, DollarSign, Calendar, X, Save, Loader2, Trash2,
-  CalendarDays, CalendarRange, Clock
+  TrendingUp, TrendingDown, DollarSign, Users, Package, Music,
+  CalendarDays, Target, RefreshCw, Plus, Trash2, Check,
+  AlertTriangle, Eye, EyeOff, UserCheck, UserX, Gift, Loader2,
+  ArrowUp, ArrowDown, Minus
 } from 'lucide-react';
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend
-} from 'recharts';
 import { supabase } from '../lib/supabase';
 
-// ─── Tipos ───────────────────────────────────────────────────────────────────
-type OKRStatus      = 'on-track' | 'at-risk' | 'off-track' | 'completed';
-type Periodicidade  = 'semanal'  | 'mensal'  | 'trimestral';
-
-interface KeyResult {
-  id: string;
-  objetivo_id: string;
-  titulo: string;
-  meta_valor: number;
-  valor_atual: number;
-  unidade: string;
-  responsavel: string;
-  data_limite: string;
-  status: OKRStatus;
-  periodicidade: Periodicidade;
-}
-
-interface Comentario {
-  id: string;
-  objetivo_id: string;
-  autor: string;
-  texto: string;
-  criado_em: string;
-}
-
-interface Objetivo {
-  id: string;
-  titulo: string;
-  descricao: string;
-  trimestre: string;
-  responsavel: string;
-  status: OKRStatus;
-  keyResults: KeyResult[];
-  comentarios: Comentario[];
-}
-
-interface KPIs {
-  receita_mes: number;
-  despesa_mes: number;
-  saldo_mes: number;
-  receita_mes_anterior: number;
-  colaboradores_ativos: number;
-  folha_mensal: number;
-  contas_em_aberto: number;
-  valor_em_aberto: number;
-  eventos_mes: number;
-  receita_eventos: number;
-  itens_criticos: number;
-}
-
-interface SerieFin {
-  label: string;
-  Receita: number;
-  Despesa: number;
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-const moeda = (v: number) => {
-  if (v >= 1000000) return `R$ ${(v / 1000000).toFixed(1)}M`;
-  if (v >= 100000)  return `R$ ${(v / 1000).toFixed(0)}k`;
-  if (v >= 1000)    return `R$ ${(v / 1000).toFixed(1)}k`;
-  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 });
+// ─── Formatters ───────────────────────────────────────────────────────────────
+const R   = (v: number) => v.toLocaleString('pt-BR', { style:'currency', currency:'BRL', minimumFractionDigits:0, maximumFractionDigits:0 });
+const Rs  = (v: number) => v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+const fmt = (v: number) => {
+  if (v >= 1_000_000) return `R$${(v/1_000_000).toFixed(2).replace('.',',')}M`;
+  if (v >= 1_000)     return `R$${(v/1_000).toFixed(1).replace('.',',')}k`;
+  return R(v);
 };
-const pct = (v: number) => `${v.toFixed(1)}%`;
-const num = (v: number) => v.toLocaleString('pt-BR');
+const pct = (a: number, b: number) => b === 0 ? 0 : ((a - b) / b) * 100;
 
-const calcProg = (atual: number, meta: number) =>
-  meta === 0 ? 0 : Math.min(100, Math.round((atual / meta) * 100));
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface FinData   { receita:number; despesa:number; saldo:number; receitaAnt:number; despesaAnt:number }
+interface RhData    { ativos:number; emFerias:number; afastados:number; salariosPagos:number; extrasPagos:number; gorjetasPagas:number }
+interface EstData   { valorTotal:number; zerados:number; criticos:number; cmvMes:number; cmvSemana:number }
+interface MusicData { totalMes:number; pago:number; aberto:number; contratacoes:number; pendentes:MusicItem[] }
+interface MusicItem { descricao:string; valor:number; saldo:number; vencimento:string }
+interface EventData { qtd:number; totalReceita:number; lista:EvItem[] }
+interface EvItem    { nome:string; data:string; valor:number; status:string }
+interface OKR       { id:string; titulo:string; descricao:string; trimestre:string; responsavel:string; status:string; progresso:number; totalKrs:number }
+interface NewOKR    { titulo:string; descricao:string; trimestre:string; responsavel:string }
 
-const barColor = (p: number) =>
-  p >= 90 ? 'bg-emerald-400' : p >= 60 ? 'bg-amber-400' : 'bg-red-400';
-
-const STATUS: Record<OKRStatus, { label: string; tw: string }> = {
-  'on-track':  { label: 'No Prazo',  tw: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-  'at-risk':   { label: 'Em Risco',  tw: 'text-amber-700   bg-amber-50   border-amber-200'   },
-  'off-track': { label: 'Atrasado',  tw: 'text-red-700     bg-red-50     border-red-200'     },
-  'completed': { label: 'Concluído', tw: 'text-blue-700    bg-blue-50    border-blue-200'    },
-};
-
-const PERIOD_CONFIG: Record<Periodicidade, { label: string; icon: React.ElementType; tw: string }> = {
-  semanal:    { label: 'Semanal',    icon: CalendarDays,  tw: 'text-purple-700 bg-purple-50 border-purple-200' },
-  mensal:     { label: 'Mensal',     icon: CalendarRange, tw: 'text-blue-700   bg-blue-50   border-blue-200'   },
-  trimestral: { label: 'Trimestral', icon: Clock,         tw: 'text-gray-700   bg-gray-50   border-gray-200'   },
-};
-
-// ─── KPI Card ────────────────────────────────────────────────────────────────
-function KPICard({
-  titulo, valor, formato, variacao, meta, alerta, icon: Icon, loading
-}: {
-  titulo: string; valor: number;
-  formato: 'currency' | 'percent' | 'number';
-  variacao?: number; meta?: number;
-  alerta?: 'warning' | 'danger';
-  icon: React.ElementType; loading?: boolean;
+// ─── Section Header ───────────────────────────────────────────────────────────
+function SectionHeader({ icon:Icon, title, subtitle, grad }:{
+  icon:React.ElementType; title:string; subtitle?:string; grad:string
 }) {
-  if (loading) return <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm animate-pulse h-28" />;
-
-  const display = formato === 'currency' ? moeda(valor) : formato === 'percent' ? pct(valor) : num(valor);
-  const prog    = meta ? calcProg(valor, meta) : null;
-
   return (
-    <div className={`bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md transition-shadow ${
-      alerta === 'danger'  ? 'border-red-200   bg-red-50/20'   :
-      alerta === 'warning' ? 'border-amber-200 bg-amber-50/20' : 'border-gray-100'
+    <div className="flex items-center gap-3 mb-5">
+      <div className={`p-2.5 rounded-xl bg-gradient-to-br ${grad} shadow-sm`}>
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+      <div>
+        <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-none">{title}</h2>
+        {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+// ─── KPI Tile ─────────────────────────────────────────────────────────────────
+function Tile({ label, value, sub, trend, alert, loading }:{
+  label:string; value:string; sub?:string;
+  trend?:number; alert?:'red'|'yellow'|'green'; loading?:boolean
+}) {
+  if (loading) return <div className="bg-white rounded-2xl border border-gray-100 p-4 h-[88px] animate-pulse" />;
+  return (
+    <div className={`bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md transition-all ${
+      alert==='red'    ? 'border-red-200    bg-gradient-to-br from-white to-red-50/50'    :
+      alert==='yellow' ? 'border-amber-200  bg-gradient-to-br from-white to-amber-50/50'  :
+      alert==='green'  ? 'border-emerald-200 bg-gradient-to-br from-white to-emerald-50/30' :
+      'border-gray-100'
     }`}>
-      <div className="flex items-start justify-between mb-2">
-        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide leading-tight">{titulo}</span>
-        <div className={`p-1.5 rounded-xl ml-2 shrink-0 ${
-          alerta === 'danger'  ? 'bg-red-100'   :
-          alerta === 'warning' ? 'bg-amber-100' : 'bg-gray-100'
-        }`}>
-          <Icon className={`w-3.5 h-3.5 ${
-            alerta === 'danger'  ? 'text-red-500'   :
-            alerta === 'warning' ? 'text-amber-500' : 'text-gray-500'
-          }`} />
-        </div>
-      </div>
-      <p className={`text-xl font-bold leading-none mb-2 ${
-        alerta === 'danger'  ? 'text-red-700'   :
-        alerta === 'warning' ? 'text-amber-700' : 'text-gray-900'
-      }`}>{display}</p>
-      <div className="flex items-center gap-2 min-h-[16px]">
-        {variacao !== undefined && (
-          <span className={`flex items-center gap-0.5 text-[10px] font-semibold ${
-            variacao > 0 ? 'text-emerald-600' : variacao < 0 ? 'text-red-500' : 'text-gray-400'
-          }`}>
-            {variacao > 0 ? <ArrowUp className="w-2.5 h-2.5" /> : variacao < 0 ? <ArrowDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
-            {Math.abs(variacao).toFixed(1)}% vs mês ant.
-          </span>
-        )}
-        {meta && <span className="text-[10px] text-gray-400 ml-auto font-mono">meta: {formato === 'currency' ? moeda(meta) : pct(meta)}</span>}
-      </div>
-      {prog !== null && (
-        <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-          <div className={`h-full rounded-full ${barColor(prog)}`} style={{ width: `${prog}%` }} />
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Confirm Delete Modal ─────────────────────────────────────────────────────
-function ConfirmDelete({ titulo, onConfirm, onCancel }: {
-  titulo: string; onConfirm: () => void; onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onCancel}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-red-100 mx-auto mb-4">
-          <Trash2 className="w-6 h-6 text-red-600" />
-        </div>
-        <h2 className="text-base font-bold text-gray-900 text-center mb-2">Excluir Objetivo?</h2>
-        <p className="text-sm text-gray-500 text-center mb-1 line-clamp-2">"{titulo}"</p>
-        <p className="text-xs text-gray-400 text-center mb-6">
-          Todos os Key Results e comentários vinculados serão removidos. Esta ação não pode ser desfeita.
-        </p>
-        <div className="flex gap-3">
-          <button onClick={onCancel}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">
-            Cancelar
-          </button>
-          <button onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors">
-            Excluir
-          </button>
-        </div>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{label}</p>
+      <p className={`text-xl font-extrabold tracking-tight leading-none ${
+        alert==='red' ? 'text-red-700' : alert==='green' ? 'text-emerald-700' : 'text-gray-900'
+      }`}>{value}</p>
+      <div className="flex items-center justify-between mt-2">
+        {trend !== undefined
+          ? <span className={`text-[10px] font-semibold flex items-center gap-0.5 ${trend>0?'text-emerald-600':trend<0?'text-red-500':'text-gray-400'}`}>
+              {trend>0?<ArrowUp className="w-2.5 h-2.5"/>:trend<0?<ArrowDown className="w-2.5 h-2.5"/>:<Minus className="w-2.5 h-2.5"/>}
+              {Math.abs(trend).toFixed(1)}% vs ant.
+            </span>
+          : <span/>
+        }
+        {sub && <p className="text-[10px] text-gray-400 font-medium">{sub}</p>}
       </div>
     </div>
   );
 }
 
-// ─── OKR Card ────────────────────────────────────────────────────────────────
-function OKRCard({ obj, onRefresh }: { obj: Objetivo; onRefresh: () => void }) {
-  const [open, setOpen]           = useState(false);
-  const [comentario, setComentario] = useState('');
-  const [saving, setSaving]       = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleting, setDeleting]   = useState(false);
-
-  const prog = obj.keyResults.length > 0
-    ? Math.round(obj.keyResults.reduce((a, kr) => a + calcProg(kr.valor_atual, kr.meta_valor), 0) / obj.keyResults.length)
-    : 0;
-  const s = STATUS[obj.status];
-
-  const handleDelete = async () => {
-    setDeleting(true);
-    await supabase.from('okr_objetivos').update({ deletado_em: new Date().toISOString() }).eq('id', obj.id);
-    setDeleting(false);
-    setConfirmDelete(false);
-    onRefresh();
-  };
-
-  const saveComentario = async () => {
-    if (!comentario.trim()) return;
-    setSaving(true);
-    await supabase.from('okr_comentarios').insert({ objetivo_id: obj.id, autor: 'Usuário', texto: comentario.trim() });
-    setComentario('');
-    setSaving(false);
-    onRefresh();
-  };
-
-  const updateKRStatus = async (id: string, status: OKRStatus) => {
-    await supabase.from('okr_key_results').update({ status }).eq('id', id);
-    onRefresh();
-  };
-
-  const updateKRValor = async (id: string, valor: number) => {
-    if (isNaN(valor)) return;
-    await supabase.from('okr_key_results').update({ valor_atual: valor }).eq('id', id);
-    onRefresh();
-  };
-
+// ─── Progress Ring SVG ────────────────────────────────────────────────────────
+function Ring({ p, color }:{ p:number; color:string }) {
+  const r=18, c=2*Math.PI*r, dash=(Math.min(p,100)/100)*c;
   return (
-    <>
-      {confirmDelete && (
-        <ConfirmDelete
-          titulo={obj.titulo}
-          onConfirm={handleDelete}
-          onCancel={() => setConfirmDelete(false)}
-        />
-      )}
-
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 flex items-start gap-3">
-          {/* Toggle */}
-          <button
-            className="mt-0.5 text-gray-400 shrink-0 hover:text-gray-600"
-            onClick={() => setOpen(v => !v)}
-          >
-            {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </button>
-
-          {/* Conteúdo clicável */}
-          <div className="flex-1 min-w-0 cursor-pointer select-none" onClick={() => setOpen(v => !v)}>
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <h3 className="text-sm font-semibold text-gray-900 leading-snug">{obj.titulo}</h3>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${s.tw}`}>
-                {s.label}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                <div className={`h-full rounded-full ${barColor(prog)}`} style={{ width: `${prog}%` }} />
-              </div>
-              <span className="text-xs font-bold text-gray-600 font-mono w-8 text-right shrink-0">{prog}%</span>
-            </div>
-            <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-400">
-              <span>{obj.responsavel}</span>
-              <span>·</span>
-              <span>{obj.trimestre}</span>
-              {obj.keyResults.length > 0 && (
-                <><span>·</span><span>{obj.keyResults.length} KR{obj.keyResults.length > 1 ? 's' : ''}</span></>
-              )}
-              {obj.comentarios.length > 0 && (
-                <span className="flex items-center gap-1">· <MessageSquare className="w-3 h-3" />{obj.comentarios.length}</span>
-              )}
-            </div>
-          </div>
-
-          {/* Botão excluir */}
-          <button
-            onClick={() => setConfirmDelete(true)}
-            disabled={deleting}
-            className="mt-0.5 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
-            title="Excluir objetivo"
-          >
-            {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-          </button>
-        </div>
-
-        {/* Expandido */}
-        {open && (
-          <div className="border-t border-gray-100 px-5 py-4 space-y-5">
-            {obj.descricao && (
-              <p className="text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2.5 leading-relaxed">{obj.descricao}</p>
-            )}
-
-            {/* Key Results */}
-            {obj.keyResults.length > 0 && (
-              <div className="space-y-3">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Key Results</p>
-                {obj.keyResults.map(kr => {
-                  const p  = calcProg(kr.valor_atual, kr.meta_valor);
-                  const ks = STATUS[kr.status];
-                  const pc = PERIOD_CONFIG[kr.periodicidade];
-                  return (
-                    <div key={kr.id} className="space-y-1.5 bg-gray-50 rounded-xl p-3">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-xs font-semibold text-gray-800 truncate">{kr.titulo}</span>
-                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold border shrink-0 ${pc.tw}`}>
-                            <pc.icon className="w-2.5 h-2.5" />
-                            {pc.label}
-                          </span>
-                        </div>
-                        <select
-                          value={kr.status}
-                          onChange={e => updateKRStatus(kr.id, e.target.value as OKRStatus)}
-                          onClick={e => e.stopPropagation()}
-                          className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 cursor-pointer shrink-0 ${ks.tw}`}
-                        >
-                          <option value="on-track">No Prazo</option>
-                          <option value="at-risk">Em Risco</option>
-                          <option value="off-track">Atrasado</option>
-                          <option value="completed">Concluído</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                          <div className={`h-full rounded-full ${barColor(p)}`} style={{ width: `${p}%` }} />
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                          <input
-                            type="number"
-                            defaultValue={kr.valor_atual}
-                            onBlur={e => updateKRValor(kr.id, parseFloat(e.target.value))}
-                            className="w-20 text-[11px] border border-gray-200 rounded-lg px-2 py-0.5 text-right font-mono bg-white focus:outline-none focus:ring-1 focus:ring-[#7D1F2C]/30"
-                          />
-                          <span className="text-[11px] text-gray-400">/ {kr.meta_valor} {kr.unidade}</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between text-[10px] text-gray-400">
-                        <span>{kr.responsavel}</span>
-                        <span>Prazo: {new Date(kr.data_limite + 'T12:00:00').toLocaleDateString('pt-BR')}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Comentários */}
-            {obj.comentarios.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Comentários</p>
-                {obj.comentarios.map(c => (
-                  <div key={c.id} className="bg-gray-50 rounded-xl px-3 py-2.5">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-xs font-bold text-gray-700">{c.autor}</span>
-                      <span className="text-[10px] text-gray-400">{new Date(c.criado_em).toLocaleDateString('pt-BR')}</span>
-                    </div>
-                    <p className="text-xs text-gray-600 leading-relaxed">{c.texto}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Novo comentário */}
-            <div className="flex gap-2" onClick={e => e.stopPropagation()}>
-              <input
-                type="text"
-                value={comentario}
-                onChange={e => setComentario(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && saveComentario()}
-                placeholder="Adicionar comentário..."
-                className="flex-1 text-xs border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-              />
-              <button
-                onClick={saveComentario}
-                disabled={saving || !comentario.trim()}
-                className="px-3 py-2 rounded-xl text-white bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] disabled:opacity-40"
-              >
-                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
+    <svg width="44" height="44" className="-rotate-90">
+      <circle cx="22" cy="22" r={r} fill="none" stroke="#f1f5f9" strokeWidth="5"/>
+      <circle cx="22" cy="22" r={r} fill="none" stroke={color} strokeWidth="5"
+        strokeDasharray={`${dash} ${c}`} strokeLinecap="round"
+        style={{transition:'stroke-dasharray .6s ease'}}/>
+    </svg>
   );
 }
 
-// ─── Modal Novo OKR ───────────────────────────────────────────────────────────
-interface KRForm {
-  titulo: string;
-  meta_valor: string;
-  unidade: string;
-  responsavel: string;
-  data_limite: string;
-  periodicidade: Periodicidade;
-}
+const OKR_ST: Record<string,{bg:string;txt:string;lbl:string;clr:string}> = {
+  'on-track': {bg:'bg-emerald-100',txt:'text-emerald-700',lbl:'No Prazo',  clr:'#10b981'},
+  'at-risk':  {bg:'bg-amber-100',  txt:'text-amber-700',  lbl:'Em Risco',  clr:'#f59e0b'},
+  'off-track':{bg:'bg-red-100',    txt:'text-red-700',    lbl:'Atrasado',  clr:'#ef4444'},
+  'completed':{bg:'bg-blue-100',   txt:'text-blue-700',   lbl:'Concluído', clr:'#3b82f6'},
+};
 
-const krVazio = (): KRForm => ({
-  titulo: '', meta_valor: '', unidade: '', responsavel: '',
-  data_limite: '', periodicidade: 'mensal',
-});
-
-function ModalOKR({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
-  const [titulo,      setTitulo]      = useState('');
-  const [descricao,   setDescricao]   = useState('');
-  const [trimestre,   setTrimestre]   = useState('Q2 2026');
-  const [responsavel, setResponsavel] = useState('');
-  const [krs,         setKrs]         = useState<KRForm[]>([krVazio()]);
-  const [saving,      setSaving]      = useState(false);
-  const [step,        setStep]        = useState<1 | 2>(1);
-
-  const addKR   = () => setKrs(prev => [...prev, krVazio()]);
-  const removeKR = (i: number) => setKrs(prev => prev.filter((_, idx) => idx !== i));
-  const updateKR = (i: number, field: keyof KRForm, value: string) =>
-    setKrs(prev => prev.map((kr, idx) => idx === i ? { ...kr, [field]: value } : kr));
-
-  const salvar = async () => {
-    if (!titulo.trim() || !responsavel.trim()) return;
-    setSaving(true);
-    const { data: obj } = await supabase
-      .from('okr_objetivos')
-      .insert({ titulo: titulo.trim(), descricao: descricao.trim(), trimestre, responsavel: responsavel.trim(), status: 'on-track' })
-      .select('id')
-      .single();
-
-    if (obj?.id) {
-      const krsValidos = krs.filter(kr => kr.titulo.trim() && kr.meta_valor && kr.responsavel.trim() && kr.data_limite);
-      if (krsValidos.length > 0) {
-        await supabase.from('okr_key_results').insert(
-          krsValidos.map(kr => ({
-            objetivo_id:   obj.id,
-            titulo:        kr.titulo.trim(),
-            meta_valor:    parseFloat(kr.meta_valor),
-            valor_atual:   0,
-            unidade:       kr.unidade.trim(),
-            responsavel:   kr.responsavel.trim(),
-            data_limite:   kr.data_limite,
-            periodicidade: kr.periodicidade,
-            status:        'on-track' as OKRStatus,
-          }))
-        );
-      }
-    }
-
-    setSaving(false);
-    onSave();
-    onClose();
-  };
-
-  const trimestres = ['Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026'];
-  const canNext    = titulo.trim() && responsavel.trim();
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-
-        {/* Header do modal */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-          <div>
-            <h2 className="text-base font-bold text-gray-900">Novo Objetivo</h2>
-            <div className="flex items-center gap-2 mt-1">
-              <div className={`w-6 h-1.5 rounded-full ${step === 1 ? 'bg-[#7D1F2C]' : 'bg-emerald-400'}`} />
-              <div className={`w-6 h-1.5 rounded-full ${step === 2 ? 'bg-[#7D1F2C]' : 'bg-gray-200'}`} />
-              <span className="text-[11px] text-gray-400">{step === 1 ? 'Objetivo' : 'Key Results'}</span>
-            </div>
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1"><X className="w-4 h-4" /></button>
-        </div>
-
-        {/* Corpo scrollável */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
-
-          {/* Step 1: Objetivo */}
-          {step === 1 && (
-            <>
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Título do Objetivo *</label>
-                <input
-                  value={titulo}
-                  onChange={e => setTitulo(e.target.value)}
-                  placeholder="Ex: Aumentar a receita mensal para R$ 250k"
-                  className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Descrição / Contexto</label>
-                <textarea
-                  value={descricao}
-                  onChange={e => setDescricao(e.target.value)}
-                  placeholder="Por que este objetivo é importante? Qual o contexto?"
-                  rows={3}
-                  className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C] resize-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1.5">Trimestre</label>
-                  <select
-                    value={trimestre}
-                    onChange={e => setTrimestre(e.target.value)}
-                    className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none"
-                  >
-                    {trimestres.map(t => <option key={t}>{t}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1.5">Responsável *</label>
-                  <input
-                    value={responsavel}
-                    onChange={e => setResponsavel(e.target.value)}
-                    placeholder="Nome ou área"
-                    className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Step 2: Key Results */}
-          {step === 2 && (
-            <div className="space-y-4">
-              <p className="text-xs text-gray-500">
-                Defina de 1 a 5 métricas mensuráveis que indicarão o sucesso do objetivo.
-              </p>
-
-              {krs.map((kr, i) => (
-                <div key={i} className="border border-gray-200 rounded-2xl p-4 space-y-3 relative">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-700">KR {i + 1}</span>
-                    {krs.length > 1 && (
-                      <button onClick={() => removeKR(i)} className="text-gray-300 hover:text-red-500 transition-colors">
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Periodicidade */}
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Tipo de Meta</label>
-                    <div className="flex gap-2">
-                      {(['semanal', 'mensal', 'trimestral'] as Periodicidade[]).map(p => {
-                        const pc = PERIOD_CONFIG[p];
-                        const active = kr.periodicidade === p;
-                        return (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => updateKR(i, 'periodicidade', p)}
-                            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold border transition-all ${
-                              active ? pc.tw + ' shadow-sm' : 'text-gray-400 bg-white border-gray-200 hover:border-gray-300'
-                            }`}
-                          >
-                            <pc.icon className="w-3.5 h-3.5" />
-                            {pc.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Título do KR */}
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Descrição da Meta</label>
-                    <input
-                      value={kr.titulo}
-                      onChange={e => updateKR(i, 'titulo', e.target.value)}
-                      placeholder={
-                        kr.periodicidade === 'semanal'    ? 'Ex: Vendas por semana ≥ R$ 60k' :
-                        kr.periodicidade === 'mensal'     ? 'Ex: Receita mensal ≥ R$ 250k'   :
-                                                           'Ex: CMV abaixo de 30% no trimestre'
-                      }
-                      className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                    />
-                  </div>
-
-                  {/* Meta + Unidade */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Valor Meta</label>
-                      <input
-                        type="number"
-                        value={kr.meta_valor}
-                        onChange={e => updateKR(i, 'meta_valor', e.target.value)}
-                        placeholder="Ex: 250000"
-                        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Unidade</label>
-                      <input
-                        value={kr.unidade}
-                        onChange={e => updateKR(i, 'unidade', e.target.value)}
-                        placeholder="R$, %, eventos..."
-                        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Responsável + Prazo */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Responsável</label>
-                      <input
-                        value={kr.responsavel}
-                        onChange={e => updateKR(i, 'responsavel', e.target.value)}
-                        placeholder="Nome ou área"
-                        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">
-                        Prazo {kr.periodicidade === 'semanal' ? '(fim da semana)' : kr.periodicidade === 'mensal' ? '(fim do mês)' : '(fim do tri.)'}
-                      </label>
-                      <input
-                        type="date"
-                        value={kr.data_limite}
-                        onChange={e => updateKR(i, 'data_limite', e.target.value)}
-                        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {krs.length < 5 && (
-                <button
-                  type="button"
-                  onClick={addKR}
-                  className="w-full py-2.5 rounded-xl text-sm font-semibold text-[#7D1F2C] border-2 border-dashed border-[#7D1F2C]/30 hover:border-[#7D1F2C]/60 hover:bg-[#7D1F2C]/5 transition-all flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Adicionar Key Result
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="flex gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
-          {step === 1 ? (
-            <>
-              <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">
-                Cancelar
-              </button>
-              <button
-                onClick={() => setStep(2)}
-                disabled={!canNext}
-                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] disabled:opacity-40"
-              >
-                Próximo → Key Results
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setStep(1)} className="flex-1 px-4 py-2.5 rounded-xl text-sm text-gray-600 border border-gray-200 hover:bg-gray-50 font-medium">
-                ← Voltar
-              </button>
-              <button
-                onClick={salvar}
-                disabled={saving}
-                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] disabled:opacity-40"
-              >
-                {saving ? (
-                  <span className="flex items-center justify-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" />Salvando...</span>
-                ) : 'Criar Objetivo'}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Página Principal ────────────────────────────────────────────────────────
-type Tab = 'dashboard' | 'okrs' | 'alertas';
-
+// ═══════════════════════════════════════════════════════════════════════════════
 export default function GestaoEstrategica() {
-  const [tab,       setTab]       = useState<Tab>('dashboard');
-  const [loading,   setLoading]   = useState(true);
-  const [refreshing,setRefreshing]= useState(false);
-  const [kpis,      setKpis]      = useState<KPIs | null>(null);
-  const [serie,     setSerie]     = useState<SerieFin[]>([]);
-  const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
-  const [modalOKR,  setModalOKR]  = useState(false);
+  const [loading,     setLoading]    = useState(true);
+  const [refreshing,  setRefreshing] = useState(false);
+  const [fin,  setFin]   = useState<FinData|null>(null);
+  const [rh,   setRh]    = useState<RhData|null>(null);
+  const [est,  setEst]   = useState<EstData|null>(null);
+  const [mus,  setMus]   = useState<MusicData|null>(null);
+  const [evs,  setEvs]   = useState<EventData|null>(null);
+  const [okrs, setOkrs]  = useState<OKR[]>([]);
+
+  const [cmvMode,     setCmvMode]    = useState<'mensal'|'semanal'>('mensal');
+  const [soPendentes, setSoPendentes]= useState(false);
+  const [showForm,    setShowForm]   = useState(false);
+  const [confirmDel,  setConfirmDel] = useState<string|null>(null);
+  const [newOkr,      setNewOkr]     = useState<NewOKR>({titulo:'',descricao:'',trimestre:'Q2 2026',responsavel:''});
+  const [saving,      setSaving]     = useState(false);
 
   const load = useCallback(async () => {
     try {
-      const hoje = new Date();
+      const hoje         = new Date();
       const inicioMes    = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().split('T')[0];
-      const fimMes       = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1).toISOString().split('T')[0];
-      const inicioMesAnt = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1).toISOString().split('T')[0];
+      const fimMes       = new Date(hoje.getFullYear(), hoje.getMonth()+1, 1).toISOString().split('T')[0];
+      const inicioMesAnt = new Date(hoje.getFullYear(), hoje.getMonth()-1, 1).toISOString().split('T')[0];
       const fimMesAnt    = new Date(hoje.getFullYear(), hoje.getMonth(), 0).toISOString().split('T')[0];
-      const inicio30d    = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+      const inicio7d     = new Date(hoje.getTime() - 7*86400000).toISOString().split('T')[0];
 
-      // IDs das categorias de pessoal no contas_pagar
-      const CATS_PESSOAL = [
-        'c07bb17a-0ad5-4a86-adcf-090694ee9acb', // Salários Fixos
-        '6f030239-f3df-4ecd-a5c6-2aaa3992669b', // Extras e Freelancers
-        '710f7a66-6ab2-447a-b52e-68c431c7ed79', // Adiantamentos e Vales
-        'b570835e-2e96-4db1-9ba1-8b61aab8c0cc', // Férias
-        '3bbf5e7b-c2fa-48a8-b4da-598938269f99', // Rescisões
-        'a2878c92-6baf-4a83-81c5-67f22c9eb480', // Equipe e Pessoal
-        '81e42a86-bae1-446c-9940-89baf944aa68', // Comissões
-        '8b80240b-de17-4650-a4c0-e1bb037afa50', // Vale Transporte
-        '782d79ab-0f64-42d7-8f09-aa31188f7677', // Gorjetas de Garçom
-      ];
+      const CAT_SAL  = 'c07bb17a-0ad5-4a86-adcf-090694ee9acb';
+      const CAT_EXT  = '6f030239-f3df-4ecd-a5c6-2aaa3992669b';
+      const CAT_GOR  = '782d79ab-0f64-42d7-8f09-aa31188f7677';
+      const CATS_MUS = ['8a0e65eb-e5c1-4ab9-a03c-6103c9071883','0fa4dda6-f9a0-4416-8e23-d38bc510c14d','04b9df59-25dc-4234-9d71-5bea479c3334'];
 
       const [
-        { data: fcMes },
-        { data: fcAnt },
-        { data: colab },
-        { data: contasAb },
-        { data: evs },
-        { data: fcSerie },
-        { data: okrObjs },
-        { data: saldosCrit },
-        { data: folhaPaga },
+        {data:fcMes},{data:fcAnt},
+        {data:colab},
+        {data:salD},{data:extD},{data:gorD},
+        {data:saldos},
+        {data:cmvM},{data:cmvS},
+        {data:musicD},
+        {data:eventD},
+        {data:okrD},
       ] = await Promise.all([
-        supabase.from('fluxo_caixa').select('tipo,valor').gte('data', inicioMes),
-        supabase.from('fluxo_caixa').select('tipo,valor').gte('data', inicioMesAnt).lte('data', fimMesAnt),
-        supabase.from('colaboradores').select('id').eq('status', 'ativo'),
-        supabase.from('contas_pagar').select('saldo_restante').eq('status', 'em_aberto'),
-        supabase.from('eventos_fechados').select('valor_total').gte('data_evento', inicioMes).lt('data_evento', fimMes),
-        supabase.from('fluxo_caixa').select('tipo,valor,data').gte('data', inicio30d).order('data'),
-        supabase.from('okr_objetivos').select('*').is('deletado_em', null).order('criado_em'),
-        supabase.from('saldos_estoque').select('id').lte('quantidade_atual', 0),
-        // Folha = soma do que foi efetivamente pago em categorias de pessoal com vencimento no mês
-        supabase
-          .from('contas_pagar')
-          .select('valor_pago')
-          .in('categoria_id', CATS_PESSOAL)
-          .gte('data_vencimento', inicioMes)
-          .lt('data_vencimento', fimMes)
-          .gt('valor_pago', 0),
+        supabase.from('fluxo_caixa').select('tipo,valor').gte('data',inicioMes).lt('data',fimMes),
+        supabase.from('fluxo_caixa').select('tipo,valor').gte('data',inicioMesAnt).lte('data',fimMesAnt),
+        supabase.from('colaboradores').select('status'),
+        supabase.from('contas_pagar').select('valor_pago').eq('categoria_id',CAT_SAL).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).gt('valor_pago',0),
+        supabase.from('contas_pagar').select('valor_pago').eq('categoria_id',CAT_EXT).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).gt('valor_pago',0),
+        supabase.from('contas_pagar').select('valor_pago').eq('categoria_id',CAT_GOR).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).gt('valor_pago',0),
+        supabase.from('saldos_estoque').select('quantidade_atual, itens_estoque!inner(custo_medio,estoque_minimo,status)').eq('itens_estoque.status','ativo'),
+        supabase.from('movimentacoes_estoque').select('quantidade, itens_estoque!inner(custo_medio)').eq('tipo_movimentacao','saida').gte('data_movimentacao',inicioMes).lt('data_movimentacao',fimMes),
+        supabase.from('movimentacoes_estoque').select('quantidade, itens_estoque!inner(custo_medio)').eq('tipo_movimentacao','saida').gte('data_movimentacao',inicio7d),
+        supabase.from('contas_pagar').select('descricao,valor_total,valor_pago,saldo_restante,data_vencimento,status').in('categoria_id',CATS_MUS).gte('data_vencimento',inicioMes).lt('data_vencimento',fimMes).order('data_vencimento'),
+        supabase.from('eventos_fechados').select('nome_evento,data_evento,valor_total,status_pagamento').gte('data_evento',inicioMes).lt('data_evento',fimMes).order('data_evento'),
+        supabase.from('okr_objetivos').select('id,titulo,descricao,trimestre,responsavel,status,okr_key_results(meta_valor,valor_atual)').is('deletado_em',null).order('criado_em',{ascending:false}),
       ]);
 
-      const receitaMes = (fcMes || []).filter(r => r.tipo === 'entrada').reduce((a, b) => a + +b.valor, 0);
-      const despesaMes = (fcMes || []).filter(r => r.tipo === 'saida').reduce((a, b) => a + +b.valor, 0);
-      const receitaAnt = (fcAnt || []).filter(r => r.tipo === 'entrada').reduce((a, b) => a + +b.valor, 0);
-      const folha      = (folhaPaga || []).reduce((a, b) => a + +(b.valor_pago || 0), 0);
+      // Financeiro
+      const rec  = (fcMes||[]).filter(r=>r.tipo==='entrada').reduce((a,b)=>a+ +b.valor,0);
+      const desp = (fcMes||[]).filter(r=>r.tipo==='saida').reduce((a,b)=>a+ +b.valor,0);
+      const recA = (fcAnt||[]).filter(r=>r.tipo==='entrada').reduce((a,b)=>a+ +b.valor,0);
+      const desA = (fcAnt||[]).filter(r=>r.tipo==='saida').reduce((a,b)=>a+ +b.valor,0);
+      setFin({receita:rec,despesa:desp,saldo:rec-desp,receitaAnt:recA,despesaAnt:desA});
 
-      setKpis({
-        receita_mes:        receitaMes,
-        despesa_mes:        despesaMes,
-        saldo_mes:          receitaMes - despesaMes,
-        receita_mes_anterior: receitaAnt,
-        colaboradores_ativos: colab?.length || 0,
-        folha_mensal:       folha,
-        contas_em_aberto:   contasAb?.length || 0,
-        valor_em_aberto:    (contasAb || []).reduce((a, b) => a + +(b.saldo_restante || 0), 0),
-        eventos_mes:        evs?.length || 0,
-        receita_eventos:    (evs || []).filter(e => +(e.valor_total || 0) > 0).reduce((a, b) => a + +(b.valor_total || 0), 0),
-        itens_criticos:     saldosCrit?.length || 0,
+      // RH
+      const cl = colab||[];
+      setRh({
+        ativos:       cl.filter(x=>x.status==='ativo').length,
+        emFerias:     cl.filter(x=>x.status==='ferias').length,
+        afastados:    cl.filter(x=>x.status==='afastado').length,
+        salariosPagos:(salD||[]).reduce((a,b)=>a+ +b.valor_pago,0),
+        extrasPagos:  (extD||[]).reduce((a,b)=>a+ +b.valor_pago,0),
+        gorjetasPagas:(gorD||[]).reduce((a,b)=>a+ +b.valor_pago,0),
       });
 
-      // Série financeira
-      const porDia: Record<string, { R: number; D: number }> = {};
-      (fcSerie || []).forEach(r => {
-        if (!porDia[r.data]) porDia[r.data] = { R: 0, D: 0 };
-        r.tipo === 'entrada' ? (porDia[r.data].R += +r.valor) : (porDia[r.data].D += +r.valor);
+      // Estoque
+      const ss = saldos||[];
+      let valEst=0,zer=0,crit=0;
+      ss.forEach((s:any)=>{
+        const q=+s.quantidade_atual, cu=+(s.itens_estoque?.custo_medio||0), mn=+(s.itens_estoque?.estoque_minimo||0);
+        valEst+=q*cu;
+        if(q<=0) zer++; else if(mn>0&&q<=mn) crit++;
       });
-      setSerie(
-        Object.entries(porDia)
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([data, v]) => ({
-            label: new Date(data + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-            Receita: v.R,
-            Despesa: v.D,
-          }))
-      );
+      const cmvMes  = (cmvM||[]).reduce((a,b:any)=>a+(+b.quantidade*(+(b.itens_estoque?.custo_medio||0))),0);
+      const cmvSem  = (cmvS||[]).reduce((a,b:any)=>a+(+b.quantidade*(+(b.itens_estoque?.custo_medio||0))),0);
+      setEst({valorTotal:valEst,zerados:zer,criticos:crit,cmvMes,cmvSemana:cmvSem});
 
-      // OKRs + KRs + comentários
-      if (okrObjs && okrObjs.length > 0) {
-        const detalhes = await Promise.all(
-          okrObjs.map(async o => {
-            const [{ data: krs }, { data: cms }] = await Promise.all([
-              supabase.from('okr_key_results').select('*').eq('objetivo_id', o.id).order('criado_em'),
-              supabase.from('okr_comentarios').select('*').eq('objetivo_id', o.id).order('criado_em'),
-            ]);
-            return { ...o, keyResults: krs || [], comentarios: cms || [] } as Objetivo;
-          })
-        );
-        setObjetivos(detalhes);
-      } else {
-        setObjetivos([]);
-      }
-    } catch (err) {
-      console.error('[GestaoEstrategica]', err);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+      // Músicos
+      const mp = musicD||[];
+      setMus({
+        totalMes:     mp.reduce((a,b:any)=>a+ +b.valor_total,0),
+        pago:         mp.filter((m:any)=>m.status==='pago').reduce((a,b:any)=>a+ +b.valor_total,0),
+        aberto:       mp.filter((m:any)=>m.status==='em_aberto').reduce((a,b:any)=>a+ +b.valor_total,0),
+        contratacoes: mp.length,
+        pendentes:    mp.filter((m:any)=>m.status==='em_aberto'&&+m.saldo_restante>0)
+                       .map((m:any)=>({descricao:m.descricao,valor:+m.valor_total,saldo:+m.saldo_restante,vencimento:m.data_vencimento})),
+      });
 
-  useEffect(() => { load(); }, [load]);
-  const refresh = () => { setRefreshing(true); load(); };
+      // Eventos
+      const ep = eventD||[];
+      setEvs({
+        qtd:         ep.length,
+        totalReceita:ep.reduce((a,b:any)=>a+ +b.valor_total,0),
+        lista:       ep.map((e:any)=>({nome:e.nome_evento,data:e.data_evento,valor:+e.valor_total,status:e.status_pagamento})),
+      });
 
-  // Métricas derivadas
-  const varReceita = kpis && kpis.receita_mes_anterior > 0
-    ? ((kpis.receita_mes - kpis.receita_mes_anterior) / kpis.receita_mes_anterior) * 100 : 0;
-  const pctPessoal = kpis && kpis.receita_mes > 0 ? (kpis.folha_mensal / kpis.receita_mes) * 100 : 0;
-  const pctMargem  = kpis && kpis.receita_mes > 0 ? (kpis.saldo_mes   / kpis.receita_mes) * 100 : 0;
+      // OKRs
+      setOkrs((okrD||[]).map((o:any)=>{
+        const krs=o.okr_key_results||[];
+        const prog=krs.length===0?0:krs.reduce((a:number,k:any)=>a+(k.meta_valor>0?Math.min((k.valor_atual/k.meta_valor)*100,100):0),0)/krs.length;
+        return {id:o.id,titulo:o.titulo,descricao:o.descricao,trimestre:o.trimestre,responsavel:o.responsavel,status:o.status,progresso:prog,totalKrs:krs.length};
+      }));
 
-  const alertas = !kpis ? [] : [
-    kpis.itens_criticos > 0 && { id: 'estoque', tipo: 'warning',
-      titulo: `${kpis.itens_criticos} item(ns) com saldo zerado`, msg: 'Verifique o módulo de estoque.' },
-    kpis.valor_em_aberto > 0 && { id: 'contas', tipo: 'warning',
-      titulo: `${kpis.contas_em_aberto} conta(s) a pagar em aberto`, msg: `Total de ${moeda(kpis.valor_em_aberto)} pendente.` },
-    pctPessoal > 45 && { id: 'pessoal', tipo: 'danger',
-      titulo: 'Custo de pessoal acima de 45%', msg: `Folha de ${moeda(kpis!.folha_mensal)} = ${pct(pctPessoal)} da receita.` },
-    kpis.saldo_mes < 0 && { id: 'saldo', tipo: 'danger',
-      titulo: 'Saldo negativo no mês', msg: `Despesas superaram receitas em ${moeda(Math.abs(kpis.saldo_mes))}.` },
-    kpis.receita_mes > kpis.receita_mes_anterior && kpis.receita_mes_anterior > 0 && { id: 'crescimento', tipo: 'info',
-      titulo: `Receita cresceu ${pct(varReceita)} vs mês anterior`, msg: `De ${moeda(kpis.receita_mes_anterior)} para ${moeda(kpis.receita_mes)}.` },
-  ].filter(Boolean) as { id: string; tipo: string; titulo: string; msg: string }[];
+    } catch(e){console.error(e);}
+    finally{setLoading(false);setRefreshing(false);}
+  },[]);
 
-  const critCount  = alertas.filter(a => a.tipo !== 'info').length;
-  const okrSummary = {
-    onTrack:  objetivos.filter(o => o.status === 'on-track').length,
-    atRisk:   objetivos.filter(o => o.status === 'at-risk').length,
-    offTrack: objetivos.filter(o => o.status === 'off-track').length,
+  useEffect(()=>{load();},[load]);
+  const refresh=()=>{setRefreshing(true);load();};
+
+  const saveOkr = async () => {
+    if (!newOkr.titulo.trim()) return;
+    setSaving(true);
+    const {error} = await supabase.from('okr_objetivos').insert({
+      titulo:newOkr.titulo, descricao:newOkr.descricao,
+      trimestre:newOkr.trimestre, responsavel:newOkr.responsavel, status:'on-track',
+    });
+    if (!error){setNewOkr({titulo:'',descricao:'',trimestre:'Q2 2026',responsavel:''});setShowForm(false);load();}
+    setSaving(false);
   };
 
+  const deleteOkr = async (id:string) => {
+    await supabase.from('okr_objetivos').update({deletado_em:new Date().toISOString()}).eq('id',id);
+    setConfirmDel(null); setOkrs(p=>p.filter(o=>o.id!==id));
+  };
+
+  // Indicadores derivados
+  const margemPct  = fin&&fin.receita>0 ? (fin.saldo/fin.receita)*100 : 0;
+  const rhPct      = fin&&fin.receita>0&&rh ? ((rh.salariosPagos+rh.extrasPagos+rh.gorjetasPagas)/fin.receita)*100 : 0;
+  const cmvVal     = cmvMode==='mensal'?(est?.cmvMes||0):(est?.cmvSemana||0);
+  const cmvBase    = cmvMode==='mensal'?(fin?.receita||0):(fin?.receita||0)/4;
+  const cmvPct     = cmvBase>0 ? (cmvVal/cmvBase)*100 : 0;
+  const mesNome    = new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const pendList   = soPendentes ? mus?.pendentes : mus?.pendentes; // sempre mostra, toggle só filtra visualmente
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
 
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] bg-clip-text text-transparent">
-            Gestão Estratégica
-          </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Dados em tempo real · {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-          </p>
-        </div>
-        <button onClick={refresh} disabled={refreshing}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm">
-          <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-          Atualizar
-        </button>
-      </div>
+      {/* ══ HEADER HERO ═══════════════════════════════════════════════════ */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#7D1F2C] via-[#9B2535] to-[#3d0e16] p-6 shadow-2xl">
+        {/* Decoração de fundo */}
+        <div className="absolute inset-0 opacity-[0.07]"
+          style={{backgroundImage:`repeating-linear-gradient(45deg, #D4AF37 0px, #D4AF37 1px, transparent 0px, transparent 50%),repeating-linear-gradient(-45deg, #D4AF37 0px, #D4AF37 1px, transparent 0px, transparent 50%)`, backgroundSize:'30px 30px'}}/>
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#D4AF37] opacity-5 -translate-y-1/2 translate-x-1/3"/>
 
-      {/* Tabs */}
-      <div className="flex gap-1.5 bg-gray-100 p-1 rounded-2xl w-fit">
-        {([
-          { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-          { id: 'okrs',      label: 'OKRs',       icon: Target },
-          { id: 'alertas',   label: `Alertas${critCount > 0 ? ` (${critCount})` : ''}`, icon: AlertTriangle },
-        ] as { id: Tab; label: string; icon: React.ElementType }[]).map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              tab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}>
-            <t.icon className="w-3.5 h-3.5" />{t.label}
+        <div className="relative flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Ditado Popular</p>
+            <h1 className="text-3xl font-black text-white tracking-tight">Gestão Estratégica</h1>
+            <p className="text-white/50 text-sm mt-1 capitalize">{mesNome}</p>
+          </div>
+          <button onClick={refresh} disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/70 bg-white/10 hover:bg-white/20 border border-white/15 transition-all">
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing?'animate-spin':''}`}/>
+            Atualizar
           </button>
-        ))}
+        </div>
+
+        {/* Trio de números */}
+        <div className="relative grid grid-cols-3 gap-3 mt-6">
+          {[
+            {label:'Receita',   value:fin?.receita||0,  color:'text-emerald-300'},
+            {label:'Despesa',   value:fin?.despesa||0,  color:'text-red-300'},
+            {label:'Resultado', value:fin?.saldo||0,    color:(fin?.saldo||0)>=0?'text-[#D4AF37]':'text-red-300'},
+          ].map(item=>(
+            <div key={item.label} className="text-center bg-white/5 rounded-2xl py-3 px-2 border border-white/10">
+              <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">{item.label}</p>
+              {loading
+                ? <div className="h-7 bg-white/10 rounded-lg animate-pulse mt-1 mx-2"/>
+                : <p className={`text-xl font-black mt-1 ${item.color}`}>{fmt(item.value)}</p>
+              }
+            </div>
+          ))}
+        </div>
+
+        {/* Pills de indicadores */}
+        {!loading && (
+          <div className="relative mt-4 flex flex-wrap gap-2">
+            <span className={`text-[10px] font-bold px-3 py-1 rounded-full border ${margemPct>=0?'bg-emerald-500/20 border-emerald-400/30 text-emerald-300':'bg-red-500/20 border-red-400/30 text-red-300'}`}>
+              Margem {margemPct.toFixed(1)}%
+            </span>
+            <span className={`text-[10px] font-bold px-3 py-1 rounded-full border ${rhPct<=45?'bg-sky-500/20 border-sky-400/30 text-sky-300':'bg-amber-500/20 border-amber-400/30 text-amber-300'}`}>
+              Custo RH {rhPct.toFixed(1)}%
+            </span>
+            <span className={`text-[10px] font-bold px-3 py-1 rounded-full border ${cmvPct<=35?'bg-violet-500/20 border-violet-400/30 text-violet-300':'bg-red-500/20 border-red-400/30 text-red-300'}`}>
+              CMV {cmvPct.toFixed(1)}%
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* ══ DASHBOARD ══════════════════════════════════════════════════════════ */}
-      {tab === 'dashboard' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-            <KPICard titulo="Receita do Mês"    valor={kpis?.receita_mes || 0}  formato="currency" variacao={varReceita} icon={TrendingUp} loading={loading} />
-            <KPICard titulo="Despesas do Mês"   valor={kpis?.despesa_mes || 0}  formato="currency" icon={DollarSign}   loading={loading} />
-            <KPICard titulo="Saldo do Mês"      valor={kpis?.saldo_mes || 0}    formato="currency" icon={DollarSign}   alerta={kpis && kpis.saldo_mes < 0 ? 'danger' : undefined} loading={loading} />
-            <KPICard titulo="Margem Líquida"    valor={pctMargem}               formato="percent"  icon={BarChart3}    alerta={pctMargem < 10 ? 'danger' : pctMargem < 20 ? 'warning' : undefined} loading={loading} />
-            <KPICard titulo="% Custo Pessoal"   valor={pctPessoal}              formato="percent"  icon={Users} meta={40} alerta={pctPessoal > 50 ? 'danger' : pctPessoal > 40 ? 'warning' : undefined} loading={loading} />
-            <KPICard titulo="Itens c/ Saldo 0"  valor={kpis?.itens_criticos || 0} formato="number" icon={Package}      alerta={kpis && kpis.itens_criticos > 0 ? 'warning' : undefined} loading={loading} />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <KPICard titulo="Colaboradores"    valor={kpis?.colaboradores_ativos || 0} formato="number"   icon={Users}     loading={loading} />
-            <KPICard titulo="Pessoal Pago"     valor={kpis?.folha_mensal || 0}          formato="currency" icon={Users}     loading={loading} />
-            <KPICard titulo="Eventos Agendados" valor={kpis?.eventos_mes || 0}           formato="number"   icon={Calendar}  loading={loading} />
-            <KPICard titulo="Receita Prevista"  valor={kpis?.receita_eventos || 0}        formato="currency" icon={Calendar}  loading={loading} />
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-            {/* Gráfico */}
-            <div className="xl:col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <p className="text-sm font-bold text-gray-900 mb-0.5">Receita vs Despesa — 30 dias</p>
-              <p className="text-xs text-gray-400 mb-4">Fonte: fluxo_caixa</p>
-              {loading ? <div className="h-48 bg-gray-100 rounded-xl animate-pulse" /> :
-               serie.length === 0 ? <div className="h-48 flex items-center justify-center text-sm text-gray-400">Sem dados no período</div> : (
-                <ResponsiveContainer width="100%" height={200}>
-                  <AreaChart data={serie} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="gRec"  x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#7D1F2C" stopOpacity={0.18} />
-                        <stop offset="95%" stopColor="#7D1F2C" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="gDesp" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#D4AF37" stopOpacity={0.18} />
-                        <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-                    <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v: number, name: string) => [moeda(v), name]} contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 11 }} />
-                    <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 11 }} />
-                    <Area type="monotone" dataKey="Receita" stroke="#7D1F2C" strokeWidth={2} fill="url(#gRec)"  dot={false} />
-                    <Area type="monotone" dataKey="Despesa" stroke="#D4AF37" strokeWidth={2} fill="url(#gDesp)" dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-
-            {/* Resumo OKR */}
-            <div className="xl:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-bold text-gray-900">Status OKRs</p>
-                <button onClick={() => setTab('okrs')} className="text-xs text-[#7D1F2C] font-semibold hover:underline">Ver todos →</button>
-              </div>
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {[
-                  { label: 'No Prazo', value: okrSummary.onTrack,  tw: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-                  { label: 'Em Risco', value: okrSummary.atRisk,   tw: 'text-amber-700   bg-amber-50   border-amber-200'   },
-                  { label: 'Atrasado', value: okrSummary.offTrack, tw: 'text-red-700     bg-red-50     border-red-200'     },
-                ].map(s => (
-                  <div key={s.label} className={`rounded-xl border p-3 text-center ${s.tw}`}>
-                    <p className="text-2xl font-extrabold">{s.value}</p>
-                    <p className="text-[10px] font-semibold mt-0.5">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex-1 space-y-2 overflow-y-auto">
-                {loading ? [1,2,3].map(i => <div key={i} className="h-12 bg-gray-100 rounded-xl animate-pulse" />) :
-                 objetivos.length === 0 ? <p className="text-xs text-gray-400 text-center py-6">Nenhum OKR criado</p> :
-                 objetivos.slice(0, 4).map(o => {
-                  const p = o.keyResults.length > 0
-                    ? Math.round(o.keyResults.reduce((a, kr) => a + calcProg(kr.valor_atual, kr.meta_valor), 0) / o.keyResults.length) : 0;
-                  const s = STATUS[o.status];
-                  return (
-                    <div key={o.id} className="flex items-center gap-3 bg-gray-50 rounded-xl p-2.5">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{o.titulo}</p>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <div className="flex-1 h-1 rounded-full bg-gray-200 overflow-hidden">
-                            <div className={`h-full rounded-full ${barColor(p)}`} style={{ width: `${p}%` }} />
-                          </div>
-                          <span className="text-[10px] font-mono text-gray-500">{p}%</span>
-                        </div>
-                      </div>
-                      <span className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 shrink-0 ${s.tw}`}>{s.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              {critCount > 0 && (
-                <button onClick={() => setTab('alertas')}
-                  className="mt-4 flex items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 hover:bg-amber-100 transition-colors">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  {critCount} alerta{critCount > 1 ? 's' : ''} ativo{critCount > 1 ? 's' : ''} → ver detalhes
-                </button>
-              )}
-            </div>
-          </div>
+      {/* ══ 1. FINANCEIRO ══════════════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <SectionHeader icon={DollarSign} title="Financeiro" subtitle="Resultado do mês vs mês anterior" grad="from-emerald-500 to-teal-600"/>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Tile label="Receita"         value={fmt(fin?.receita||0)}  trend={fin?pct(fin.receita,fin.receitaAnt):undefined} alert="green" loading={loading}/>
+          <Tile label="Despesas"        value={fmt(fin?.despesa||0)}  trend={fin?pct(fin.despesa,fin.despesaAnt):undefined} loading={loading}/>
+          <Tile label="Resultado"       value={fmt(fin?.saldo||0)}    alert={(fin?.saldo||0)>=0?'green':'red'} sub={`Margem ${margemPct.toFixed(1)}%`} loading={loading}/>
+          <Tile label="Custo RH/Receita" value={`${rhPct.toFixed(1)}%`} alert={rhPct>45?'yellow':'green'} loading={loading}/>
         </div>
-      )}
+      </section>
 
-      {/* ══ OKRs ═══════════════════════════════════════════════════════════════ */}
-      {tab === 'okrs' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex gap-2">
-              {[
-                { label: 'Total',    value: objetivos.length,       tw: 'text-gray-700    bg-white      border-gray-200'    },
-                { label: 'No Prazo', value: okrSummary.onTrack,  tw: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-                { label: 'Em Risco', value: okrSummary.atRisk,   tw: 'text-amber-700   bg-amber-50   border-amber-200'   },
-                { label: 'Atrasado', value: okrSummary.offTrack, tw: 'text-red-700     bg-red-50     border-red-200'     },
-              ].map(s => (
-                <div key={s.label} className={`rounded-2xl border px-4 py-2.5 text-center shadow-sm ${s.tw}`}>
-                  <p className="text-lg font-extrabold">{s.value}</p>
-                  <p className="text-[10px] font-semibold">{s.label}</p>
+      {/* ══ 2. RECURSOS HUMANOS ═══════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <SectionHeader icon={Users} title="Recursos Humanos" subtitle="Headcount, custos pagos e situação da equipe" grad="from-orange-500 to-amber-500"/>
+
+        {/* Status pills */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {loading
+            ? [1,2,3].map(i=><div key={i} className="h-7 w-28 bg-gray-100 rounded-full animate-pulse"/>)
+            : [
+                {icon:UserCheck, label:'Ativos',   value:rh?.ativos||0,   bg:'bg-emerald-100 text-emerald-800 border-emerald-200'},
+                {icon:Gift,      label:'Férias',   value:rh?.emFerias||0, bg:'bg-blue-100 text-blue-800 border-blue-200'},
+                {icon:UserX,     label:'Afastados',value:rh?.afastados||0,bg:'bg-red-100 text-red-800 border-red-200'},
+              ].map(p=>(
+                <div key={p.label} className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${p.bg}`}>
+                  <p.icon className="w-3.5 h-3.5"/>
+                  {p.value} {p.label}
                 </div>
-              ))}
-            </div>
-            <button onClick={() => setModalOKR(true)}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] shadow-sm hover:shadow-md transition-all">
-              <Plus className="w-3.5 h-3.5" /> Novo Objetivo
-            </button>
-          </div>
+              ))
+          }
+        </div>
 
-          {loading ? (
-            [1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-gray-100 animate-pulse" />)
-          ) : objetivos.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-              <Target className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm font-semibold text-gray-500">Nenhum objetivo criado ainda</p>
-              <p className="text-xs text-gray-400 mt-1 mb-5">Defina os OKRs do trimestre para acompanhar o progresso</p>
-              <button onClick={() => setModalOKR(true)}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37]">
-                Criar Primeiro Objetivo
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Tile label="Salários Pagos" value={fmt(rh?.salariosPagos||0)} alert="green" loading={loading}/>
+          <Tile label="Extras Pagos"   value={fmt(rh?.extrasPagos||0)}   loading={loading}/>
+          <Tile label="Gorjetas Pagas" value={fmt(rh?.gorjetasPagas||0)} loading={loading}/>
+        </div>
+
+        {!loading && (rh?.emFerias||0)>0 && (
+          <div className="mt-3 flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5">
+            <Gift className="w-4 h-4 text-blue-500 shrink-0"/>
+            <p className="text-xs font-medium text-blue-700">{rh?.emFerias} colaborador{(rh?.emFerias||0)>1?'es':''} em férias</p>
+          </div>
+        )}
+        {!loading && (rh?.afastados||0)>0 && (
+          <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+            <AlertTriangle className="w-4 h-4 text-red-500 shrink-0"/>
+            <p className="text-xs font-medium text-red-700">{rh?.afastados} colaborador{(rh?.afastados||0)>1?'es':''} afastado{(rh?.afastados||0)>1?'s':''}</p>
+          </div>
+        )}
+      </section>
+
+      {/* ══ 3. ESTOQUE ════════════════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+          <SectionHeader icon={Package} title="Estoque" subtitle="CMV, valor em estoque e criticidade" grad="from-violet-500 to-indigo-600"/>
+          {/* Toggle CMV */}
+          <div className="flex bg-gray-100 rounded-xl p-1 gap-1 h-fit">
+            {(['mensal','semanal'] as const).map(m=>(
+              <button key={m} onClick={()=>setCmvMode(m)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${cmvMode===m?'bg-white shadow text-gray-900':'text-gray-500 hover:text-gray-700'}`}>
+                {m}
               </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {objetivos.map(o => <OKRCard key={o.id} obj={o} onRefresh={load} />)}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      )}
 
-      {/* ══ ALERTAS ════════════════════════════════════════════════════════════ */}
-      {tab === 'alertas' && (
-        <div className="space-y-3 max-w-2xl">
-          {loading ? (
-            [1,2,3].map(i => <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />)
-          ) : alertas.length === 0 ? (
-            <div className="text-center py-14 bg-white rounded-2xl border border-gray-100">
-              <CheckCircle className="w-9 h-9 text-emerald-400 mx-auto mb-3" />
-              <p className="text-sm font-semibold text-gray-600">Tudo certo por aqui!</p>
-              <p className="text-xs text-gray-400 mt-1">Nenhum alerta ativo no momento.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Tile label={`CMV ${cmvMode==='mensal'?'Mensal':'Semanal'}`}
+            value={fmt(cmvVal)} sub={`${cmvPct.toFixed(1)}% receita`}
+            alert={cmvPct>35?'yellow':'green'} loading={loading}/>
+          <Tile label="Valor em Estoque" value={fmt(est?.valorTotal||0)}  loading={loading}/>
+          <Tile label="Itens Zerados"    value={`${est?.zerados||0}`}     alert={(est?.zerados||0)>10?'red':(est?.zerados||0)>0?'yellow':undefined} loading={loading}/>
+          <Tile label="Itens Críticos"   value={`${est?.criticos||0}`}    alert={(est?.criticos||0)>5?'yellow':undefined} loading={loading}/>
+        </div>
+
+        {!loading&&(est?.zerados||0)>0&&(
+          <div className="mt-3 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+            <AlertTriangle className="w-4 h-4 text-red-500 shrink-0"/>
+            <p className="text-xs font-medium text-red-700">{est?.zerados} iten{(est?.zerados||0)>1?'s':''} com saldo zero — reposição urgente</p>
+          </div>
+        )}
+      </section>
+
+      {/* ══ 4. MÚSICOS ════════════════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+          <SectionHeader icon={Music} title="Músicos" subtitle="Cachês do mês — pagos e pendentes" grad="from-pink-500 to-rose-600"/>
+          <button onClick={()=>setSoPendentes(v=>!v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all h-fit ${
+              soPendentes?'bg-amber-100 border-amber-300 text-amber-800':'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200'
+            }`}>
+            {soPendentes?<Eye className="w-3.5 h-3.5"/>:<EyeOff className="w-3.5 h-3.5"/>}
+            {soPendentes?'Ver todos':'Só pendentes'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <Tile label="Total do Mês"  value={fmt(mus?.totalMes||0)}     loading={loading}/>
+          <Tile label="Pago"          value={fmt(mus?.pago||0)}          alert="green" loading={loading}/>
+          <Tile label="Em Aberto"     value={fmt(mus?.aberto||0)}        alert={(mus?.aberto||0)>0?'yellow':undefined} loading={loading}/>
+          <Tile label="Contratações"  value={`${mus?.contratacoes||0}`} loading={loading}/>
+        </div>
+
+        {/* Lista pendentes — sempre visível se houver, toggle apenas filtra */}
+        {!loading && (
+          <div className="border border-amber-100 rounded-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-2.5 border-b border-amber-100 flex items-center justify-between">
+              <p className="text-xs font-bold text-amber-800 uppercase tracking-wide">
+                Pendentes ({mus?.pendentes?.length||0})
+              </p>
+              {(mus?.pendentes?.length||0)>0&&(
+                <p className="text-xs font-bold text-amber-700">{fmt((mus?.pendentes||[]).reduce((a,b)=>a+b.saldo,0))}</p>
+              )}
             </div>
-          ) : alertas.map(a => {
-            const cfg = {
-              danger:  { bg: 'bg-red-50   border-red-200',   text: 'text-red-700',   icon: AlertTriangle },
-              warning: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', icon: AlertTriangle },
-              info:    { bg: 'bg-blue-50  border-blue-200',  text: 'text-blue-700',  icon: CheckCircle   },
-            }[a.tipo] ?? { bg: 'bg-gray-50 border-gray-200', text: 'text-gray-700', icon: AlertTriangle };
-            return (
-              <div key={a.id} className={`rounded-2xl border px-4 py-3.5 ${cfg.bg}`}>
-                <div className="flex items-start gap-3">
-                  <cfg.icon className={`w-4 h-4 mt-0.5 shrink-0 ${cfg.text}`} />
-                  <div>
-                    <p className={`text-sm font-bold ${cfg.text}`}>{a.titulo}</p>
-                    <p className={`text-xs mt-0.5 opacity-80 ${cfg.text}`}>{a.msg}</p>
+            {(mus?.pendentes?.length||0)===0
+              ? <div className="py-6 text-center"><p className="text-xs text-gray-400">Nenhum cachê pendente 🎉</p></div>
+              : (soPendentes ? mus?.pendentes : mus?.pendentes)?.map((p,i)=>(
+                  <div key={i} className="flex items-center gap-3 px-4 py-3 hover:bg-amber-50/40 border-b border-amber-50 last:border-0 transition-colors">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"/>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-gray-800 truncate">{p.descricao}</p>
+                      <p className="text-[10px] text-gray-400">{new Date(p.vencimento+'T12:00:00').toLocaleDateString('pt-BR')}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-bold text-amber-700">{Rs(p.saldo)}</p>
+                      {p.saldo<p.valor&&<p className="text-[10px] text-gray-400">de {Rs(p.valor)}</p>}
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                ))
+            }
+          </div>
+        )}
+      </section>
 
-      {modalOKR && <ModalOKR onClose={() => setModalOKR(false)} onSave={load} />}
+      {/* ══ 5. EVENTOS ════════════════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <SectionHeader icon={CalendarDays} title="Eventos" subtitle="Agenda e receita prevista do mês" grad="from-teal-500 to-cyan-600"/>
+
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <Tile label="Eventos no Mês"   value={`${evs?.qtd||0}`}           loading={loading}/>
+          <Tile label="Receita Prevista" value={fmt(evs?.totalReceita||0)}   alert="green" loading={loading}/>
+        </div>
+
+        {!loading&&(evs?.lista||[]).length>0&&(
+          <div className="border border-teal-100 rounded-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-4 py-2.5 border-b border-teal-100">
+              <p className="text-xs font-bold text-teal-800 uppercase tracking-wide">Agenda do Mês</p>
+            </div>
+            {(evs?.lista||[]).map((ev,i)=>(
+              <div key={i} className="flex items-center gap-3 px-4 py-3 hover:bg-teal-50/30 border-b border-teal-50 last:border-0 transition-colors">
+                <div className="bg-teal-100 text-teal-700 text-[10px] font-black rounded-xl px-2.5 py-1.5 text-center shrink-0 min-w-[48px]">
+                  {new Date(ev.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','')}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-gray-800 truncate">{ev.nome}</p>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${ev.status==='pago'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}`}>
+                    {ev.status==='pago'?'Pago':'Pendente'}
+                  </span>
+                </div>
+                <p className={`text-sm font-bold shrink-0 ${ev.valor>0?'text-teal-700':'text-gray-300'}`}>
+                  {ev.valor>0?Rs(ev.valor):'—'}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ══ 6. OKRs ═══════════════════════════════════════════════════════ */}
+      <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+          <SectionHeader icon={Target} title="OKRs" subtitle="Objetivos e Resultados-chave" grad="from-[#7D1F2C] to-[#c94454]"/>
+          <button onClick={()=>setShowForm(v=>!v)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#7D1F2C] to-[#9B2535] shadow-sm hover:shadow-md transition-all h-fit">
+            <Plus className="w-3.5 h-3.5"/>
+            Novo Objetivo
+          </button>
+        </div>
+
+        {/* Formulário */}
+        {showForm&&(
+          <div className="mb-5 border-2 border-dashed border-[#D4AF37]/40 rounded-2xl p-4 bg-gradient-to-br from-amber-50/50 to-white">
+            <p className="text-xs font-bold text-gray-600 mb-3 uppercase tracking-wide">Novo Objetivo</p>
+            <div className="grid gap-3">
+              <input value={newOkr.titulo} onChange={e=>setNewOkr(v=>({...v,titulo:e.target.value}))}
+                placeholder="Título do objetivo *"
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 bg-white"/>
+              <textarea value={newOkr.descricao} onChange={e=>setNewOkr(v=>({...v,descricao:e.target.value}))}
+                placeholder="Descrição (opcional)" rows={2}
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 bg-white resize-none"/>
+              <div className="grid grid-cols-2 gap-3">
+                <select value={newOkr.trimestre} onChange={e=>setNewOkr(v=>({...v,trimestre:e.target.value}))}
+                  className="text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 bg-white">
+                  {['Q1 2026','Q2 2026','Q3 2026','Q4 2026'].map(t=><option key={t}>{t}</option>)}
+                </select>
+                <input value={newOkr.responsavel} onChange={e=>setNewOkr(v=>({...v,responsavel:e.target.value}))}
+                  placeholder="Responsável"
+                  className="text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 bg-white"/>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button onClick={()=>setShowForm(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+                  Cancelar
+                </button>
+                <button onClick={saveOkr} disabled={saving||!newOkr.titulo.trim()}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#7D1F2C] to-[#9B2535] disabled:opacity-50 hover:shadow-md transition-all">
+                  {saving?<Loader2 className="w-3.5 h-3.5 animate-spin"/>:<Check className="w-3.5 h-3.5"/>}
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Lista OKRs */}
+        {loading
+          ? [1,2,3].map(i=><div key={i} className="h-20 bg-gray-100 rounded-2xl animate-pulse mb-3"/>)
+          : okrs.length===0
+          ? (
+            <div className="text-center py-10 text-gray-400">
+              <Target className="w-10 h-10 mx-auto mb-3 opacity-20"/>
+              <p className="text-sm font-semibold">Nenhum OKR cadastrado</p>
+              <p className="text-xs mt-1">Clique em "Novo Objetivo" para começar</p>
+            </div>
+          )
+          : okrs.map(okr=>{
+              const st=OKR_ST[okr.status]||OKR_ST['on-track'];
+              return (
+                <div key={okr.id} className="border border-gray-100 rounded-2xl p-4 mb-3 hover:border-gray-200 hover:shadow-sm transition-all group">
+                  <div className="flex items-start gap-3">
+                    {/* Ring */}
+                    <div className="relative shrink-0 cursor-default">
+                      <Ring p={okr.progresso} color={st.clr}/>
+                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black text-gray-700 rotate-90">
+                        {okr.progresso.toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-bold text-gray-900">{okr.titulo}</p>
+                          {okr.descricao&&<p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{okr.descricao}</p>}
+                        </div>
+                        <button onClick={()=>setConfirmDel(confirmDel===okr.id?null:okr.id)}
+                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500 transition-all shrink-0">
+                          <Trash2 className="w-3.5 h-3.5"/>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${st.bg} ${st.txt}`}>{st.lbl}</span>
+                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{okr.trimestre}</span>
+                        {okr.responsavel&&<span className="text-[9px] text-gray-400">{okr.responsavel}</span>}
+                        <span className="text-[9px] text-gray-400">{okr.totalKrs} KR{okr.totalKrs!==1?'s':''}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {confirmDel===okr.id&&(
+                    <div className="mt-3 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                      <p className="text-xs text-red-700 font-medium flex-1">Excluir este objetivo?</p>
+                      <button onClick={()=>deleteOkr(okr.id)} className="text-xs font-bold text-white bg-red-500 px-3 py-1 rounded-lg hover:bg-red-600">Sim</button>
+                      <button onClick={()=>setConfirmDel(null)} className="text-xs font-bold text-gray-600 bg-gray-200 px-3 py-1 rounded-lg hover:bg-gray-300">Não</button>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+        }
+      </section>
+
     </div>
   );
 }
