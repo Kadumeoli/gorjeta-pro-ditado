@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import {
-  Search, CheckCircle, AlertCircle, CreditCard, Clock,
-  ChevronRight, ArrowLeft, Check, X, Loader2, Calendar,
-  TrendingUp, RefreshCw
+  Search, CheckCircle, AlertCircle, CreditCard,
+  ChevronRight, ArrowLeft, Check, Loader2, Calendar,
+  TrendingUp, RefreshCw, Banknote, Smartphone, Wallet
 } from 'lucide-react';
 
 interface ItemPreview {
-  paymentId: string;
+  paymentId: number;
   paymentName: string;
-  cardBrand: string;
   valor: number;
   descricao: string;
   formaId: string | null;
   formaLabel: string;
   dataRef: string;
+  eventIds: string[];
   selecionado: boolean;
 }
 
@@ -37,7 +37,7 @@ const moeda = (v: number) =>
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
 const hoje = fmt(new Date());
-const ontem = () => { const d = new Date(); d.setDate(d.getDate() - 1); return fmt(d); };
+const ontemStr = () => { const d = new Date(); d.setDate(d.getDate() - 1); return fmt(d); };
 
 const SUPABASE_URL = (supabase as any).supabaseUrl as string;
 
@@ -51,10 +51,30 @@ const BADGE_LABEL: Record<string, string> = {
   sucesso: 'Sucesso', parcial: 'Parcial', erro: 'Erro', em_andamento: 'Em andamento',
 };
 
+// Ícone por forma de pagamento
+function IconeForma({ label }: { label: string }) {
+  const l = label.toLowerCase();
+  if (l.includes('crédito') || l.includes('débito') || l.includes('credito') || l.includes('debito'))
+    return <CreditCard className="w-4 h-4" />;
+  if (l.includes('pix'))    return <Smartphone className="w-4 h-4" />;
+  if (l.includes('dinheir')) return <Banknote className="w-4 h-4" />;
+  return <Wallet className="w-4 h-4" />;
+}
+
+// Cor do badge por forma
+function corForma(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes('crédito') || l.includes('credito'))   return 'bg-purple-100 text-purple-700';
+  if (l.includes('débito')  || l.includes('debito'))    return 'bg-blue-100 text-blue-700';
+  if (l.includes('pix'))                                return 'bg-teal-100 text-teal-700';
+  if (l.includes('dinheir'))                            return 'bg-green-100 text-green-700';
+  return 'bg-gray-100 text-gray-600';
+}
+
 export default function ZigRecebimentos() {
   const [etapa, setEtapa]         = useState<Etapa>('periodo');
-  const [dtinicio, setDtinicio]   = useState(ontem());
-  const [dtfim, setDtfim]         = useState(ontem());
+  const [dtinicio, setDtinicio]   = useState(ontemStr());
+  const [dtfim, setDtfim]         = useState(ontemStr());
   const [loading, setLoading]     = useState(false);
   const [erro, setErro]           = useState('');
   const [itens, setItens]         = useState<ItemPreview[]>([]);
@@ -76,7 +96,7 @@ export default function ZigRecebimentos() {
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || 'Erro ao buscar dados na ZIG');
       if (!data.itens?.length) {
-        setErro('Nenhum faturamento encontrado na ZIG para o período selecionado.');
+        setErro('Nenhum faturamento encontrado para o período selecionado.');
         return;
       }
       setItens(data.itens.map((i: any) => ({ ...i, selecionado: true })));
@@ -135,6 +155,15 @@ export default function ZigRecebimentos() {
   const totalSelecionado = itens.filter(i => i.selecionado).reduce((s, i) => s + i.valor, 0);
   const todosSelected    = itens.length > 0 && itens.every(i => i.selecionado);
 
+  // Resumo por forma para mostrar na tela de revisão
+  const resumoPorForma = itens
+    .filter(i => i.selecionado)
+    .reduce((acc, i) => {
+      const k = i.formaLabel;
+      acc[k] = (acc[k] || 0) + i.valor;
+      return acc;
+    }, {} as Record<string, number>);
+
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
 
@@ -144,8 +173,8 @@ export default function ZigRecebimentos() {
           <CreditCard className="w-6 h-6 text-[#7D1F2C]" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">ZIG → Recebimentos</h1>
-          <p className="text-sm text-gray-500">Importação de maquininhas integradas</p>
+          <h1 className="text-2xl font-bold text-gray-900">ZIG → Faturamento</h1>
+          <p className="text-sm text-gray-500">Importação de faturamento por forma de pagamento</p>
         </div>
       </div>
 
@@ -234,7 +263,7 @@ export default function ZigRecebimentos() {
             </div>
             {historico.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-4">
-                {loadingHist ? 'Carregando...' : 'Nenhuma importação registrada — clique em ↺ para carregar'}
+                {loadingHist ? 'Carregando...' : 'Nenhuma importação — clique em ↺ para carregar'}
               </p>
             ) : (
               <div className="space-y-2">
@@ -246,7 +275,7 @@ export default function ZigRecebimentos() {
                         {h.dtinicio === h.dtfim ? h.dtinicio : `${h.dtinicio} → ${h.dtfim}`}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {h.total_inseridos} inseridos · {h.total_duplicados} duplicados
+                        {h.total_inseridos} inseridos · {h.total_duplicados} já existiam
                       </p>
                     </div>
                     <div className="text-right space-y-1">
@@ -271,6 +300,21 @@ export default function ZigRecebimentos() {
             <ArrowLeft className="w-4 h-4" /> Voltar
           </button>
 
+          {/* resumo por forma */}
+          {Object.keys(resumoPorForma).length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {Object.entries(resumoPorForma).map(([forma, valor]) => (
+                <div key={forma} className="bg-white border border-gray-200 rounded-xl p-3">
+                  <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium mb-2 ${corForma(forma)}`}>
+                    <IconeForma label={forma} />
+                    {forma}
+                  </div>
+                  <p className="text-lg font-bold text-gray-900">{moeda(valor)}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <div>
@@ -289,7 +333,7 @@ export default function ZigRecebimentos() {
 
             <div className="divide-y divide-gray-50">
               {itens.map((item, idx) => (
-                <div key={`${item.paymentId}-${item.cardBrand}-${idx}`}
+                <div key={`${item.paymentId}-${item.dataRef}-${idx}`}
                   onClick={() => setItens(prev => prev.map((it, i) =>
                     i === idx ? { ...it, selecionado: !it.selecionado } : it))}
                   className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors
@@ -301,8 +345,16 @@ export default function ZigRecebimentos() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{item.descricao}</p>
-                    <p className="text-xs text-gray-400">{item.formaLabel} · {item.dataRef}</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${corForma(item.formaLabel)}`}>
+                        <IconeForma label={item.formaLabel} />
+                        {item.formaLabel}
+                      </span>
+                      <span className="text-xs text-gray-400">{item.dataRef}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">
+                      {item.eventIds?.length || 0} evento{(item.eventIds?.length || 0) !== 1 ? 's' : ''}
+                    </p>
                   </div>
 
                   <p className={`text-sm font-bold tabular-nums shrink-0
@@ -370,7 +422,7 @@ export default function ZigRecebimentos() {
                 <p className="text-xs text-amber-700 mt-1">Já existiam</p>
               </div>
               <div className="bg-[#7D1F2C]/5 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-[#7D1F2C]">{moeda(resultado.total_valor)}</p>
+                <p className="text-lg font-bold text-[#7D1F2C]">{moeda(resultado.total_valor)}</p>
                 <p className="text-xs text-[#7D1F2C] mt-1">Total importado</p>
               </div>
             </div>
@@ -378,7 +430,7 @@ export default function ZigRecebimentos() {
             {resultado.erros?.length > 0 && (
               <div className="bg-red-50 rounded-lg p-4 space-y-1">
                 <p className="text-sm font-medium text-red-700 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" /> Erros parciais:
+                  <AlertCircle className="w-4 h-4" /> Erros:
                 </p>
                 {resultado.erros.map((e: string, i: number) => (
                   <p key={i} className="text-xs text-red-600 ml-5">{e}</p>
@@ -412,7 +464,7 @@ export default function ZigRecebimentos() {
                         {h.dtinicio === h.dtfim ? h.dtinicio : `${h.dtinicio} → ${h.dtfim}`}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {h.total_inseridos} inseridos · {h.total_duplicados} duplicados
+                        {h.total_inseridos} inseridos · {h.total_duplicados} já existiam
                       </p>
                     </div>
                     <div className="text-right space-y-1">
