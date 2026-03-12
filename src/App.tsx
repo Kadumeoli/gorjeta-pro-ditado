@@ -28,6 +28,7 @@ const VisaoEstrategica   = lazy(() => import('./pages/VisaoEstrategica'));
 const Entradas           = lazy(() => import('./pages/Entradas'));
 const DashboardFinanceiro = lazy(() => import('./pages/DashboardFinanceiro'));
 const ZigVendasSync      = lazy(() => import('./pages/ZigVendasSync'));
+const ZigRecebimentos    = lazy(() => import('./pages/ZigRecebimentos'));
 
 function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -117,6 +118,7 @@ function AppContent() {
                   <Route path="/visao-estrategica"   element={<ProtectedRoute moduloSlug="financeiro">   <VisaoEstrategica />    </ProtectedRoute>} />
                   <Route path="/entradas"            element={<ProtectedRoute moduloSlug="financeiro">   <Entradas />            </ProtectedRoute>} />
                   <Route path="/zig-vendas"          element={<ProtectedRoute moduloSlug="estoque">      <ZigVendasSync />       </ProtectedRoute>} />
+                  <Route path="/zig-recebimentos"    element={<ProtectedRoute moduloSlug="financeiro">   <ZigRecebimentos />     </ProtectedRoute>} />
                   <Route path="/manual"              element={<ManualUsuario />} />
                   <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"><Settings />           </ProtectedRoute>} />
                   <Route path="*" element={
