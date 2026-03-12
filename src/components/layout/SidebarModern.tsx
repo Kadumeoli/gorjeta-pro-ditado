@@ -34,7 +34,8 @@ import {
   Tag,
   ArrowLeftRight,
   Target,
-  LineChart
+  LineChart,
+  RefreshCw
 } from 'lucide-react';
 
 interface SubModule {
@@ -111,6 +112,7 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
         { name: 'Movimentações',   path: '/advanced-inventory?tab=8',  tab: 8,  icon: Activity       },
         { name: 'Kardex Produto',  path: '/advanced-inventory?tab=10', tab: 10, icon: Activity       },
         { name: 'Contagem',        path: '/advanced-inventory?tab=11', tab: 11, icon: ClipboardCheck },
+        { name: 'ZIG → Estoque',   path: '/zig-vendas',                         icon: RefreshCw      },
       ]
     },
     {
@@ -120,16 +122,16 @@ const SidebarModern: React.FC<SidebarModernProps> = ({ onNavigate }) => {
       color: 'from-orange-500 to-amber-600',
       slug: 'rh',
       subModules: [
-        { name: 'Recrutamento & Seleção', path: '/recruitment',      icon: UserPlus    },
-        { name: 'Colaboradores',          path: '/staff?tab=0', tab: 0, icon: Users      },
-        { name: 'Escalas',                path: '/staff?tab=1', tab: 1, icon: Calendar   },
+        { name: 'Recrutamento & Seleção', path: '/recruitment',        icon: UserPlus      },
+        { name: 'Colaboradores',          path: '/staff?tab=0', tab: 0, icon: Users        },
+        { name: 'Escalas',                path: '/staff?tab=1', tab: 1, icon: Calendar     },
         { name: 'Férias',                 path: '/staff?tab=2', tab: 2, icon: CalendarDays },
-        { name: 'Ocorrências',            path: '/staff?tab=3', tab: 3, icon: AlertTriangle },
-        { name: 'Extras/Freelancers',     path: '/staff?tab=4', tab: 4, icon: Users      },
-        { name: 'Funções',                path: '/staff?tab=5', tab: 5, icon: UserCog    },
-        { name: 'Configurações',          path: '/staff?tab=6', tab: 6, icon: Settings   },
-        { name: 'Relatórios',             path: '/staff?tab=7', tab: 7, icon: FileText   },
-        { name: 'Gorjetas',               path: '/staff?tab=8', tab: 8, icon: DollarSign },
+        { name: 'Ocorrências',            path: '/staff?tab=3', tab: 3, icon: AlertTriangle},
+        { name: 'Extras/Freelancers',     path: '/staff?tab=4', tab: 4, icon: Users        },
+        { name: 'Funções',                path: '/staff?tab=5', tab: 5, icon: UserCog      },
+        { name: 'Configurações',          path: '/staff?tab=6', tab: 6, icon: Settings     },
+        { name: 'Relatórios',             path: '/staff?tab=7', tab: 7, icon: FileText     },
+        { name: 'Gorjetas',               path: '/staff?tab=8', tab: 8, icon: DollarSign   },
       ]
     },
     {
