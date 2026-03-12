@@ -21,6 +21,8 @@ interface SyncLog {
   nao_mapeados_lista: string[] | null;
 }
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+
 export default function ZigVendasSync() {
   const [dtinicio, setDtinicio] = useState(() => {
     const d = new Date();
@@ -55,15 +57,11 @@ export default function ZigVendasSync() {
     setSincronizando(true);
     setUltimoResultado(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-zig-vendas-estoque`,
+        `${SUPABASE_URL}/functions/v1/sync-zig-vendas-estoque`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`,
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ dtinicio, dtfim }),
         }
       );
@@ -98,7 +96,6 @@ export default function ZigVendasSync() {
     );
   };
 
-  // Atalhos de período
   const atalhos = [
     {
       label: 'Ontem', fn: () => {
@@ -141,7 +138,7 @@ export default function ZigVendasSync() {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
         <h2 className="font-semibold text-gray-800">Nova Sincronização</h2>
 
-        {/* Atalhos de período */}
+        {/* Atalhos */}
         <div className="flex gap-2 flex-wrap">
           {atalhos.map(a => (
             <button
@@ -154,7 +151,7 @@ export default function ZigVendasSync() {
           ))}
         </div>
 
-        {/* Seletor de datas */}
+        {/* Datas */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-gray-500 mb-1 block">Data início</label>
@@ -176,7 +173,7 @@ export default function ZigVendasSync() {
           </div>
         </div>
 
-        {/* Info sobre o processo */}
+        {/* Info */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700 space-y-1">
           <p className="font-semibold flex items-center gap-1"><AlertTriangle size={13} /> Como funciona</p>
           <p>1. Busca vendas no ZIG pelo período selecionado</p>
@@ -195,7 +192,7 @@ export default function ZigVendasSync() {
           {sincronizando ? 'Sincronizando...' : 'Sincronizar agora'}
         </button>
 
-        {/* Resultado imediato */}
+        {/* Resultado */}
         {ultimoResultado && (
           <div className={`rounded-xl p-4 text-sm space-y-2 ${
             ultimoResultado.ok
@@ -209,10 +206,10 @@ export default function ZigVendasSync() {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { label: 'Produtos ZIG',   v: ultimoResultado.resumo?.total_produtos_zig, color: 'text-gray-700' },
-                    { label: 'Mapeados',        v: ultimoResultado.resumo?.total_mapeados,     color: 'text-green-600' },
-                    { label: 'Baixas criadas',  v: ultimoResultado.resumo?.total_movimentacoes, color: 'text-blue-600' },
-                    { label: 'Sem mapeamento',  v: ultimoResultado.resumo?.total_nao_mapeados,  color: 'text-amber-600' },
+                    { label: 'Produtos ZIG',  v: ultimoResultado.resumo?.total_produtos_zig,   color: 'text-gray-700'   },
+                    { label: 'Mapeados',       v: ultimoResultado.resumo?.total_mapeados,       color: 'text-green-600'  },
+                    { label: 'Baixas criadas', v: ultimoResultado.resumo?.total_movimentacoes,  color: 'text-blue-600'   },
+                    { label: 'S/ mapeamento',  v: ultimoResultado.resumo?.total_nao_mapeados,   color: 'text-amber-600'  },
                   ].map(item => (
                     <div key={item.label} className="bg-white rounded-lg p-2 text-center border border-gray-100">
                       <p className={`text-lg font-bold ${item.color}`}>{item.v ?? 0}</p>
@@ -222,16 +219,17 @@ export default function ZigVendasSync() {
                 </div>
                 {ultimoResultado.resumo?.nao_mapeados?.length > 0 && (
                   <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                    <p className="text-xs font-semibold text-amber-700 mb-1 flex items-center gap-1">
-                      <AlertTriangle size={12} /> Produtos sem mapeamento ({ultimoResultado.resumo.nao_mapeados.length})
+                    <p className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1">
+                      <AlertTriangle size={12} />
+                      Produtos sem mapeamento ({ultimoResultado.resumo.nao_mapeados.length})
                     </p>
                     <div className="space-y-0.5 max-h-32 overflow-y-auto">
                       {ultimoResultado.resumo.nao_mapeados.map((n: string) => (
                         <p key={n} className="text-xs text-amber-600 font-mono">{n}</p>
                       ))}
                     </div>
-                    <p className="text-xs text-amber-600 mt-1">
-                      Adicione esses produtos em <strong>Configurações → Mapeamento de Itens</strong>
+                    <p className="text-xs text-amber-600 mt-2">
+                      Adicione em <strong>Estoque → Itens → Mapeamento de Vendas</strong>
                     </p>
                   </div>
                 )}
@@ -265,7 +263,6 @@ export default function ZigVendasSync() {
           <div className="space-y-2">
             {logs.map(log => (
               <div key={log.id} className="rounded-xl border border-gray-100 overflow-hidden">
-                {/* Linha principal */}
                 <div
                   className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setExpandido(expandido === log.id ? null : log.id)}
@@ -292,7 +289,7 @@ export default function ZigVendasSync() {
                         <p className="text-sm font-bold text-green-600">{log.total_movimentacoes}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">S/ mapeamento</p>
+                        <p className="text-xs text-gray-400">S/ map.</p>
                         <p className={`text-sm font-bold ${log.total_nao_mapeados > 0 ? 'text-amber-500' : 'text-gray-400'}`}>
                           {log.total_nao_mapeados}
                         </p>
@@ -309,12 +306,11 @@ export default function ZigVendasSync() {
                   </div>
                 </div>
 
-                {/* Expansão com produtos sem mapeamento */}
                 {expandido === log.id && log.nao_mapeados_lista && log.nao_mapeados_lista.length > 0 && (
                   <div className="p-4 bg-amber-50 border-t border-amber-100">
                     <p className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1">
                       <AlertTriangle size={12} />
-                      Produtos sem mapeamento nesta sincronização ({log.nao_mapeados_lista.length})
+                      Produtos sem mapeamento ({log.nao_mapeados_lista.length})
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                       {log.nao_mapeados_lista.map(nome => (
