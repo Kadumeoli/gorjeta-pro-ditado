@@ -70,36 +70,11 @@ function AppContent() {
         />
       )}
 
-      {/* ── SIDEBAR ── */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 flex flex-col w-60
-        bg-[#0f0a0b] border-r border-white/[0.05]
-        transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:static lg:inset-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 h-14 px-4 border-b border-white/[0.05] flex-shrink-0">
-          <div
-            className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg"
-            style={{ background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)' }}
-          >
-            <span className="text-white text-[10px] font-black tracking-tighter">DP</span>
-          </div>
-          <div>
-            <p className="text-[13px] font-bold text-white/90 leading-none tracking-tight">Ditado Popular</p>
-            <p className="text-[10px] text-white/25 mt-0.5 tracking-widest uppercase">Gestão</p>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="ml-auto lg:hidden p-1.5 text-white/30 hover:text-white/60 rounded-lg hover:bg-white/8"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
+      {/* ── SIDEBAR: rail 60px + flyout gerenciado internamente ── */}
+      <aside style={{
+        flexShrink: 0, width: 60, position: 'relative', zIndex: 50,
+        display: 'flex', flexDirection: 'column',
+      }}>
         <SidebarModern onNavigate={() => setSidebarOpen(false)} />
       </aside>
 
