@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
   Search, RefreshCw, CheckCircle, XCircle, Clock,
-  Package, AlertTriangle, Info, Play, Warehouse, Link2, X, Check
+  Package, AlertTriangle, Info, Play, Warehouse, Link2, X, Check,
+  EyeOff, Eye
 } from 'lucide-react';
 
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL as string;
@@ -15,14 +16,21 @@ interface ProdutoZig {
   productId: string; productName: string; productSku: string | null;
   productCategory: string | null; count: number; eventDate: string;
   mapeado: boolean;
-  mapeamento: { item_estoque_id: string|null; ficha_tecnica_id: string|null; estoque_id: string|null; tipo_mapeamento: string|null; } | null;
+  ignorar_estoque: boolean;
+  mapeamento: {
+    item_estoque_id: string|null; ficha_tecnica_id: string|null;
+    estoque_id: string|null; tipo_mapeamento: string|null;
+    ignorar_estoque: boolean;
+  } | null;
 }
 
 interface ProdutoEditavel extends ProdutoZig {
-  estoqueId: string;
-  vinculoTipo: 'item' | 'ficha' | '';
+  estoqueId:     string;
+  vinculoTipo:   'item' | 'ficha' | '';
   itemEstoqueId: string;
-  fichaId: string;
+  fichaId:       string;
+  ignorado:      boolean; // controle local do toggle
+  salvandoIgnore: boolean;
 }
 
 interface SyncLog {
@@ -34,18 +42,18 @@ interface SyncLog {
 type Etapa = 'busca' | 'revisao' | 'resultado';
 
 export default function ZigVendasSync() {
-  const [etapa, setEtapa]         = useState<Etapa>('busca');
-  const [dtinicio, setDtinicio]   = useState(() => { const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; });
-  const [dtfim, setDtfim]         = useState(() => { const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; });
-  const [buscando, setBuscando]   = useState(false);
+  const [etapa, setEtapa]       = useState<Etapa>('busca');
+  const [dtinicio, setDtinicio] = useState(() => { const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; });
+  const [dtfim, setDtfim]       = useState(() => { const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; });
+  const [buscando, setBuscando]     = useState(false);
   const [processando, setProcessando] = useState(false);
-  const [erroBusca, setErroBusca] = useState('');
-  const [produtos, setProdutos]   = useState<ProdutoEditavel[]>([]);
-  const [estoques, setEstoques]   = useState<Estoque[]>([]);
-  const [itens, setItens]         = useState<ItemEstoque[]>([]);
-  const [fichas, setFichas]       = useState<Ficha[]>([]);
-  const [resultado, setResultado] = useState<any>(null);
-  const [logs, setLogs]           = useState<SyncLog[]>([]);
+  const [erroBusca, setErroBusca]   = useState('');
+  const [produtos, setProdutos]     = useState<ProdutoEditavel[]>([]);
+  const [estoques, setEstoques]     = useState<Estoque[]>([]);
+  const [itens, setItens]           = useState<ItemEstoque[]>([]);
+  const [fichas, setFichas]         = useState<Ficha[]>([]);
+  const [resultado, setResultado]   = useState<any>(null);
+  const [logs, setLogs]             = useState<SyncLog[]>([]);
   const [buscaVinculo, setBuscaVinculo] = useState<Record<string, string>>({});
 
   useEffect(() => { carregarLogs(); }, []);
@@ -59,9 +67,9 @@ export default function ZigVendasSync() {
   };
 
   const atalhos = [
-    { label: 'Ontem', fn: () => { const d=new Date(); d.setDate(d.getDate()-1); const s=d.toISOString().split('T')[0]; setDtinicio(s); setDtfim(s); }},
-    { label: 'Últimos 7 dias', fn: () => { const i=new Date(); i.setDate(i.getDate()-7); const f=new Date(); f.setDate(f.getDate()-1); setDtinicio(i.toISOString().split('T')[0]); setDtfim(f.toISOString().split('T')[0]); }},
-    { label: 'Mês atual', fn: () => { const n=new Date(); setDtinicio(`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-01`); setDtfim(n.toISOString().split('T')[0]); }},
+    { label: 'Ontem',         fn: () => { const d=new Date(); d.setDate(d.getDate()-1); const s=d.toISOString().split('T')[0]; setDtinicio(s); setDtfim(s); }},
+    { label: 'Últimos 7 dias',fn: () => { const i=new Date(); i.setDate(i.getDate()-7); const f=new Date(); f.setDate(f.getDate()-1); setDtinicio(i.toISOString().split('T')[0]); setDtfim(f.toISOString().split('T')[0]); }},
+    { label: 'Mês atual',     fn: () => { const n=new Date(); setDtinicio(`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-01`); setDtfim(n.toISOString().split('T')[0]); }},
   ];
 
   const handleBuscar = async () => {
@@ -81,10 +89,12 @@ export default function ZigVendasSync() {
 
       const editaveis: ProdutoEditavel[] = (json.produtos || []).map((p: ProdutoZig) => ({
         ...p,
-        estoqueId:    p.mapeamento?.estoque_id    || '',
-        itemEstoqueId:p.mapeamento?.item_estoque_id || '',
-        fichaId:      p.mapeamento?.ficha_tecnica_id || '',
-        vinculoTipo:  p.mapeamento?.ficha_tecnica_id ? 'ficha' : p.mapeamento?.item_estoque_id ? 'item' : '',
+        estoqueId:     p.mapeamento?.estoque_id        || '',
+        itemEstoqueId: p.mapeamento?.item_estoque_id    || '',
+        fichaId:       p.mapeamento?.ficha_tecnica_id   || '',
+        vinculoTipo:   p.mapeamento?.ficha_tecnica_id ? 'ficha' : p.mapeamento?.item_estoque_id ? 'item' : '',
+        ignorado:      p.mapeamento?.ignorar_estoque ?? p.ignorar_estoque ?? false,
+        salvandoIgnore: false,
       }));
       setProdutos(editaveis);
       setEtapa('revisao');
@@ -95,11 +105,62 @@ export default function ZigVendasSync() {
   const update = (id: string, changes: Partial<ProdutoEditavel>) =>
     setProdutos(prev => prev.map(p => p.productId === id ? { ...p, ...changes } : p));
 
-  const pronto = (p: ProdutoEditavel) =>
-    !!(p.estoqueId && (p.itemEstoqueId || p.fichaId));
+  // Toggle ignorar estoque — persiste imediatamente na tabela de mapeamento
+  const toggleIgnorar = async (prod: ProdutoEditavel) => {
+    const novoValor = !prod.ignorado;
+    update(prod.productId, { ignorado: novoValor, salvandoIgnore: true });
 
-  const todosProntos   = produtos.every(pronto);
-  const qtdPendentes   = produtos.filter(p => !pronto(p)).length;
+    try {
+      // Upsert no mapeamento usando nome_externo como chave
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/mapeamento_itens_vendas?nome_externo=eq.${encodeURIComponent(prod.productName)}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_ANON,
+            'Authorization': `Bearer ${SUPABASE_ANON}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify({ ignorar_estoque: novoValor }),
+        }
+      );
+
+      // Se não existe mapeamento ainda, insere
+      if (res.status === 404 || res.status === 200 && (await res.text()) === '') {
+        await fetch(`${SUPABASE_URL}/rest/v1/mapeamento_itens_vendas`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON,
+            'Authorization': `Bearer ${SUPABASE_ANON}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify({
+            nome_externo:    prod.productName,
+            nome_normalizado: prod.productName.toLowerCase().trim(),
+            ignorar_estoque: novoValor,
+            origem:          'zig',
+            confianca:       1,
+          }),
+        });
+      }
+    } catch (e) {
+      // Reverte em caso de erro
+      update(prod.productId, { ignorado: !novoValor });
+    } finally {
+      update(prod.productId, { salvandoIgnore: false });
+    }
+  };
+
+  // Produto "pronto" = ignorado OU tem estoque + vínculo
+  const pronto = (p: ProdutoEditavel) =>
+    p.ignorado || !!(p.estoqueId && (p.itemEstoqueId || p.fichaId));
+
+  const ativos       = produtos.filter(p => !p.ignorado);
+  const ignorados    = produtos.filter(p =>  p.ignorado);
+  const todosProntos = produtos.every(pronto);
+  const qtdPendentes = ativos.filter(p => !pronto(p)).length;
 
   const filtrarVinculo = (prodId: string, tipo: 'item' | 'ficha') => {
     const q = (buscaVinculo[prodId] || '').toLowerCase();
@@ -107,24 +168,27 @@ export default function ZigVendasSync() {
     return q ? fichas.filter(f => f.nome.toLowerCase().includes(q)) : fichas;
   };
 
-  const nomeEstoque  = (id: string) => estoques.find(e => e.id === id)?.nome || '—';
-  const nomeItem     = (id: string) => itens.find(i => i.id === id)?.nome    || '—';
-  const nomeFicha    = (id: string) => fichas.find(f => f.id === id)?.nome   || '—';
+  const nomeEstoque = (id: string) => estoques.find(e => e.id === id)?.nome || '—';
+  const nomeItem    = (id: string) => itens.find(i => i.id === id)?.nome    || '—';
+  const nomeFicha   = (id: string) => fichas.find(f => f.id === id)?.nome   || '—';
 
   const handleProcessar = async () => {
     if (!todosProntos) return;
     setProcessando(true);
     try {
-      const payload = produtos.map(p => ({
-        productId:      p.productId,
-        productName:    p.productName,
-        productCategory:p.productCategory,
-        count:          p.count,
-        eventDate:      p.eventDate,
-        estoqueId:      p.estoqueId,
-        itemEstoqueId:  p.vinculoTipo === 'item'  ? p.itemEstoqueId : null,
-        fichaTecnicaId: p.vinculoTipo === 'ficha' ? p.fichaId : null,
-      }));
+      // Envia apenas os produtos NÃO ignorados
+      const payload = ativos
+        .filter(p => p.estoqueId && (p.itemEstoqueId || p.fichaId))
+        .map(p => ({
+          productId:       p.productId,
+          productName:     p.productName,
+          productCategory: p.productCategory,
+          count:           p.count,
+          eventDate:       p.eventDate,
+          estoqueId:       p.estoqueId,
+          itemEstoqueId:   p.vinculoTipo === 'item'  ? p.itemEstoqueId : null,
+          fichaTecnicaId:  p.vinculoTipo === 'ficha' ? p.fichaId       : null,
+        }));
       const res  = await fetch(`${SUPABASE_URL}/functions/v1/zig-processar-baixas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -179,8 +243,9 @@ export default function ZigVendasSync() {
           <p className="font-semibold flex items-center gap-1"><Info size={13} /> Como funciona</p>
           <p>1. Busca os produtos vendidos no período via ZIG</p>
           <p>2. Você escolhe o estoque de saída e vincula ao item ou ficha técnica</p>
-          <p>3. O mapeamento fica salvo — na próxima vez já vem preenchido</p>
-          <p>4. Confirme e processe as baixas de estoque</p>
+          <p>3. Produtos que não movimentam estoque podem ser marcados como <strong>ignorados</strong></p>
+          <p>4. O mapeamento fica salvo — na próxima vez já vem preenchido</p>
+          <p>5. Confirme e processe as baixas de estoque</p>
         </div>
         {erroBusca && <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-600">{erroBusca}</div>}
         <button onClick={handleBuscar} disabled={buscando}
@@ -228,7 +293,7 @@ export default function ZigVendasSync() {
             <p className="text-sm text-gray-500">{dtinicio} → {dtfim} · {produtos.length} produtos</p>
           </div>
         </div>
-        <div className="flex gap-2 text-xs">
+        <div className="flex gap-2 text-xs flex-wrap">
           <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg border border-green-200 font-medium">
             ✓ {produtos.filter(pronto).length} prontos
           </span>
@@ -237,23 +302,29 @@ export default function ZigVendasSync() {
               ⚠ {qtdPendentes} pendentes
             </span>
           )}
+          {ignorados.length > 0 && (
+            <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-lg border border-gray-200 font-medium">
+              ⊘ {ignorados.length} ignorados
+            </span>
+          )}
         </div>
       </div>
 
       {!todosProntos && (
         <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 text-sm text-amber-800 flex items-start gap-2">
           <AlertTriangle size={16} className="mt-0.5 flex-shrink-0" />
-          <span>Todos os produtos precisam ter estoque e vínculo (item ou ficha técnica) antes de processar.</span>
+          <span>Todos os produtos precisam ter estoque e vínculo, ou estar marcados como <strong>ignorados</strong>, antes de processar.</span>
         </div>
       )}
 
+      {/* ── Produtos ativos ── */}
       <div className="space-y-3">
-        {produtos.map(prod => {
+        {ativos.map(prod => {
           const ok = pronto(prod);
           const q  = buscaVinculo[prod.productId] || '';
           return (
             <div key={prod.productId}
-              className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${ok ? 'border-green-200' : 'border-amber-300'}`}>
+              className={`bg-white rounded-2xl border shadow-sm overflow-hidden transition-all ${ok ? 'border-green-200' : 'border-amber-300'}`}>
 
               {/* Header */}
               <div className={`flex items-center justify-between px-4 py-3 ${ok ? 'bg-green-50' : 'bg-amber-50'}`}>
@@ -268,9 +339,24 @@ export default function ZigVendasSync() {
                     </p>
                   </div>
                 </div>
-                <div className="flex-shrink-0 text-right ml-4">
-                  <p className="text-lg font-bold text-gray-800">{prod.count}</p>
-                  <p className="text-xs text-gray-400">unid.</p>
+                <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-gray-800">{prod.count}</p>
+                    <p className="text-xs text-gray-400">unid.</p>
+                  </div>
+                  {/* ★ TOGGLE IGNORAR */}
+                  <button
+                    onClick={() => toggleIgnorar(prod)}
+                    disabled={prod.salvandoIgnore}
+                    title="Não baixar este item do estoque"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                      prod.salvandoIgnore
+                        ? 'opacity-50 cursor-wait bg-gray-50 border-gray-200 text-gray-400'
+                        : 'bg-white border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50'
+                    }`}>
+                    <EyeOff size={12} />
+                    Ignorar
+                  </button>
                 </div>
               </div>
 
@@ -296,7 +382,6 @@ export default function ZigVendasSync() {
                     <Link2 size={11} /> Vínculo de baixa
                   </label>
 
-                  {/* Toggle item / ficha */}
                   {!prod.itemEstoqueId && !prod.fichaId && (
                     <div className="flex gap-2 mb-3">
                       <button
@@ -320,7 +405,6 @@ export default function ZigVendasSync() {
                     </div>
                   )}
 
-                  {/* Já vinculado: item */}
                   {prod.itemEstoqueId && (
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
@@ -335,7 +419,6 @@ export default function ZigVendasSync() {
                     </div>
                   )}
 
-                  {/* Já vinculado: ficha */}
                   {prod.fichaId && (
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
@@ -350,7 +433,6 @@ export default function ZigVendasSync() {
                     </div>
                   )}
 
-                  {/* Busca de item */}
                   {!prod.itemEstoqueId && !prod.fichaId && prod.vinculoTipo === 'item' && (
                     <div>
                       <div className="relative mb-1">
@@ -381,7 +463,6 @@ export default function ZigVendasSync() {
                     </div>
                   )}
 
-                  {/* Busca de ficha técnica */}
                   {!prod.itemEstoqueId && !prod.fichaId && prod.vinculoTipo === 'ficha' && (
                     <div>
                       <div className="relative mb-1">
@@ -412,7 +493,6 @@ export default function ZigVendasSync() {
                     </div>
                   )}
 
-                  {/* Sem tipo selecionado e sem vínculo */}
                   {!prod.itemEstoqueId && !prod.fichaId && !prod.vinculoTipo && (
                     <p className="text-xs text-amber-600 italic">Escolha o tipo de vínculo acima</p>
                   )}
@@ -422,6 +502,38 @@ export default function ZigVendasSync() {
           );
         })}
       </div>
+
+      {/* ── Produtos ignorados ── */}
+      {ignorados.length > 0 && (
+        <div className="mt-2">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+            <EyeOff size={11} /> Ignorados — não serão baixados do estoque
+          </p>
+          <div className="space-y-2">
+            {ignorados.map(prod => (
+              <div key={prod.productId}
+                className="bg-gray-50 rounded-2xl border border-gray-200 px-4 py-3 flex items-center justify-between opacity-60 hover:opacity-80 transition-opacity">
+                <div className="flex items-center gap-3 min-w-0">
+                  <EyeOff size={14} className="text-gray-400 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-600 line-through">{prod.productName}</p>
+                    <p className="text-xs text-gray-400">{prod.productCategory || '—'} · {prod.count} unid.</p>
+                  </div>
+                </div>
+                {/* Desfazer ignore */}
+                <button
+                  onClick={() => toggleIgnorar(prod)}
+                  disabled={prod.salvandoIgnore}
+                  title="Voltar a processar este item"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-500 hover:border-green-300 hover:text-green-600 hover:bg-green-50 transition-all disabled:opacity-50">
+                  <Eye size={12} />
+                  Reativar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Botão processar sticky */}
       <div className="sticky bottom-4 pt-2">
@@ -433,7 +545,7 @@ export default function ZigVendasSync() {
           {processando
             ? 'Processando baixas...'
             : todosProntos
-              ? `Processar ${produtos.length} produtos`
+              ? `Processar ${ativos.filter(p => p.estoqueId).length} produto(s)${ignorados.length > 0 ? ` · ${ignorados.length} ignorado(s)` : ''}`
               : `Aguardando ${qtdPendentes} mapeamento(s)`}
         </button>
       </div>
@@ -456,16 +568,23 @@ export default function ZigVendasSync() {
       {resultado?.ok && resultado.resumo && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Processados',  v: resultado.resumo.total_processados,   color: 'text-gray-700'  },
-            { label: 'Baixas',       v: resultado.resumo.total_movimentacoes,  color: 'text-green-600' },
-            { label: 'Já proc.',     v: resultado.resumo.total_duplicados,     color: 'text-blue-500'  },
-            { label: 'Erros',        v: resultado.resumo.total_erros,          color: 'text-red-500'   },
+            { label: 'Processados', v: resultado.resumo.total_processados,  color: 'text-gray-700'  },
+            { label: 'Baixas',      v: resultado.resumo.total_movimentacoes, color: 'text-green-600' },
+            { label: 'Já proc.',    v: resultado.resumo.total_duplicados,    color: 'text-blue-500'  },
+            { label: 'Erros',       v: resultado.resumo.total_erros,         color: 'text-red-500'   },
           ].map(item => (
             <div key={item.label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
               <p className={`text-2xl font-bold ${item.color}`}>{item.v ?? 0}</p>
               <p className="text-xs text-gray-500 mt-1">{item.label}</p>
             </div>
           ))}
+        </div>
+      )}
+
+      {ignorados.length > 0 && (
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm text-gray-500">
+          <p className="flex items-center gap-2 font-medium"><EyeOff size={14} /> {ignorados.length} produto(s) ignorado(s) nesta importação</p>
+          <p className="text-xs mt-1 text-gray-400">Estes itens ficam salvos como ignorados e serão pulados automaticamente na próxima vez.</p>
         </div>
       )}
 
