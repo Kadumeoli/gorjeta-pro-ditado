@@ -8,27 +8,30 @@ import Login from './pages/Login';
 import { testConnection } from './lib/supabase';
 import { X } from 'lucide-react';
 
-const Dashboard          = lazy(() => import('./pages/Dashboard'));
-const DashboardHome      = lazy(() => import('./pages/DashboardHome'));
-const Finance            = lazy(() => import('./pages/Finance'));
-const AdvancedInventory  = lazy(() => import('./pages/AdvancedInventory'));
-const Staff              = lazy(() => import('./pages/Staff'));
-const Musicians          = lazy(() => import('./pages/Musicians'));
-const Events             = lazy(() => import('./pages/Events'));
-const Settings           = lazy(() => import('./pages/Settings'));
-const Solicitacoes       = lazy(() => import('./pages/Solicitacoes'));
-const Ocorrencias        = lazy(() => import('./pages/Ocorrencias'));
-const ManualUsuario      = lazy(() => import('./pages/ManualUsuario'));
-const Recruitment        = lazy(() => import('./pages/Recruitment'));
-const PreEntrevista      = lazy(() => import('./pages/PreEntrevista'));
-const SolicitacaoPublica = lazy(() => import('./pages/SolicitacaoPublica'));
-const Marketing          = lazy(() => import('./pages/Marketing'));
-const GestaoEstrategica  = lazy(() => import('./pages/GestaoEstrategica'));
-const VisaoEstrategica   = lazy(() => import('./pages/VisaoEstrategica'));
-const Entradas           = lazy(() => import('./pages/Entradas'));
+const Dashboard           = lazy(() => import('./pages/Dashboard'));
+const DashboardHome       = lazy(() => import('./pages/DashboardHome'));
+const Finance             = lazy(() => import('./pages/Finance'));
+const AdvancedInventory   = lazy(() => import('./pages/AdvancedInventory'));
+const Staff               = lazy(() => import('./pages/Staff'));
+const Musicians           = lazy(() => import('./pages/Musicians'));
+const Events              = lazy(() => import('./pages/Events'));
+const Settings            = lazy(() => import('./pages/Settings'));
+const Solicitacoes        = lazy(() => import('./pages/Solicitacoes'));
+const Ocorrencias         = lazy(() => import('./pages/Ocorrencias'));
+const ManualUsuario       = lazy(() => import('./pages/ManualUsuario'));
+const Recruitment         = lazy(() => import('./pages/Recruitment'));
+const PreEntrevista       = lazy(() => import('./pages/PreEntrevista'));
+const SolicitacaoPublica  = lazy(() => import('./pages/SolicitacaoPublica'));
+const Marketing           = lazy(() => import('./pages/Marketing'));
+const GestaoEstrategica   = lazy(() => import('./pages/GestaoEstrategica'));
+const VisaoEstrategica    = lazy(() => import('./pages/VisaoEstrategica'));
+const Entradas            = lazy(() => import('./pages/Entradas'));
 const DashboardFinanceiro = lazy(() => import('./pages/DashboardFinanceiro'));
-const ZigVendasSync      = lazy(() => import('./pages/ZigVendasSync'));
-const ZigRecebimentos    = lazy(() => import('./pages/ZigRecebimentos'));
+const ZigVendasSync       = lazy(() => import('./pages/ZigVendasSync'));
+const ZigRecebimentos     = lazy(() => import('./pages/ZigRecebimentos'));
+
+// Página pública de contagem para celular — sem autenticação
+const ContagemMobile = lazy(() => import('./components/inventory/contagem/ContagemMobile'));
 
 function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,17 +42,19 @@ function AppContent() {
 
   useEffect(() => { testConnection(); }, []);
 
-  const rotasPublicas = ['/pre-entrevista', '/solicitacao'];
+  const rotasPublicas = ['/pre-entrevista', '/solicitacao', '/contagem-mobile'];
   const isRotaPublica = rotasPublicas.some(r => window.location.pathname.startsWith(r));
 
   if (!usuario && !isRotaPublica) return <Login />;
 
+  // Rotas públicas — renderiza sem sidebar/topbar
   if (isRotaPublica) {
     return (
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm text-gray-400">Carregando...</div>}>
         <Routes>
-          <Route path="/pre-entrevista" element={<PreEntrevista />} />
-          <Route path="/solicitacao"    element={<SolicitacaoPublica />} />
+          <Route path="/pre-entrevista"         element={<PreEntrevista />} />
+          <Route path="/solicitacao"            element={<SolicitacaoPublica />} />
+          <Route path="/contagem-mobile/:token" element={<ContagemMobile />} />
         </Routes>
       </Suspense>
     );
@@ -100,27 +105,27 @@ function AppContent() {
 
           <main className="flex-1 relative overflow-y-auto">
             <div className="p-8">
-              <Suspense fallback={<div>Carregando...</div>}>
+              <Suspense fallback={<div className="flex items-center justify-center py-12 text-sm text-gray-400">Carregando...</div>}>
                 <Routes>
-                  <Route path="/"                    element={<ProtectedRoute moduloSlug="dashboard">    <DashboardHome />       </ProtectedRoute>} />
-                  <Route path="/dashboard"           element={<ProtectedRoute moduloSlug="dashboard">    <Dashboard />           </ProtectedRoute>} />
-                  <Route path="/finance"             element={<ProtectedRoute moduloSlug="financeiro">   <Finance />             </ProtectedRoute>} />
-                  <Route path="/financeiro"          element={<ProtectedRoute moduloSlug="financeiro">   <DashboardFinanceiro /> </ProtectedRoute>} />
-                  <Route path="/advanced-inventory"  element={<ProtectedRoute moduloSlug="estoque">      <AdvancedInventory />   </ProtectedRoute>} />
-                  <Route path="/staff"               element={<ProtectedRoute moduloSlug="rh">           <Staff />               </ProtectedRoute>} />
-                  <Route path="/recruitment"         element={<ProtectedRoute moduloSlug="rh">           <Recruitment />         </ProtectedRoute>} />
-                  <Route path="/musicians"           element={<ProtectedRoute moduloSlug="musicos">      <Musicians />           </ProtectedRoute>} />
-                  <Route path="/events"              element={<ProtectedRoute moduloSlug="eventos">      <Events />              </ProtectedRoute>} />
-                  <Route path="/solicitacoes"        element={<ProtectedRoute moduloSlug="solicitacoes"> <Solicitacoes />        </ProtectedRoute>} />
-                  <Route path="/ocorrencias"         element={<ProtectedRoute moduloSlug="ocorrencias">  <Ocorrencias />         </ProtectedRoute>} />
-                  <Route path="/marketing"           element={<ProtectedRoute moduloSlug="marketing">    <Marketing />           </ProtectedRoute>} />
-                  <Route path="/gestao-estrategica"  element={<ProtectedRoute moduloSlug="financeiro">   <GestaoEstrategica />   </ProtectedRoute>} />
-                  <Route path="/visao-estrategica"   element={<ProtectedRoute moduloSlug="financeiro">   <VisaoEstrategica />    </ProtectedRoute>} />
-                  <Route path="/entradas"            element={<ProtectedRoute moduloSlug="financeiro">   <Entradas />            </ProtectedRoute>} />
-                  <Route path="/zig-vendas"          element={<ProtectedRoute moduloSlug="estoque">      <ZigVendasSync />       </ProtectedRoute>} />
-                  <Route path="/zig-recebimentos"    element={<ProtectedRoute moduloSlug="financeiro">   <ZigRecebimentos />     </ProtectedRoute>} />
+                  <Route path="/"                    element={<ProtectedRoute moduloSlug="dashboard">     <DashboardHome />        </ProtectedRoute>} />
+                  <Route path="/dashboard"           element={<ProtectedRoute moduloSlug="dashboard">     <Dashboard />            </ProtectedRoute>} />
+                  <Route path="/finance"             element={<ProtectedRoute moduloSlug="financeiro">    <Finance />              </ProtectedRoute>} />
+                  <Route path="/financeiro"          element={<ProtectedRoute moduloSlug="financeiro">    <DashboardFinanceiro />  </ProtectedRoute>} />
+                  <Route path="/advanced-inventory"  element={<ProtectedRoute moduloSlug="estoque">       <AdvancedInventory />    </ProtectedRoute>} />
+                  <Route path="/staff"               element={<ProtectedRoute moduloSlug="rh">            <Staff />                </ProtectedRoute>} />
+                  <Route path="/recruitment"         element={<ProtectedRoute moduloSlug="rh">            <Recruitment />          </ProtectedRoute>} />
+                  <Route path="/musicians"           element={<ProtectedRoute moduloSlug="musicos">       <Musicians />            </ProtectedRoute>} />
+                  <Route path="/events"              element={<ProtectedRoute moduloSlug="eventos">       <Events />               </ProtectedRoute>} />
+                  <Route path="/solicitacoes"        element={<ProtectedRoute moduloSlug="solicitacoes">  <Solicitacoes />         </ProtectedRoute>} />
+                  <Route path="/ocorrencias"         element={<ProtectedRoute moduloSlug="ocorrencias">   <Ocorrencias />          </ProtectedRoute>} />
+                  <Route path="/marketing"           element={<ProtectedRoute moduloSlug="marketing">     <Marketing />            </ProtectedRoute>} />
+                  <Route path="/gestao-estrategica"  element={<ProtectedRoute moduloSlug="financeiro">    <GestaoEstrategica />    </ProtectedRoute>} />
+                  <Route path="/visao-estrategica"   element={<ProtectedRoute moduloSlug="financeiro">    <VisaoEstrategica />     </ProtectedRoute>} />
+                  <Route path="/entradas"            element={<ProtectedRoute moduloSlug="financeiro">    <Entradas />             </ProtectedRoute>} />
+                  <Route path="/zig-vendas"          element={<ProtectedRoute moduloSlug="estoque">       <ZigVendasSync />        </ProtectedRoute>} />
+                  <Route path="/zig-recebimentos"    element={<ProtectedRoute moduloSlug="financeiro">    <ZigRecebimentos />      </ProtectedRoute>} />
                   <Route path="/manual"              element={<ManualUsuario />} />
-                  <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"><Settings />           </ProtectedRoute>} />
+                  <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"> <Settings />             </ProtectedRoute>} />
                   <Route path="*" element={
                     <div className="text-center py-12">
                       <h3 className="text-lg font-medium text-gray-900 mb-2">Página não encontrada</h3>
