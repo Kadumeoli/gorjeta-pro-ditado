@@ -7,6 +7,51 @@ import {
   TrendingUp, RefreshCw, ChevronDown, LogOut,
 } from 'lucide-react';
 
+const Tooltip: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div
+      style={{ position: 'relative' }}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
+      {children}
+      {visible && (
+        <div style={{
+          position: 'absolute',
+          left: 'calc(100% + 10px)',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: '#1a0f12',
+          border: '1px solid rgba(212,175,55,0.25)',
+          color: 'rgba(255,255,255,0.88)',
+          fontSize: '12px',
+          fontWeight: 500,
+          padding: '5px 10px',
+          borderRadius: '8px',
+          whiteSpace: 'nowrap',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+        }}>
+          {label}
+          <div style={{
+            position: 'absolute',
+            right: '100%',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 0,
+            height: 0,
+            borderTop: '5px solid transparent',
+            borderBottom: '5px solid transparent',
+            borderRight: '5px solid rgba(212,175,55,0.25)',
+          }} />
+        </div>
+      )}
+    </div>
+  );
+};
+
 interface SubModule { name: string; path: string; }
 interface Module {
   name: string;
@@ -119,47 +164,51 @@ const SidebarModern: React.FC<Props> = ({ onNavigate }) => {
     return (
       <div key={m.slug + m.path}>
         {hasChildren ? (
-          <button
-            onClick={() => toggle(m)}
-            className={`
-              w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm
-              transition-all duration-150 group
-              ${active
-                ? 'bg-[#7D1F2C]/20 text-white'
-                : 'text-white/40 hover:text-white/75 hover:bg-white/6'
-              }
-            `}
-          >
-            <m.icon
-              className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`}
-              style={{ width: 15, height: 15 }}
-            />
-            <span className="flex-1 text-left text-[13px] leading-none">{m.name}</span>
-            <ChevronDown
-              className={`transition-transform duration-200 ${open ? 'rotate-180' : ''} text-white/20`}
-              style={{ width: 13, height: 13 }}
-            />
-          </button>
+          <Tooltip label={m.name}>
+            <button
+              onClick={() => toggle(m)}
+              className={`
+                w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm
+                transition-all duration-150 group
+                ${active
+                  ? 'bg-[#7D1F2C]/20 text-white'
+                  : 'text-white/40 hover:text-white/75 hover:bg-white/6'
+                }
+              `}
+            >
+              <m.icon
+                className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`}
+                style={{ width: 15, height: 15 }}
+              />
+              <span className="flex-1 text-left text-[13px] leading-none">{m.name}</span>
+              <ChevronDown
+                className={`transition-transform duration-200 ${open ? 'rotate-180' : ''} text-white/20`}
+                style={{ width: 13, height: 13 }}
+              />
+            </button>
+          </Tooltip>
         ) : (
-          <Link
-            to={m.path}
-            onClick={onNavigate}
-            className={`
-              flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm
-              transition-all duration-150 group
-              ${active
-                ? 'bg-[#7D1F2C]/25 text-white ring-1 ring-[#7D1F2C]/40'
-                : 'text-white/40 hover:text-white/75 hover:bg-white/6'
-              }
-            `}
-          >
-            <m.icon
-              className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`}
-              style={{ width: 15, height: 15 }}
-            />
-            <span className="text-[13px] leading-none">{m.name}</span>
-            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />}
-          </Link>
+          <Tooltip label={m.name}>
+            <Link
+              to={m.path}
+              onClick={onNavigate}
+              className={`
+                flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm
+                transition-all duration-150 group
+                ${active
+                  ? 'bg-[#7D1F2C]/25 text-white ring-1 ring-[#7D1F2C]/40'
+                  : 'text-white/40 hover:text-white/75 hover:bg-white/6'
+                }
+              `}
+            >
+              <m.icon
+                className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`}
+                style={{ width: 15, height: 15 }}
+              />
+              <span className="text-[13px] leading-none">{m.name}</span>
+              {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />}
+            </Link>
+          </Tooltip>
         )}
 
         {/* Submódulos */}
