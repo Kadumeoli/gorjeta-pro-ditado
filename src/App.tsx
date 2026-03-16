@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SidebarModern from './components/layout/SidebarModern';
 import ProtectedRoute from './components/layout/ProtectedRoute';
@@ -32,11 +32,12 @@ const ContagemMobile      = lazy(() => import('./components/inventory/contagem/C
 
 const PageLoader = () => (
   <div className="flex items-center justify-center h-full min-h-[300px]">
-    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-[#7D1F2C]" />
+    <div className="animate-spin rounded-full h-7 w-7 border-2 border-white/10 border-t-[#D4AF37]" />
   </div>
 );
 
 function AppContent() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { usuario, logout } = useAuth();
 
   useEffect(() => { testConnection(); }, []);
@@ -59,39 +60,53 @@ function AppContent() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+    <div className="flex h-screen overflow-hidden" style={{ background: '#0a0608' }}>
+
+      {/* Overlay mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 lg:hidden bg-black/60 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* ── SIDEBAR ── */}
-      <aside className="
-        hidden lg:flex flex-col w-64
-        bg-[#140d0f] border-r border-white/[0.05]
-        flex-shrink-0
-      ">
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 flex flex-col w-60
+        bg-[#0f0a0b] border-r border-white/[0.05]
+        transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static lg:inset-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         {/* Logo */}
         <div className="flex items-center gap-3 h-14 px-4 border-b border-white/[0.05] flex-shrink-0">
           <div
-            className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center"
+            className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg"
             style={{ background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)' }}
           >
             <span className="text-white text-[10px] font-black tracking-tighter">DP</span>
           </div>
           <div>
             <p className="text-[13px] font-bold text-white/90 leading-none tracking-tight">Ditado Popular</p>
-            <p className="text-[10px] text-white/30 mt-0.5 tracking-widest uppercase">Gestão</p>
+            <p className="text-[10px] text-white/25 mt-0.5 tracking-widest uppercase">Gestão</p>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="ml-auto lg:hidden p-1.5 text-white/30 hover:text-white/60 rounded-lg hover:bg-white/8"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <SidebarModern />
+
+        <SidebarModern onNavigate={() => setSidebarOpen(false)} />
       </aside>
 
       {/* ── MAIN ── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <Topbar toggleSidebar={() => setSidebarOpen(v => !v)} user={usuario} onLogout={logout} />
 
-        {/* Topbar */}
-        <header className="h-14 flex items-center px-4 gap-3 bg-[#140d0f] border-b border-white/[0.05] flex-shrink-0">
-          <Topbar toggleSidebar={() => {}} user={usuario} onLogout={logout} />
-        </header>
-
-        {/* Conteúdo */}
         <main className="flex-1 overflow-y-auto bg-gray-100">
           <div className="p-6 lg:p-8 min-h-full">
             <Suspense fallback={<PageLoader />}>
