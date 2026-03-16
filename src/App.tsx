@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SidebarModern from './components/layout/SidebarModern';
 import ProtectedRoute from './components/layout/ProtectedRoute';
@@ -32,13 +32,7 @@ const ContagemMobile      = lazy(() => import('./components/inventory/contagem/C
 
 const PageLoader = () => (
   <div className="flex items-center justify-center h-full min-h-[300px]">
-    <div className="flex flex-col items-center gap-3">
-      <div className="relative w-7 h-7">
-        <div className="absolute inset-0 rounded-full border-2 border-[#7D1F2C]/20" />
-        <div className="absolute inset-0 rounded-full border-2 border-[#D4AF37] border-t-transparent animate-spin" />
-      </div>
-      <p className="text-xs text-white/20 tracking-widest uppercase">Carregando</p>
-    </div>
+    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-[#7D1F2C]" />
   </div>
 );
 
@@ -65,19 +59,40 @@ function AppContent() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: '#0a0608' }}>
+    <div className="flex h-screen overflow-hidden bg-gray-100">
 
-      {/* ── SIDEBAR: rail + flyout gerenciados internamente ── */}
-      <SidebarModern />
+      {/* ── SIDEBAR ── */}
+      <aside className="
+        hidden lg:flex flex-col w-64
+        bg-[#140d0f] border-r border-white/[0.05]
+        flex-shrink-0
+      ">
+        {/* Logo */}
+        <div className="flex items-center gap-3 h-14 px-4 border-b border-white/[0.05] flex-shrink-0">
+          <div
+            className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)' }}
+          >
+            <span className="text-white text-[10px] font-black tracking-tighter">DP</span>
+          </div>
+          <div>
+            <p className="text-[13px] font-bold text-white/90 leading-none tracking-tight">Ditado Popular</p>
+            <p className="text-[10px] text-white/30 mt-0.5 tracking-widest uppercase">Gestão</p>
+          </div>
+        </div>
+        <SidebarModern />
+      </aside>
 
       {/* ── MAIN ── */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <Topbar toggleSidebar={() => {}} user={usuario} onLogout={logout} />
 
-        <main
-          className="flex-1 overflow-y-auto"
-          style={{ background: '#0c0709' }}
-        >
+        {/* Topbar */}
+        <header className="h-14 flex items-center px-4 gap-3 bg-[#140d0f] border-b border-white/[0.05] flex-shrink-0">
+          <Topbar toggleSidebar={() => {}} user={usuario} onLogout={logout} />
+        </header>
+
+        {/* Conteúdo */}
+        <main className="flex-1 overflow-y-auto bg-gray-100">
           <div className="p-6 lg:p-8 min-h-full">
             <Suspense fallback={<PageLoader />}>
               <Routes>
@@ -102,9 +117,9 @@ function AppContent() {
                 <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"> <Settings />            </ProtectedRoute>} />
                 <Route path="*" element={
                   <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-                    <p className="text-6xl font-black text-white/10 mb-4">404</p>
-                    <h3 className="text-base font-semibold text-white/40 mb-1">Página não encontrada</h3>
-                    <p className="text-sm text-white/20">A URL acessada não existe.</p>
+                    <p className="text-6xl font-black text-gray-200 mb-4">404</p>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-1">Página não encontrada</h3>
+                    <p className="text-sm text-gray-400">A URL acessada não existe.</p>
                   </div>
                 } />
               </Routes>
