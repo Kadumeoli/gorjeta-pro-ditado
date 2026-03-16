@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bell, Menu, Search, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Bell, Menu, Search, User, LogOut, Settings, ChevronDown, X, Command } from 'lucide-react';
 import { Usuario } from '../../contexts/AuthContext';
 
 interface TopbarProps {
@@ -9,131 +9,229 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ toggleSidebar, user, onLogout }) => {
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu]   = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const menuRef  = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Atalho ⌘K para focar na busca
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  const initials = user
+    ? user.nome_completo.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+    : 'U';
 
   return (
-    <header className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
-      <div className="container flex items-center justify-between h-16 px-6 mx-auto">
-        {/* Mobile hamburger */}
+    <header className="
+      relative z-30 h-14 flex items-center px-4 gap-3
+      bg-[#0f0a0b]/95 backdrop-blur-xl
+      border-b border-white/6
+    ">
+      {/* Hamburger mobile */}
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/8 transition-all"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Divisor vertical */}
+      <div className="hidden lg:block w-px h-5 bg-white/10" />
+
+      {/* Breadcrumb / título dinâmico */}
+      <div className="hidden lg:flex items-center gap-1.5 text-xs">
+        <span className="text-white/30 font-medium tracking-widest uppercase text-[10px]">
+          Ditado Popular
+        </span>
+      </div>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Barra de busca */}
+      <div className={`
+        relative flex items-center gap-2 transition-all duration-300
+        ${searchFocused ? 'w-80' : 'w-56'}
+      `}>
+        <div className={`
+          flex items-center w-full gap-2 px-3 py-2 rounded-xl text-sm
+          transition-all duration-200
+          ${searchFocused
+            ? 'bg-white/10 border border-white/20 shadow-lg shadow-black/20'
+            : 'bg-white/5 border border-transparent hover:bg-white/8'
+          }
+        `}>
+          <Search className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
+          <input
+            ref={searchRef}
+            type="text"
+            placeholder="Buscar..."
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            className="
+              flex-1 bg-transparent text-white/80 placeholder-white/25
+              text-xs focus:outline-none min-w-0
+            "
+          />
+          {!searchFocused && (
+            <kbd className="
+              hidden sm:flex items-center gap-0.5 px-1.5 py-0.5
+              text-[10px] text-white/20 bg-white/5 border border-white/10
+              rounded-md font-mono flex-shrink-0
+            ">
+              <Command className="w-2.5 h-2.5" />K
+            </kbd>
+          )}
+        </div>
+      </div>
+
+      {/* Notificações */}
+      <button className="
+        relative p-2 rounded-xl text-white/40 hover:text-white/80
+        hover:bg-white/8 transition-all duration-200
+      ">
+        <Bell className="w-4.5 h-4.5 w-[18px] h-[18px]" />
+        <span className="
+          absolute top-1.5 right-1.5 w-2 h-2
+          bg-[#D4AF37] rounded-full
+          ring-2 ring-[#0f0a0b]
+        " />
+      </button>
+
+      {/* Divisor */}
+      <div className="w-px h-5 bg-white/8" />
+
+      {/* Perfil */}
+      <div className="relative" ref={menuRef}>
         <button
-          className="p-2 -ml-1 rounded-xl lg:hidden focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 hover:bg-gray-100/80 transition-all duration-200"
-          onClick={toggleSidebar}
-          aria-label="Menu"
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          className="
+            flex items-center gap-2.5 pl-1 pr-2.5 py-1.5 rounded-xl
+            hover:bg-white/8 transition-all duration-200 group
+          "
         >
-          <Menu className="w-6 h-6 text-gray-700" />
+          {/* Avatar */}
+          <div className="
+            relative w-7 h-7 rounded-lg
+            bg-gradient-to-br from-[#7D1F2C] to-[#D4AF37]
+            flex items-center justify-center
+            text-white text-xs font-bold tracking-wide
+            shadow-lg shadow-[#7D1F2C]/30
+            ring-1 ring-white/10
+          ">
+            {initials}
+            <span className="
+              absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5
+              bg-emerald-400 border-2 border-[#0f0a0b] rounded-full
+            " />
+          </div>
+
+          {/* Nome */}
+          <div className="hidden md:block text-left">
+            <p className="text-xs font-semibold text-white/80 leading-none">
+              {user?.nome_completo?.split(' ')[0] || 'Usuário'}
+            </p>
+            <p className="text-[10px] text-white/30 mt-0.5 capitalize">
+              {user?.cargo || user?.nivel || 'carregando'}
+            </p>
+          </div>
+
+          <ChevronDown className={`
+            w-3 h-3 text-white/30 transition-transform duration-200
+            ${showUserMenu ? 'rotate-180' : ''}
+          `} />
         </button>
 
-        {/* Search */}
-        <div className="flex justify-center flex-1 lg:mr-32">
-          <div className="relative w-full max-w-lg">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4">
-              <Search className="w-5 h-5 text-gray-400" />
+        {/* Dropdown */}
+        {showUserMenu && (
+          <div className="
+            absolute right-0 mt-2 w-60
+            bg-[#1a1114] border border-white/10
+            rounded-2xl shadow-2xl shadow-black/60
+            overflow-hidden z-50
+            animate-in fade-in slide-in-from-top-2 duration-150
+          ">
+            {/* Cabeçalho do perfil */}
+            <div className="
+              px-4 py-3.5
+              bg-gradient-to-b from-white/5 to-transparent
+              border-b border-white/8
+            ">
+              <div className="flex items-center gap-3">
+                <div className="
+                  w-10 h-10 rounded-xl flex-shrink-0
+                  bg-gradient-to-br from-[#7D1F2C] to-[#D4AF37]
+                  flex items-center justify-center
+                  text-white text-sm font-bold
+                  shadow-lg shadow-[#7D1F2C]/30
+                ">
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white/90 truncate">
+                    {user?.nome_completo || 'Usuário'}
+                  </p>
+                  <p className="text-xs text-white/40 truncate mt-0.5">
+                    {user?.email || '—'}
+                  </p>
+                  <span className="
+                    inline-block mt-1 px-2 py-0.5 rounded-full
+                    text-[10px] font-medium capitalize
+                    bg-[#7D1F2C]/30 text-[#f5a0ac]
+                    border border-[#7D1F2C]/40
+                  ">
+                    {user?.cargo || user?.nivel || 'usuário'}
+                  </span>
+                </div>
+              </div>
             </div>
-            <input
-              className="w-full pl-12 pr-4 py-3 text-sm text-gray-700 placeholder-gray-400 bg-white/60 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]/30 transition-all duration-200"
-              type="text"
-              placeholder="Buscar em todo o sistema..."
-              aria-label="Search"
-            />
-          </div>
-        </div>
 
-        <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              className="relative p-2 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 transition-all duration-200"
-              aria-label="Notifications"
-            >
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-1 right-1 inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-full">
-                3
-              </span>
-            </button>
-          </div>
+            {/* Ações */}
+            <div className="py-1.5 px-1.5">
+              <button className="
+                flex items-center w-full gap-3 px-3 py-2.5 rounded-xl
+                text-sm text-white/60 hover:text-white/90
+                hover:bg-white/8 transition-all duration-150
+              ">
+                <Settings className="w-4 h-4 flex-shrink-0" />
+                <span>Configurações</span>
+              </button>
 
-          {/* Profile */}
-          <div className="relative">
-            <button
-              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/20 transition-all duration-200"
-              aria-label="Account"
-              onClick={() => setShowUserMenu(!showUserMenu)}
-            >
-              <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] flex items-center justify-center shadow-lg">
-                  {user ? (
-                    <span className="text-white font-medium text-sm">
-                      {user.nome_completo.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                    </span>
-                  ) : (
-                    <User className="w-5 h-5 text-white" />
-                  )}
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
-              </div>
-              {user ? (
-                <div className="hidden md:block text-left">
-                  <div className="text-sm font-semibold text-gray-800">{user.nome_completo}</div>
-                  <div className="text-xs text-gray-500 capitalize">{user.cargo || user.nivel}</div>
-                </div>
-              ) : (
-                <div className="hidden md:block text-left">
-                  <div className="text-sm font-semibold text-gray-800">Usuário</div>
-                  <div className="text-xs text-gray-500">Carregando...</div>
-                </div>
-              )}
-              <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
-            </button>
+              <div className="my-1 border-t border-white/8" />
 
-            {/* User dropdown menu */}
-            {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 py-2 z-50 transform transition-all duration-200 origin-top-right">
-                <div className="px-4 py-3 border-b border-gray-100/50">
-                  {user ? (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] flex items-center justify-center">
-                        <span className="text-white font-medium">
-                          {user.nome_completo.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-800">{user.nome_completo}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
-                        <div className="text-xs text-gray-400 capitalize bg-gray-100 px-2 py-1 rounded-full mt-1 inline-block">
-                          {user.cargo || user.nivel}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] flex items-center justify-center">
-                        <User className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-800">Carregando...</div>
-                        <div className="text-sm text-gray-500">---</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="py-2">
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50/80 transition-colors duration-150">
-                    <Settings className="w-4 h-4 mr-3 text-gray-500" />
-                    Configurações
-                  </button>
-                  <button
-                    onClick={onLogout}
-                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50/80 transition-colors duration-150"
-                  >
-                    <LogOut className="w-4 h-4 mr-3" />
-                    Sair do Sistema
-                  </button>
-                </div>
-              </div>
-            )}
+              <button
+                onClick={onLogout}
+                className="
+                  flex items-center w-full gap-3 px-3 py-2.5 rounded-xl
+                  text-sm text-red-400/80 hover:text-red-400
+                  hover:bg-red-500/10 transition-all duration-150
+                "
+              >
+                <LogOut className="w-4 h-4 flex-shrink-0" />
+                <span>Sair do sistema</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </header>
   );
