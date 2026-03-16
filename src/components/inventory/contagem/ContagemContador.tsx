@@ -55,7 +55,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
 
   // ── Adicionar item ausente ─────────────────────────────────────────────────
   const [showAdicionarPanel, setShowAdicionarPanel] = useState(false);
-  const [buscaAusente, setBuscaAusente]             = useState(');
+  const [buscaAusente, setBuscaAusente]             = useState('');
   const [itensDisponiveis, setItensDisponiveis]     = useState<{id:string;nome:string;codigo:string;unidade_medida:string;custo_medio:number;grupo_contagem:string}[]>([]);
   const [loadingDisponiveis, setLoadingDisponiveis] = useState(false);
   const [adicionando, setAdicionando]               = useState<string | null>(null);
