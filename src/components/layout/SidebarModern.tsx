@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   Home, DollarSign, Warehouse, Users, Music, CalendarDays,
   Settings, BookOpen, AlertTriangle, ClipboardCheck, Target,
-  TrendingUp, ChevronRight, LogOut, X,
+  TrendingUp, ChevronDown, LogOut,
 } from 'lucide-react';
 
 interface SubModule { name: string; path: string; }
@@ -77,243 +77,112 @@ const MODULES: Module[] = [
 
 interface Props { onNavigate?: () => void; }
 
-export default function SidebarModern({ onNavigate }: Props) {
+const SidebarModern: React.FC<Props> = ({ onNavigate }) => {
   const location = useLocation();
   const { temAcessoModulo, usuario, logout } = useAuth();
-  const [flyout, setFlyout] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(() => {
+    const cur = MODULES.find(m =>
+      m.subModules?.some(s =>
+        location.pathname + location.search === s.path || location.pathname === s.path
+      )
+    );
+    return cur?.slug ?? null;
+  });
 
-  const filtered = MODULES.filter(m => temAcessoModulo(m.slug));
-  const main  = filtered.filter(m => !['manual','configuracoes'].includes(m.slug));
-  const utils = filtered.filter(m =>  ['manual','configuracoes'].includes(m.slug));
+  const filtered  = MODULES.filter(m => temAcessoModulo(m.slug));
+  const main      = filtered.filter(m => !['manual','configuracoes'].includes(m.slug));
+  const utils     = filtered.filter(m =>  ['manual','configuracoes'].includes(m.slug));
 
-  const isActive = (path: string) =>
+  const isActive  = (path: string) =>
     location.pathname + location.search === path || location.pathname === path;
-
   const isModActive = (m: Module) =>
     isActive(m.path) || !!m.subModules?.some(s => isActive(s.path));
 
   const initials = usuario?.nome_completo
     ?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() ?? 'U';
 
-  const handleIconClick = (m: Module) => {
-    if (m.subModules?.length) {
-      setFlyout(prev => prev === m.slug ? null : m.slug);
-    } else {
-      setFlyout(null);
-      onNavigate?.();
-    }
+  const renderModule = (m: Module) => {
+    const active      = isModActive(m);
+    const open        = expanded === m.slug;
+    const hasChildren = !!m.subModules?.length;
+
+    return (
+      <div key={m.slug + m.path}>
+        {hasChildren ? (
+          <button
+            onClick={() => setExpanded(p => p === m.slug ? null : m.slug)}
+            title={m.name}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-150 group
+              ${active ? 'bg-[#7D1F2C]/20 text-white' : 'text-white/40 hover:text-white/75 hover:bg-white/6'}`}
+          >
+            <m.icon className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`} style={{ width: 15, height: 15 }} />
+            <span className="flex-1 text-left text-[13px] leading-none">{m.name}</span>
+            <ChevronDown className={`transition-transform duration-200 ${open ? 'rotate-180' : ''} text-white/20`} style={{ width: 13, height: 13 }} />
+          </button>
+        ) : (
+          <Link
+            to={m.path}
+            onClick={onNavigate}
+            title={m.name}
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-150 group
+              ${active ? 'bg-[#7D1F2C]/25 text-white ring-1 ring-[#7D1F2C]/40' : 'text-white/40 hover:text-white/75 hover:bg-white/6'}`}
+          >
+            <m.icon className={`flex-shrink-0 ${active ? 'text-[#f5c0c8]' : 'text-white/30 group-hover:text-white/55'}`} style={{ width: 15, height: 15 }} />
+            <span className="text-[13px] leading-none">{m.name}</span>
+            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />}
+          </Link>
+        )}
+
+        {hasChildren && open && (
+          <div className="mt-0.5 mb-1 ml-4 pl-3 border-l border-white/[0.07] space-y-0.5">
+            {m.subModules!.map(sub => (
+              <Link
+                key={sub.path}
+                to={sub.path}
+                onClick={onNavigate}
+                className={`flex items-center justify-between px-2 py-2 rounded-lg text-[12px] transition-all duration-100
+                  ${isActive(sub.path) ? 'text-[#D4AF37] bg-[#D4AF37]/8' : 'text-white/30 hover:text-white/65 hover:bg-white/5'}`}
+              >
+                {sub.name}
+                {isActive(sub.path) && <span className="w-1 h-1 rounded-full bg-[#D4AF37] flex-shrink-0" />}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
-  const activeFlyoutModule = filtered.find(m => m.slug === flyout);
-
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'visible', position: 'relative' }}>
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5
+        [&::-webkit-scrollbar]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-track]:bg-transparent">
+        {main.map(renderModule)}
+        <div className="my-2 mx-2 border-t border-white/[0.06]" />
+        {utils.map(renderModule)}
+      </div>
 
-      {/* ── RAIL DE ÍCONES (sempre visível, 60px) ── */}
-      <div style={{
-        width: 60, background: '#0a0608',
-        borderRight: '1px solid rgba(255,255,255,0.05)',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', padding: '12px 0', gap: 2,
-        flexShrink: 0, zIndex: 10,
-      }}>
-        {/* Logo */}
-        <div style={{
-          width: 32, height: 32, borderRadius: 10, marginBottom: 12, flexShrink: 0,
-          background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <span style={{ color: 'white', fontSize: 9, fontWeight: 800 }}>DP</span>
-        </div>
-
-        {/* Módulos principais */}
-        {main.map(m => {
-          const active = isModActive(m);
-          const open   = flyout === m.slug;
-          return (
-            <div key={m.slug} style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => handleIconClick(m)}
-                title={m.name}
-                style={{
-                  width: 40, height: 40, borderRadius: 10, border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: active || open ? 'rgba(125,31,44,0.35)' : 'transparent',
-                  outline: active || open ? '1px solid rgba(125,31,44,0.5)' : 'none',
-                  transition: 'all 0.15s',
-                  position: 'relative',
-                }}
-                onMouseEnter={e => { if (!active && !open) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; }}
-                onMouseLeave={e => { if (!active && !open) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-              >
-                <m.icon style={{
-                  width: 16, height: 16,
-                  color: active || open ? '#f5c0c8' : 'rgba(255,255,255,0.35)',
-                }} />
-                {active && (
-                  <span style={{
-                    position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)',
-                    width: 3, height: 18, borderRadius: '2px 0 0 2px',
-                    background: '#D4AF37',
-                  }} />
-                )}
-              </button>
-            </div>
-          );
-        })}
-
-        {/* Divisor */}
-        <div style={{ width: 28, borderTop: '1px solid rgba(255,255,255,0.06)', margin: '4px 0' }} />
-
-        {/* Utilitários */}
-        {utils.map(m => {
-          const active = isModActive(m);
-          return (
-            <div key={m.slug} style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => handleIconClick(m)}
-                title={m.name}
-                style={{
-                  width: 40, height: 40, borderRadius: 10, border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: active ? 'rgba(125,31,44,0.35)' : 'transparent',
-                  outline: active ? '1px solid rgba(125,31,44,0.5)' : 'none',
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; }}
-                onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-              >
-                <m.icon style={{ width: 16, height: 16, color: active ? '#f5c0c8' : 'rgba(255,255,255,0.35)' }} />
-              </button>
-            </div>
-          );
-        })}
-
-        {/* Avatar / logout */}
-        <div style={{ marginTop: 'auto', paddingBottom: 4 }}>
-          <button
-            onClick={logout}
-            title={`${usuario?.nome_completo ?? 'Usuário'} — Sair`}
-            style={{
-              width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 10, fontWeight: 700,
-            }}
-          >
+      <div className="px-2 py-3 border-t border-white/[0.05]">
+        <div className="flex items-center gap-2.5 px-2 py-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)' }}>
             {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-white/65 text-[11px] font-medium truncate leading-tight">
+              {usuario?.nome_completo?.split(' ')[0] ?? 'Usuário'}
+            </p>
+            <p className="text-white/25 text-[10px] capitalize truncate leading-tight">
+              {usuario?.cargo ?? usuario?.nivel ?? '—'}
+            </p>
+          </div>
+          <button onClick={logout} title="Sair" className="text-white/20 hover:text-red-400/70 transition-colors flex-shrink-0">
+            <LogOut style={{ width: 13, height: 13 }} />
           </button>
         </div>
       </div>
-
-      {/* ── PAINEL FLYOUT (aparece ao clicar em módulo com submódulos) ── */}
-      {flyout && activeFlyoutModule?.subModules && (
-        <>
-          {/* Overlay para fechar */}
-          <div
-            onClick={() => setFlyout(null)}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 8,
-            }}
-          />
-          <div style={{
-            position: 'absolute', left: 60, top: 0, bottom: 0,
-            width: 220, zIndex: 9,
-            background: '#120b0d',
-            borderRight: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex', flexDirection: 'column',
-            animation: 'slideInLeft 0.15s ease-out',
-          }}>
-            <style>{`
-              @keyframes slideInLeft {
-                from { opacity: 0; transform: translateX(-8px); }
-                to   { opacity: 1; transform: translateX(0); }
-              }
-            `}</style>
-
-            {/* Header do flyout */}
-            <div style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '14px 14px 10px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {activeFlyoutModule && (
-                  <activeFlyoutModule.icon style={{ width: 14, height: 14, color: '#f5c0c8' }} />
-                )}
-                <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, fontWeight: 600 }}>
-                  {activeFlyoutModule?.name}
-                </span>
-              </div>
-              <button
-                onClick={() => setFlyout(null)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, color: 'rgba(255,255,255,0.25)' }}
-              >
-                <X style={{ width: 13, height: 13 }} />
-              </button>
-            </div>
-
-            {/* Lista de submódulos */}
-            <div style={{
-              flex: 1, overflowY: 'auto', padding: '8px',
-              scrollbarWidth: 'none',
-            }}>
-              {activeFlyoutModule?.subModules?.map(sub => {
-                const subActive = isActive(sub.path);
-                return (
-                  <Link
-                    key={sub.path}
-                    to={sub.path}
-                    onClick={() => { setFlyout(null); onNavigate?.(); }}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      padding: '9px 10px', borderRadius: 8, marginBottom: 1,
-                      textDecoration: 'none',
-                      background: subActive ? 'rgba(212,175,55,0.1)' : 'transparent',
-                      border: subActive ? '1px solid rgba(212,175,55,0.2)' : '1px solid transparent',
-                      color: subActive ? '#D4AF37' : 'rgba(255,255,255,0.4)',
-                      fontSize: 12,
-                      transition: 'all 0.1s',
-                    }}
-                    onMouseEnter={e => { if (!subActive) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.75)'; } }}
-                    onMouseLeave={e => { if (!subActive) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; } }}
-                  >
-                    {sub.name}
-                    {subActive && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4AF37', flexShrink: 0 }} />}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Footer */}
-            <div style={{
-              borderTop: '1px solid rgba(255,255,255,0.06)',
-              padding: '10px 12px',
-              display: 'flex', alignItems: 'center', gap: 8,
-            }}>
-              <div style={{
-                width: 26, height: 26, borderRadius: 7, flexShrink: 0,
-                background: 'linear-gradient(135deg,#7D1F2C,#D4AF37)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontSize: 9, fontWeight: 700,
-              }}>
-                {initials}
-              </div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {usuario?.nome_completo?.split(' ')[0] ?? 'Usuário'}
-                </p>
-                <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 10, margin: 0, textTransform: 'capitalize' }}>
-                  {usuario?.cargo ?? usuario?.nivel ?? '—'}
-                </p>
-              </div>
-              <button onClick={logout} title="Sair" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 2 }}>
-                <LogOut style={{ width: 13, height: 13 }} />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
-}
+};
+
+export default SidebarModern;
