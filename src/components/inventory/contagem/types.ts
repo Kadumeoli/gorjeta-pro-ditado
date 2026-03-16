@@ -9,6 +9,7 @@ export interface ContagemItem {
   item_nome: string;
   item_codigo: string;
   unidade_medida: string;
+  grupo_contagem: GrupoContagem;
   quantidade_sistema: number;
   quantidade_contada: number | null;
   valor_unitario: number;
@@ -31,6 +32,8 @@ export interface Contagem {
   criado_em: string;
   finalizado_em: string | null;
   processado_em: string | null;
+  token_acesso: string | null;
+  token_expira_em: string | null;
 }
 
 export interface ContagemResultado {
@@ -39,8 +42,24 @@ export interface ContagemResultado {
 }
 
 export type ContagemView = 'list' | 'new' | 'counting' | 'result' | 'history';
-
 export type FilterMode = 'todos' | 'pendentes' | 'contados' | 'divergentes' | 'sobras' | 'perdas';
+
+export type GrupoContagem =
+  | 'estoque_seco'
+  | 'bebidas'
+  | 'alimentos'
+  | 'hortifruti'
+  | 'estoque_central'
+  | 'outros';
+
+export const GRUPOS: { key: GrupoContagem; label: string; emoji: string; cor: string }[] = [
+  { key: 'bebidas',         label: 'Bebidas',        emoji: '🍺', cor: 'blue'   },
+  { key: 'alimentos',      label: 'Alimentos',      emoji: '🥩', cor: 'red'    },
+  { key: 'hortifruti',     label: 'Hortifruti',     emoji: '🥦', cor: 'green'  },
+  { key: 'estoque_seco',   label: 'Estoque Seco',   emoji: '🌾', cor: 'yellow' },
+  { key: 'estoque_central',label: 'Central',        emoji: '📦', cor: 'purple' },
+  { key: 'outros',         label: 'Outros',         emoji: '🗂️', cor: 'gray'   },
+];
 
 export interface ContagemStats {
   totalItens: number;
