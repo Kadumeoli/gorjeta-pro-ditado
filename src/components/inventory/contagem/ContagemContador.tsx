@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import {
   Search, ArrowLeft, Calculator, TrendingUp, TrendingDown,
   Loader2, Check, Minus, AlertCircle, QrCode, Copy, CheckCheck,
-  Filter, EyeOff, Eye, RotateCcw,
+  Filter, EyeOff, Eye, RotateCcw, PackagePlus, X,
 } from 'lucide-react';
 import type { ContagemItem, GrupoContagem } from './types';
 import { GRUPOS } from './types';
@@ -53,6 +53,13 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
   const [gerandoToken, setGerandoToken]   = useState(false);
   const [filtroPendentes, setFiltroPendentes] = useState(false);
 
+  // ── Adicionar item ausente ─────────────────────────────────────────────────
+  const [showAdicionarPanel, setShowAdicionarPanel] = useState(false);
+  const [buscaAusente, setBuscaAusente]             = useState(');
+  const [itensDisponiveis, setItensDisponiveis]     = useState<{id:string;nome:string;codigo:string;unidade_medida:string;custo_medio:number;grupo_contagem:string}[]>([]);
+  const [loadingDisponiveis, setLoadingDisponiveis] = useState(false);
+  const [adicionando, setAdicionando]               = useState<string | null>(null);
+
   const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -66,6 +73,76 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
     catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
+
+  // ── Buscar itens do catálogo que não estão na contagem ────────────────────
+  const buscarItensAusentes = useCallback(async (termo: string) => {
+    if (termo.length < 2) { setItensDisponiveis([]); return; }
+    setLoadingDisponiveis(true);
+    try {
+      const { supabase: sb } = await import('../../../lib/supabase');
+      const { data, error } = await sb
+        .from('itens_estoque')
+        .select('id, nome, codigo, unidade_medida, custo_medio, grupo_contagem')
+        .eq('status', 'ativo')
+        .eq('ignorar_contagem', false)
+        .or(`nome.ilike.%${termo}%,codigo.ilike.%${termo}%`)
+        .order('nome')
+        .limit(15);
+      if (error) throw error;
+      const idsNaContagem = new Set(itens.map(i => i.item_estoque_id));
+      setItensDisponiveis((data || []).filter((d: any) => !idsNaContagem.has(d.id)));
+    } catch { setItensDisponiveis([]); }
+    finally { setLoadingDisponiveis(false); }
+  }, [itens]);
+
+  useEffect(() => {
+    const t = setTimeout(() => buscarItensAusentes(buscaAusente), 400);
+    return () => clearTimeout(t);
+  }, [buscaAusente, buscarItensAusentes]);
+
+  // ── Adicionar item ausente com saldo sistema = 0 ──────────────────────────
+  const adicionarItemAusente = useCallback(async (item: typeof itensDisponiveis[0]) => {
+    setAdicionando(item.id);
+    try {
+      const { supabase: sb } = await import('../../../lib/supabase');
+      const { data, error } = await sb
+        .from('contagens_estoque_itens')
+        .insert({
+          contagem_id:        contagemId,
+          item_estoque_id:    item.id,
+          quantidade_sistema: 0,
+          valor_unitario:     item.custo_medio || 0,
+        })
+        .select('id')
+        .single();
+      if (error) throw error;
+
+      const novoItem: ContagemItem = {
+        id:                       data.id,
+        item_estoque_id:          item.id,
+        item_nome:                item.nome,
+        item_codigo:              item.codigo || '',
+        unidade_medida:           item.unidade_medida,
+        grupo_contagem:           (item.grupo_contagem as any) || 'outros',
+        ignorar_contagem_cadastro: false,
+        ignorar_override:         null,
+        quantidade_sistema:       0,
+        quantidade_contada:       null,
+        valor_unitario:           item.custo_medio || 0,
+        diferenca:                null,
+        valor_diferenca:          null,
+        observacao:               null,
+      };
+      setItens(prev => [...prev, novoItem]);
+      setItensDisponiveis(prev => prev.filter(i => i.id !== item.id));
+      setBuscaAusente('');
+      setShowAdicionarPanel(false);
+    } catch (e: any) {
+      alert('Erro ao adicionar item: ' + (e as any).message);
+    } finally {
+      setAdicionando(null);
+    }
+  }, [contagemId, itensDisponiveis]);
 
   // Salva com debounce
   const salvarCampo = useCallback((itemId: string, updates: Parameters<typeof service.atualizarItem>[1]) => {
@@ -231,6 +308,18 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
               {gerandoToken ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
               <span className="hidden sm:inline">Link Celular</span>
             </button>
+            {/* Botão adicionar item ausente */}
+            <button
+              onClick={() => { setShowAdicionarPanel(!showAdicionarPanel); setBuscaAusente(''); setItensDisponiveis([]); }}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${
+                showAdicionarPanel
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'border-blue-300 text-blue-700 hover:bg-blue-50'
+              }`}
+              title="Adicionar item que não aparece na lista">
+              <PackagePlus className="w-4 h-4" />
+              <span className="hidden sm:inline">+ Item</span>
+            </button>
             <button
               onClick={onFinalizar}
               disabled={statsGeral.contados === 0}
@@ -274,6 +363,70 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
           </div>
         )}
       </div>
+
+      {/* ── PAINEL ADICIONAR ITEM AUSENTE ── */}
+      {showAdicionarPanel && (
+        <div className="bg-blue-50 border-b border-blue-200 px-4 py-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-blue-800 flex items-center gap-1.5">
+              <PackagePlus className="w-3.5 h-3.5" />
+              Adicionar item com saldo zero ou ausente da lista
+            </p>
+            <button onClick={() => setShowAdicionarPanel(false)} className="text-blue-400 hover:text-blue-600">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-[11px] text-blue-600">
+            Use quando o item foi vendido e zerou antes da contagem, ou quando o sistema está desatualizado mas o produto existe fisicamente.
+          </p>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-blue-400" />
+            <input
+              type="text"
+              value={buscaAusente}
+              onChange={e => setBuscaAusente(e.target.value)}
+              placeholder="Buscar item por nome ou código..."
+              autoFocus
+              className="w-full pl-8 pr-3 py-2 text-sm border border-blue-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {loadingDisponiveis && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 animate-spin text-blue-400" />
+            )}
+          </div>
+          {buscaAusente.length >= 2 && itensDisponiveis.length === 0 && !loadingDisponiveis && (
+            <p className="text-xs text-blue-500 italic px-1">
+              Nenhum item encontrado fora da contagem com este nome.
+            </p>
+          )}
+          {itensDisponiveis.length > 0 && (
+            <div className="bg-white border border-blue-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto shadow-sm">
+              {itensDisponiveis.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => adicionarItemAusente(item)}
+                  disabled={adicionando === item.id}
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm hover:bg-blue-50 border-b border-blue-50 last:border-0 transition-colors disabled:opacity-50"
+                >
+                  <div className="text-left min-w-0">
+                    <p className="font-medium text-gray-900 truncate">{item.nome}</p>
+                    <p className="text-[11px] text-gray-400">
+                      {item.codigo && <span className="mr-2">{item.codigo}</span>}
+                      {item.unidade_medida}
+                      <span className="ml-2 text-orange-500 font-semibold">Sistema: 0</span>
+                    </p>
+                  </div>
+                  <div className="ml-3 shrink-0">
+                    {adicionando === item.id
+                      ? <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                      : <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">Adicionar</span>
+                    }
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── ABAS DE GRUPO ── */}
       <div className="bg-white border-b border-gray-100 sticky top-[88px] z-10">
