@@ -61,7 +61,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Verificar se há usuário logado no localStorage
     const savedUser = localStorage.getItem('sistema_usuario');
     if (savedUser) {
       try {
@@ -69,39 +68,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUsuario(user);
         loadPermissoes(user.id);
       } catch (err) {
-        console.error('AuthContext: Erro ao carregar usuário salvo:', err);
         localStorage.removeItem('sistema_usuario');
       }
     } else {
-      // Para desenvolvimento, usar usuário master padrão
       setUsuarioMasterDesenvolvimento();
     }
-    
     setLoading(false);
   }, []);
 
   const setUsuarioMasterDesenvolvimento = async () => {
     try {
-      console.log('AuthContext: Tentando carregar usuário master para desenvolvimento');
-
-      // Verificar se supabase está disponível
       if (!supabase) {
-        console.warn('AuthContext: Supabase não configurado, usando usuário temporário');
-        const tempUser: Usuario = {
-          id: 'temp-master',
-          nome_completo: 'Administrador',
-          email: 'admin@ditadopopular.com',
-          nivel: 'master',
-          ativo: true,
-          cargo: 'Administrador',
-          departamento: 'Administração'
-        };
-        setUsuario(tempUser);
+        setUsuario(usuarioTempPadrao());
         setPermissoes([]);
-        return tempUser;
+        return;
       }
 
-      // Buscar usuário master para desenvolvimento
       const { data: userData, error: userError } = await supabase
         .from('usuarios_sistema')
         .select('*')
@@ -109,73 +91,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .eq('ativo', true)
         .maybeSingle();
 
-      console.log('AuthContext: Resultado da busca do usuário master:', { userData, userError });
       if (userError || !userData) {
-        console.warn('AuthContext: Usuário master não encontrado, criando usuário temporário');
-        const tempUser: Usuario = {
-          id: 'temp-master',
-          nome_completo: 'Administrador',
-          email: 'admin@ditadopopular.com',
-          nivel: 'master',
-          ativo: true,
-          cargo: 'Administrador',
-          departamento: 'Administração'
-        };
-        setUsuario(tempUser);
-        setPermissoes([]); // Master tem acesso total
-        console.log('AuthContext: Usuário temporário criado:', tempUser);
-        return tempUser;
-      }
-
-      console.log('AuthContext: Usuário master encontrado, carregando permissões...');
-      setUsuario(userData);
-      await loadPermissoes(userData.id);
-    } catch (err) {
-      console.error('AuthContext: Erro ao carregar usuário master:', err);
-      // Fallback para usuário temporário se houver erro ao buscar no DB
-      const tempUser: Usuario = {
-        id: 'temp-master',
-        nome_completo: 'Administrador',
-        email: 'admin@ditadopopular.com',
-        nivel: 'master',
-        ativo: true,
-        cargo: 'Administrador',
-        departamento: 'Administração'
-      };
-      setUsuario(tempUser);
-      setPermissoes([]);
-      console.log('AuthContext: Fallback para usuário temporário devido a erro:', err);
-    }
-  };
-
-  const loadPermissoes = async (usuarioId: string) => {
-    try {
-      console.log('AuthContext: Carregando permissões para usuário:', usuarioId);
-
-      // Verificar se supabase está disponível
-      if (!supabase) {
-        console.warn('AuthContext: Supabase não configurado, permissões vazias');
+        setUsuario(usuarioTempPadrao());
         setPermissoes([]);
         return;
       }
 
-      // Primeiro, verificar se o usuário é master
-      const { data: userData, error: userError } = await supabase
+      setUsuario(userData);
+      await loadPermissoes(userData.id);
+    } catch (err) {
+      setUsuario(usuarioTempPadrao());
+      setPermissoes([]);
+    }
+  };
+
+  const usuarioTempPadrao = (): Usuario => ({
+    id: 'temp-master',
+    nome_completo: 'Administrador',
+    email: 'admin@ditadopopular.com',
+    nivel: 'master',
+    ativo: true,
+    cargo: 'Administrador',
+    departamento: 'Administração'
+  });
+
+  const loadPermissoes = async (usuarioId: string) => {
+    try {
+      if (!supabase) { setPermissoes([]); return; }
+
+      const { data: userData } = await supabase
         .from('usuarios_sistema')
         .select('nivel')
         .eq('id', usuarioId)
         .single();
 
-      if (userError) {
-        console.error('AuthContext: Erro ao verificar nível do usuário:', userError);
-        throw userError;
-      }
-
-      console.log('AuthContext: Nível do usuário:', userData.nivel);
-
-      // Se for master, não precisa carregar permissões específicas
-      if (userData.nivel === 'master') {
-        console.log('AuthContext: Usuário é master, não carregando permissões específicas');
+      // Master não precisa de permissões específicas
+      if (!userData || userData.nivel === 'master') {
         setPermissoes([]);
         return;
       }
@@ -186,10 +137,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .eq('usuario_id', usuarioId);
 
       if (error) throw error;
-      
-      console.log('AuthContext: Permissões brutas encontradas:', data); // Log para dados brutos
 
-      const permissoesProcessadas: Permissao[] = (data || []).map(p => ({
+      setPermissoes((data || []).map(p => ({
         modulo_slug: p.modulo_slug,
         aba_slug: p.aba_slug,
         pode_visualizar: p.pode_visualizar,
@@ -197,19 +146,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         pode_editar: p.pode_editar,
         pode_excluir: p.pode_excluir,
         pode_aprovar: p.pode_aprovar
-      }));
-
-      console.log('AuthContext: Permissões processadas:', permissoesProcessadas);
-
-      // Log para mostrar o status de pode_visualizar por módulo/aba
-      console.log('AuthContext: Status de pode_visualizar por módulo/aba:');
-      permissoesProcessadas.forEach(p => {
-        console.log(`  - Módulo: ${p.modulo_slug}${p.aba_slug ? `, Aba: ${p.aba_slug}` : ''}, Pode Visualizar: ${p.pode_visualizar}`);
-      });
-
-      setPermissoes(permissoesProcessadas);
+      })));
     } catch (err) {
-      console.error('AuthContext: Erro ao carregar permissões:', err);
+      console.error('Erro ao carregar permissões:', err);
       setPermissoes([]);
     }
   };
@@ -219,16 +158,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      console.log('AuthContext: Tentando login com email:', email);
-
-      // Verificar se supabase está disponível
       if (!supabase) {
-        console.error('AuthContext: Supabase não configurado');
         setError('Erro de configuração do sistema');
         return false;
       }
 
-      // Buscar usuário por email
       const { data: userData, error: userError } = await supabase
         .from('usuarios_sistema')
         .select('*')
@@ -236,28 +170,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .eq('ativo', true)
         .maybeSingle();
 
-      if (userError) {
-        console.log('AuthContext: Erro ao buscar usuário:', userError);
-        setError('Erro ao conectar com o banco de dados');
-        return false;
-      }
+      if (userError) { setError('Erro ao conectar com o banco de dados'); return false; }
+      if (!userData)  { setError('Email ou senha incorretos'); return false; }
 
-      if (!userData) {
-        console.log('AuthContext: Usuário não encontrado para email:', email);
-        setError('Email ou senha incorretos');
-        return false;
-      }
+      if (senha.length < 3) { setError('Senha deve ter pelo menos 3 caracteres'); return false; }
 
-      console.log('AuthContext: Usuário encontrado:', userData);
-
-      // TODO: Implementar verificação de senha com bcrypt
-      // Por enquanto, aceitar qualquer senha para desenvolvimento
-      if (senha.length < 3) {
-        setError('Senha deve ter pelo menos 3 caracteres');
-        return false;
-      }
-
-      // Atualizar último acesso
       await supabase
         .from('usuarios_sistema')
         .update({ ultimo_acesso: new Date().toISOString() })
@@ -265,15 +182,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUsuario(userData);
       localStorage.setItem('sistema_usuario', JSON.stringify(userData));
-
-      // Carregar permissões do usuário
-      console.log('AuthContext: Carregando permissões após login...');
       await loadPermissoes(userData.id);
-
-      console.log('AuthContext: Login realizado com sucesso');
       return true;
     } catch (err) {
-      console.error('AuthContext: Erro no login:', err);
+      console.error('Erro no login:', err);
       setError('Erro interno do sistema');
       return false;
     } finally {
@@ -287,134 +199,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('sistema_usuario');
   };
 
-  const verificarPermissao = (moduloSlug: string, abaSlug?: string, acao: string = 'visualizar'): boolean => {
-    console.log(`AuthContext: Verificando permissão - Módulo: ${moduloSlug}, Aba: ${abaSlug || 'N/A'}, Ação: ${acao}`);
-    console.log('AuthContext: Usuário atual:', usuario);
-    console.log('AuthContext: Permissões atuais:', permissoes);
-    
-    if (!usuario) {
-      console.log('AuthContext: Acesso negado - usuário não logado');
-      return false;
-    }
-    
-    // Master tem acesso total
-    if (usuario.nivel === 'master' || usuario.id === 'temp-master') {
-      console.log('AuthContext: Acesso permitido - usuário é master');
-      return true; // temp-master para desenvolvimento
-    }
-    
-    // Buscar permissão específica
-    const permissao = permissoes.find(p => {
-      if (abaSlug) {
-        return p.modulo_slug === moduloSlug && p.aba_slug === abaSlug;
-      } else {
-        return p.modulo_slug === moduloSlug && !p.aba_slug;
-      }
-    });
+  const isMaster = (): boolean =>
+    usuario?.nivel === 'master' || usuario?.id === 'temp-master';
 
-    console.log('AuthContext: Permissão encontrada:', permissao);
+  const verificarPermissao = (moduloSlug: string, abaSlug?: string, acao = 'visualizar'): boolean => {
+    if (!usuario) return false;
+    if (isMaster()) return true;
 
-    if (!permissao) {
-      console.log('AuthContext: Acesso negado - permissão não encontrada');
-      return false;
-    }
+    const permissao = permissoes.find(p =>
+      abaSlug
+        ? p.modulo_slug === moduloSlug && p.aba_slug === abaSlug
+        : p.modulo_slug === moduloSlug && !p.aba_slug
+    );
+    if (!permissao) return false;
 
     switch (acao) {
-      case 'visualizar':
-        const podeVisualizar = permissao.pode_visualizar;
-        console.log(`AuthContext: Pode visualizar: ${podeVisualizar}`);
-        return podeVisualizar;
-      case 'criar':
-        const podeCriar = permissao.pode_criar;
-        console.log(`AuthContext: Pode criar: ${podeCriar}`);
-        return podeCriar;
-      case 'editar':
-        const podeEditar = permissao.pode_editar;
-        console.log(`AuthContext: Pode editar: ${podeEditar}`);
-        return podeEditar;
-      case 'excluir':
-        const podeExcluir = permissao.pode_excluir;
-        console.log(`AuthContext: Pode excluir: ${podeExcluir}`);
-        return podeExcluir;
-      case 'aprovar':
-        const podeAprovar = permissao.pode_aprovar;
-        console.log(`AuthContext: Pode aprovar: ${podeAprovar}`);
-        return podeAprovar;
-      default:
-        console.log('AuthContext: Acesso negado - ação inválida');
-        return false;
+      case 'visualizar': return !!permissao.pode_visualizar;
+      case 'criar':      return !!permissao.pode_criar;
+      case 'editar':     return !!permissao.pode_editar;
+      case 'excluir':    return !!permissao.pode_excluir;
+      case 'aprovar':    return !!permissao.pode_aprovar;
+      default:           return false;
     }
   };
 
   const temAcessoModulo = (moduloSlug: string): boolean => {
-    console.log(`AuthContext: Verificando acesso ao módulo ${moduloSlug} para usuário:`, usuario);
-    
-    if (!usuario) {
-      console.log('AuthContext: Usuário não logado, negando acesso');
-      return false;
-    }
-    
-    // Master tem acesso a tudo
-    if (usuario.nivel === 'master' || usuario.id === 'temp-master') {
-      console.log(`AuthContext: Usuário ${usuario.nome_completo} é master, permitindo acesso ao módulo ${moduloSlug}`);
-      return true;
-    }
-    
-    // Para outros usuários, verificar se tem acesso ao módulo
-    const temAcesso = permissoes.some(p => p.modulo_slug === moduloSlug && (p.pode_visualizar || false));
-    console.log(`AuthContext: Usuário ${usuario.nome_completo} (${usuario.nivel}) verificando acesso ao módulo ${moduloSlug}:`, temAcesso);
-    console.log('AuthContext: Permissões disponíveis:', permissoes.filter(p => p.modulo_slug === moduloSlug));
-    return temAcesso;
+    if (!usuario) return false;
+    if (isMaster()) return true;
+    return permissoes.some(p => p.modulo_slug === moduloSlug && (p.pode_visualizar || false));
   };
 
   const temAcessoAba = (moduloSlug: string, abaSlug: string): boolean => {
-    console.log(`AuthContext: Verificando acesso à aba ${abaSlug} do módulo ${moduloSlug}`);
-    
-    if (!usuario) {
-      console.log('AuthContext: Usuário não logado, negando acesso à aba');
-      return false;
-    }
-    
-    // Master tem acesso a tudo
-    if (usuario.nivel === 'master' || usuario.id === 'temp-master') {
-      console.log(`AuthContext: Usuário ${usuario.nome_completo} é master, permitindo acesso à aba ${abaSlug}`);
-      return true;
-    }
-    
+    if (!usuario) return false;
+    if (isMaster()) return true;
     return verificarPermissao(moduloSlug, abaSlug, 'visualizar');
   };
 
-  const isMaster = (): boolean => {
-    return usuario?.nivel === 'master';
-  };
-
-  const isAdmin = (): boolean => {
-    return usuario?.nivel === 'admin' || usuario?.nivel === 'master';
-  };
+  const isAdmin = (): boolean =>
+    usuario?.nivel === 'admin' || usuario?.nivel === 'master';
 
   const refreshPermissoes = async (): Promise<void> => {
-    if (usuario) {
-      await loadPermissoes(usuario.id);
-    }
-  };
-
-  const value: AuthContextType = {
-    usuario,
-    permissoes,
-    loading,
-    error,
-    login,
-    logout,
-    verificarPermissao,
-    temAcessoModulo,
-    temAcessoAba,
-    isMaster,
-    isAdmin,
-    refreshPermissoes
+    if (usuario) await loadPermissoes(usuario.id);
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{
+      usuario, permissoes, loading, error,
+      login, logout,
+      verificarPermissao, temAcessoModulo, temAcessoAba,
+      isMaster, isAdmin, refreshPermissoes
+    }}>
       {children}
     </AuthContext.Provider>
   );
