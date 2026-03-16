@@ -86,7 +86,7 @@ const Finance: React.FC = () => {
   const hoje = dayjs().format('dddd, D [de] MMMM [de] YYYY');
 
   return (
-    <div className="flex flex-col min-h-screen -m-6 lg:-m-8" style={{ background: '#f4f2f0' }}>
+    <div className="flex flex-col min-h-screen -m-6 lg:-m-8" style={{ background: '#0d0f1a' }}>
 
       {/* ── HERO DA SEÇÃO ── */}
       <div
@@ -166,7 +166,7 @@ const Finance: React.FC = () => {
       </div>
 
       {/* ── CONTEÚDO ── */}
-      <div className="flex-1 px-6 lg:px-8 py-6">
+      <div className="flex-1 px-6 lg:px-8 py-6" style={{ background: '#0d0f1a' }}>
         {CONTENT[tab] ?? (
           <div className="flex items-center justify-center py-24">
             <p className="text-gray-400 text-sm">Módulo em desenvolvimento</p>
