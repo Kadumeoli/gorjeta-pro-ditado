@@ -82,8 +82,8 @@ function AppContent() {
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar toggleSidebar={() => setSidebarOpen(v => !v)} user={usuario} onLogout={logout} />
 
-        <main className="flex-1 overflow-y-auto bg-gray-100">
-          <div className="p-6 lg:p-8 min-h-full">
+        <main className="flex-1 overflow-y-auto" style={{ background: '#10121a' }}>
+          <div className="p-6 lg:p-8 min-h-full" style={{ background: '#10121a' }}>
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/"                    element={<ProtectedRoute moduloSlug="dashboard">     <DashboardHome />       </ProtectedRoute>} />
