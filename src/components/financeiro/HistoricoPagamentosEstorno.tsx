@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { RotateCcw, AlertTriangle, DollarSign, Calendar, FileText, Trash2, Eye, Search, Filter, X } from 'lucide-react';
+import { RotateCcw, AlertTriangle, DollarSign, Calendar, FileText, Trash2, Search, Filter, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import dayjs from 'dayjs';
 
 interface PagamentoRealizado {
-  id: string;
-  valor: number;
-  data: string;
-  descricao: string;
-  conta_pagar_id: string;
-  conta_pagar_descricao?: string;
-  fornecedor_nome?: string;
-  forma_pagamento_nome?: string;
-  conta_bancaria?: string;
-  observacoes?: string;
-  criado_em: string;
+  id: string; valor: number; data: string; descricao: string;
+  conta_pagar_id: string; conta_pagar_descricao?: string; fornecedor_nome?: string;
+  forma_pagamento_nome?: string; conta_bancaria?: string; observacoes?: string; criado_em: string;
+}
+interface EstornoHistorico {
+  id: string; fluxo_caixa_id: string; valor_estornado: number;
+  motivo?: string; data_estorno: string; estornado_por_nome?: string;
 }
 
-interface EstornoHistorico {
-  id: string;
-  fluxo_caixa_id: string;
-  valor_estornado: number;
-  motivo?: string;
-  data_estorno: string;
-  estornado_por_nome?: string;
-}
+const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+const S = {
+  card: '#12141f', border: 'rgba(255,255,255,0.06)', label: 'rgba(255,255,255,0.35)',
+  text: 'rgba(255,255,255,0.85)', muted: 'rgba(255,255,255,0.5)',
+  green: '#4ade80', red: '#f87171', gold: '#D4AF37', orange: '#fb923c',
+  greenBg: 'rgba(74,222,128,0.08)', redBg: 'rgba(248,113,113,0.08)',
+  orangeBg: 'rgba(251,146,60,0.08)', orangeBorder: 'rgba(251,146,60,0.15)',
+  redBorder: 'rgba(248,113,113,0.15)', wine: '#7D1F2C', modalBg: '#0f1020',
+};
+
+const inputStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.05)', border: `1px solid ${S.border}`, borderRadius: 8,
+  padding: '7px 12px', color: S.text, fontSize: 12, outline: 'none', width: '100%', boxSizing: 'border-box',
+};
 
 const HistoricoPagamentosEstorno: React.FC = () => {
   const [pagamentos, setPagamentos] = useState<PagamentoRealizado[]>([]);
@@ -35,483 +38,167 @@ const HistoricoPagamentosEstorno: React.FC = () => {
   const [selectedPagamento, setSelectedPagamento] = useState<PagamentoRealizado | null>(null);
   const [motivo, setMotivo] = useState('');
   const [observacoes, setObservacoes] = useState('');
-
   const [searchTerm, setSearchTerm] = useState('');
-  const [dataInicio, setDataInicio] = useState(dayjs().subtract(30, 'days').format('YYYY-MM-DD'));
+  const [dataInicio, setDataInicio] = useState(dayjs().subtract(30,'days').format('YYYY-MM-DD'));
   const [dataFim, setDataFim] = useState(dayjs().format('YYYY-MM-DD'));
-  const [statusFiltro, setStatusFiltro] = useState<'todos' | 'ativos' | 'estornados'>('todos');
-  const [valorMin, setValorMin] = useState('');
-  const [valorMax, setValorMax] = useState('');
-  const [formaPagamentoFiltro, setFormaPagamentoFiltro] = useState('');
+  const [statusFiltro, setStatusFiltro] = useState<'todos'|'ativos'|'estornados'>('todos');
   const [showFiltros, setShowFiltros] = useState(false);
-  const [searchEstornos, setSearchEstornos] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, [dataInicio, dataFim]);
-
-  const verificarJaEstornado = (fluxoId: string) => {
-    return estornos.some(e => e.fluxo_caixa_id === fluxoId);
-  };
+  useEffect(() => { fetchData(); }, [dataInicio, dataFim]);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const { data: pagamentosData, error: pagamentosError } = await supabase
-        .from('fluxo_caixa')
-        .select(`
-          id,
-          valor,
-          data,
-          descricao,
-          conta_pagar_id,
-          observacoes,
-          criado_em,
-          conta_bancaria_id,
-          contas_pagar:conta_pagar_id (
-            id,
-            descricao,
-            forma_pagamento_id,
-            fornecedores:fornecedor_id (
-              nome
-            ),
-            formas_pagamento:forma_pagamento_id (
-              nome
-            )
-          ),
-          bancos_contas:conta_bancaria_id (
-            banco,
-            tipo_conta
-          )
-        `)
-        .eq('tipo', 'saida')
-        .not('conta_pagar_id', 'is', null)
-        .gte('data', dataInicio)
-        .lte('data', dataFim)
-        .order('data', { ascending: false });
-
-      if (pagamentosError) throw pagamentosError;
-
-      const formattedPagamentos = (pagamentosData || []).map((p: any) => ({
-        id: p.id,
-        valor: p.valor,
-        data: p.data,
-        descricao: p.descricao,
-        conta_pagar_id: p.conta_pagar_id,
-        conta_pagar_descricao: p.contas_pagar?.descricao,
-        fornecedor_nome: p.contas_pagar?.fornecedores?.nome,
-        forma_pagamento_nome: p.contas_pagar?.formas_pagamento?.nome,
-        conta_bancaria: p.bancos_contas ? `${p.bancos_contas.banco} - ${p.bancos_contas.tipo_conta}` : null,
-        observacoes: p.observacoes,
-        criado_em: p.criado_em
-      }));
-
-      setPagamentos(formattedPagamentos);
-
-      const { data: estornosData, error: estornosError } = await supabase
-        .from('historico_estornos_pagamento')
-        .select('*')
-        .gte('data_estorno', dataInicio)
-        .lte('data_estorno', dataFim)
-        .order('data_estorno', { ascending: false });
-
-      if (estornosError) throw estornosError;
-      setEstornos(estornosData || []);
-
-    } catch (err) {
-      console.error('Error fetching data:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true); setError(null);
+      const { data: pd, error: pe } = await supabase.from('fluxo_caixa').select(`
+        id, valor, data, descricao, conta_pagar_id, observacoes, criado_em, conta_bancaria_id,
+        contas_pagar:conta_pagar_id(id, descricao, fornecedores:fornecedor_id(nome), formas_pagamento:forma_pagamento_id(nome)),
+        bancos_contas:conta_bancaria_id(banco, tipo_conta)
+      `).eq('tipo','saida').not('conta_pagar_id','is',null).gte('data',dataInicio).lte('data',dataFim).order('data',{ascending:false});
+      if (pe) throw pe;
+      setPagamentos((pd||[]).map((p: any) => ({ id:p.id, valor:p.valor, data:p.data, descricao:p.descricao, conta_pagar_id:p.conta_pagar_id, conta_pagar_descricao:p.contas_pagar?.descricao, fornecedor_nome:p.contas_pagar?.fornecedores?.nome, forma_pagamento_nome:p.contas_pagar?.formas_pagamento?.nome, conta_bancaria: p.bancos_contas?`${p.bancos_contas.banco} - ${p.bancos_contas.tipo_conta}`:null, observacoes:p.observacoes, criado_em:p.criado_em })));
+      const { data: ed, error: ee } = await supabase.from('historico_estornos_pagamento').select('*').gte('data_estorno',dataInicio).lte('data_estorno',dataFim).order('data_estorno',{ascending:false});
+      if (ee) throw ee;
+      setEstornos(ed||[]);
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
-  const pagamentosFiltrados = pagamentos.filter((p) => {
-    const jaEstornado = verificarJaEstornado(p.id);
+  const verificarJaEstornado = (id: string) => estornos.some(e => e.fluxo_caixa_id === id);
 
-    if (statusFiltro === 'ativos' && jaEstornado) return false;
-    if (statusFiltro === 'estornados' && !jaEstornado) return false;
-
+  const filtrados = pagamentos.filter(p => {
+    const est = verificarJaEstornado(p.id);
+    if (statusFiltro === 'ativos' && est) return false;
+    if (statusFiltro === 'estornados' && !est) return false;
     if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const matchFornecedor = p.fornecedor_nome?.toLowerCase().includes(term);
-      const matchDescricao = p.descricao?.toLowerCase().includes(term) ||
-                           p.conta_pagar_descricao?.toLowerCase().includes(term);
-      const matchObservacoes = p.observacoes?.toLowerCase().includes(term);
-
-      if (!matchFornecedor && !matchDescricao && !matchObservacoes) return false;
+      const t = searchTerm.toLowerCase();
+      return p.fornecedor_nome?.toLowerCase().includes(t) || p.descricao?.toLowerCase().includes(t) || p.conta_pagar_descricao?.toLowerCase().includes(t);
     }
-
-    if (valorMin && p.valor < parseFloat(valorMin)) return false;
-    if (valorMax && p.valor > parseFloat(valorMax)) return false;
-
-    if (formaPagamentoFiltro && p.forma_pagamento_nome !== formaPagamentoFiltro) return false;
-
     return true;
   });
-
-  const formasPagamento = Array.from(new Set(pagamentos.map(p => p.forma_pagamento_nome).filter(Boolean)));
-
-  const estornosFiltrados = estornos.filter((e) => {
-    if (searchEstornos) {
-      const term = searchEstornos.toLowerCase();
-      const matchMotivo = e.motivo?.toLowerCase().includes(term);
-      const matchUsuario = e.estornado_por_nome?.toLowerCase().includes(term);
-
-      if (!matchMotivo && !matchUsuario) return false;
-    }
-
-    return true;
-  });
-
-  const limparFiltros = () => {
-    setSearchTerm('');
-    setDataInicio(dayjs().subtract(30, 'days').format('YYYY-MM-DD'));
-    setDataFim(dayjs().format('YYYY-MM-DD'));
-    setStatusFiltro('todos');
-    setValorMin('');
-    setValorMax('');
-    setFormaPagamentoFiltro('');
-    setSearchEstornos('');
-  };
-
-  const abrirModalEstorno = (pagamento: PagamentoRealizado) => {
-    setSelectedPagamento(pagamento);
-    setMotivo('');
-    setObservacoes('');
-    setShowEstornoModal(true);
-  };
-
-  const fecharModal = () => {
-    setShowEstornoModal(false);
-    setSelectedPagamento(null);
-    setMotivo('');
-    setObservacoes('');
-  };
 
   const handleEstornar = async () => {
-    if (!selectedPagamento) return;
-
-    if (!motivo.trim()) {
-      alert('Por favor, informe o motivo do estorno');
-      return;
-    }
-
-    if (!confirm(`Confirma o estorno do pagamento de ${formatCurrency(selectedPagamento.valor)}?\n\nEsta ação não pode ser desfeita e irá:\n- Excluir o lançamento do fluxo de caixa\n- Ajustar o saldo da conta a pagar\n- Registrar o estorno no histórico`)) {
-      return;
-    }
-
+    if (!selectedPagamento || !motivo.trim()) { alert('Informe o motivo'); return; }
+    if (!confirm(`Confirma estorno de ${fmt(selectedPagamento.valor)}?`)) return;
     try {
-      setLoading(true);
-      setError(null);
-
-      const { data, error: rpcError } = await supabase.rpc('estornar_pagamento_parcial', {
-        p_fluxo_caixa_id: selectedPagamento.id,
-        p_motivo: motivo,
-        p_observacoes: observacoes || null
-      });
-
+      setLoading(true); setError(null);
+      const { data, error: rpcError } = await supabase.rpc('estornar_pagamento_parcial', { p_fluxo_caixa_id: selectedPagamento.id, p_motivo: motivo, p_observacoes: observacoes||null });
       if (rpcError) throw rpcError;
-
       const result = data as { success: boolean; error?: string; message?: string };
-
-      if (!result.success) {
-        throw new Error(result.error || 'Erro ao processar estorno');
-      }
-
-      alert(result.message || 'Estorno realizado com sucesso!');
-      fecharModal();
+      if (!result.success) throw new Error(result.error || 'Erro ao processar estorno');
+      alert(result.message || 'Estorno realizado!');
+      setShowEstornoModal(false); setSelectedPagamento(null); setMotivo(''); setObservacoes('');
       fetchData();
-    } catch (err) {
-      console.error('Error processing reversal:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao processar estorno');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+  const modalOverlay: React.CSSProperties = { position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:50, padding:16 };
+  const modalCard: React.CSSProperties = { background: S.modalBg, border:`1px solid ${S.border}`, borderRadius:16, padding:24, width:'100%', maxWidth:480 };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Histórico de Pagamentos e Estornos</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowFiltros(!showFiltros)}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            Filtros
-          </button>
-          <button
-            onClick={fetchData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-          >
-            Atualizar
-          </button>
+    <div style={{ display:'flex', flexDirection:'column', gap:16, fontFamily:'-apple-system,BlinkMacSystemFont,"Inter",sans-serif' }}>
+
+      {/* Aviso */}
+      <div style={{ background: S.orangeBg, border:`1px solid ${S.orangeBorder}`, borderRadius:10, padding:'12px 16px', display:'flex', gap:10 }}>
+        <AlertTriangle style={{ width:16, height:16, color:S.orange, flexShrink:0, marginTop:1 }} />
+        <div>
+          <p style={{ color: S.orange, fontSize:12, fontWeight:600, margin:'0 0 2px' }}>Atenção ao estornar pagamentos</p>
+          <p style={{ color:'rgba(251,146,60,0.7)', fontSize:11, margin:0 }}>O estorno excluirá o lançamento do fluxo de caixa e ajustará o saldo da conta a pagar. Ação irreversível.</p>
         </div>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded-lg flex items-center">
-          <AlertTriangle className="w-5 h-5 mr-2" />
-          {error}
-        </div>
-      )}
-
-      {showFiltros && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h4 className="text-base font-medium text-gray-900 flex items-center">
-              <Filter className="w-5 h-5 mr-2" />
-              Filtros de Pesquisa
-            </h4>
-            <button
-              onClick={limparFiltros}
-              className="text-sm text-gray-600 hover:text-gray-800 flex items-center"
-            >
-              <X className="w-4 h-4 mr-1" />
-              Limpar Filtros
+      {/* Filtros */}
+      <div style={{ background: S.card, borderRadius:12, border:`1px solid ${S.border}`, overflow:'hidden' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px', borderBottom: showFiltros ? `1px solid ${S.border}` : 'none' }}>
+          <div style={{ display:'flex', gap:8 }}>
+            {(['todos','ativos','estornados'] as const).map(s => (
+              <button key={s} onClick={() => setStatusFiltro(s)} style={{ padding:'5px 12px', borderRadius:6, border:'none', cursor:'pointer', fontSize:11, fontWeight:500,
+                background: statusFiltro===s ? S.wine : 'rgba(255,255,255,0.05)',
+                color: statusFiltro===s ? 'white' : S.label }}>
+                {s === 'todos' ? 'Todos' : s === 'ativos' ? 'Ativos' : 'Estornados'}
+              </button>
+            ))}
+          </div>
+          <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+            <span style={{ color:S.label, fontSize:11 }}>{filtrados.length} reg.</span>
+            <button onClick={() => setShowFiltros(!showFiltros)} style={{ display:'flex', alignItems:'center', gap:5, background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:7, padding:'5px 10px', color:S.muted, fontSize:11, cursor:'pointer' }}>
+              <Filter style={{ width:12, height:12 }} /> Filtros
             </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Buscar
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Fornecedor, descrição..."
-                  className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Data Início
-              </label>
-              <input
-                type="date"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Data Fim
-              </label>
-              <input
-                type="date"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                value={statusFiltro}
-                onChange={(e) => setStatusFiltro(e.target.value as any)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              >
-                <option value="todos">Todos</option>
-                <option value="ativos">Apenas Ativos</option>
-                <option value="estornados">Apenas Estornados</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Forma de Pagamento
-              </label>
-              <select
-                value={formaPagamentoFiltro}
-                onChange={(e) => setFormaPagamentoFiltro(e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              >
-                <option value="">Todas</option>
-                {formasPagamento.map((forma) => (
-                  <option key={forma} value={forma}>{forma}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Valor Mínimo
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={valorMin}
-                onChange={(e) => setValorMin(e.target.value)}
-                placeholder="0,00"
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Valor Máximo
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={valorMax}
-                onChange={(e) => setValorMax(e.target.value)}
-                placeholder="0,00"
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              />
-            </div>
-          </div>
-
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              {pagamentosFiltrados.length} pagamento(s) encontrado(s)
-            </p>
-            <button
-              onClick={() => setShowFiltros(false)}
-              className="text-sm text-[#7D1F2C] hover:text-[#5D1520] font-medium"
-            >
-              Ocultar Filtros
+            <button onClick={fetchData} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:7, padding:'5px 10px', color:S.muted, fontSize:11, cursor:'pointer' }}>
+              Atualizar
             </button>
           </div>
         </div>
-      )}
-
-      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-        <div className="flex items-start">
-          <AlertTriangle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3" />
-          <div>
-            <p className="text-sm font-medium text-yellow-800">
-              Atenção ao estornar pagamentos
-            </p>
-            <p className="text-sm text-yellow-700 mt-1">
-              O estorno irá excluir o lançamento do fluxo de caixa e ajustar automaticamente o saldo da conta a pagar.
-              Esta ação é irreversível e deve ser usada apenas para corrigir erros.
-            </p>
+        {showFiltros && (
+          <div style={{ padding:'12px 16px', display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:10 }}>
+            <div style={{ position:'relative' }}>
+              <Search style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', width:12, height:12, color:S.label }} />
+              <input type="text" placeholder="Buscar fornecedor, descrição..." value={searchTerm} onChange={e=>setSearchTerm(e.target.value)} style={{ ...inputStyle, paddingLeft:28 }} />
+            </div>
+            <input type="date" value={dataInicio} onChange={e=>setDataInicio(e.target.value)} style={inputStyle} />
+            <input type="date" value={dataFim} onChange={e=>setDataFim(e.target.value)} style={inputStyle} />
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Pagamentos Recentes */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h4 className="text-base font-medium text-gray-900">Pagamentos Realizados</h4>
-            <span className="text-sm text-gray-600">
-              {pagamentosFiltrados.length} de {pagamentos.length} pagamento(s)
-            </span>
-          </div>
-        </div>
+      {error && <div style={{ background: S.redBg, border:`1px solid ${S.redBorder}`, borderRadius:10, padding:'10px 14px', color: S.red, fontSize:12 }}>{error}</div>}
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]"></div>
+      {/* Tabela pagamentos */}
+      {loading ? (
+        <div style={{ display:'flex', justifyContent:'center', padding:48 }}>
+          <div style={{ width:32, height:32, borderRadius:'50%', border:`2px solid rgba(212,175,55,0.15)`, borderTop:`2px solid ${S.gold}`, animation:'spin 0.8s linear infinite' }} />
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        </div>
+      ) : (
+        <div style={{ background: S.card, borderRadius:12, border:`1px solid ${S.border}`, overflow:'hidden' }}>
+          <div style={{ padding:'12px 16px', borderBottom:`1px solid ${S.border}` }}>
+            <span style={{ color: S.text, fontSize:13, fontWeight:600 }}>Pagamentos Realizados</span>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead>
-                <tr className="text-left bg-gray-50 border-b">
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Data
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fornecedor
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Descrição
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Valor Pago
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Forma Pagamento
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ações
-                  </th>
+                <tr style={{ background:'rgba(255,255,255,0.03)' }}>
+                  {['Data','Fornecedor','Descrição','Valor','Forma Pagamento','Status','Ações'].map((h,i) => (
+                    <th key={i} style={{ padding:'9px 14px', textAlign: i>=3 && i<6 ? 'right' : 'left', fontSize:10, fontWeight:600, color:S.label, textTransform:'uppercase', letterSpacing:'0.6px', borderBottom:`1px solid ${S.border}`, whiteSpace:'nowrap' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {pagamentosFiltrados.map((pagamento) => {
-                  const jaEstornado = verificarJaEstornado(pagamento.id);
-
+              <tbody>
+                {filtrados.map(p => {
+                  const est = verificarJaEstornado(p.id);
                   return (
-                    <tr key={pagamento.id} className={jaEstornado ? 'bg-red-50' : 'hover:bg-gray-50'}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                          {dayjs(pagamento.data).format('DD/MM/YYYY')}
-                        </div>
+                    <tr key={p.id} style={{ borderBottom:`1px solid rgba(255,255,255,0.03)`, background: est ? 'rgba(248,113,113,0.04)' : 'transparent' }}
+                      onMouseEnter={e=>(e.currentTarget as HTMLElement).style.background = est?'rgba(248,113,113,0.06)':'rgba(255,255,255,0.02)'}
+                      onMouseLeave={e=>(e.currentTarget as HTMLElement).style.background = est?'rgba(248,113,113,0.04)':'transparent'}>
+                      <td style={{ padding:'9px 14px', whiteSpace:'nowrap' }}>
+                        <span style={{ color:S.text, fontSize:12 }}>{dayjs(p.data).format('DD/MM/YY')}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {pagamento.fornecedor_nome || '-'}
-                        </div>
+                      <td style={{ padding:'9px 14px' }}>
+                        <span style={{ color:S.text, fontSize:12, fontWeight:500 }}>{p.fornecedor_nome||'—'}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{pagamento.conta_pagar_descricao || pagamento.descricao}</div>
-                        {pagamento.observacoes && (
-                          <div className="text-xs text-gray-500 mt-1">{pagamento.observacoes}</div>
-                        )}
+                      <td style={{ padding:'9px 14px' }}>
+                        <p style={{ color:S.text, fontSize:12, margin:0 }}>{p.conta_pagar_descricao||p.descricao}</p>
+                        {p.observacoes && <p style={{ color:S.label, fontSize:10, margin:0 }}>{p.observacoes}</p>}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm font-medium text-red-600">
-                          <DollarSign className="w-4 h-4 mr-1" />
-                          {formatCurrency(pagamento.valor)}
-                        </div>
+                      <td style={{ padding:'9px 14px', textAlign:'right', whiteSpace:'nowrap' }}>
+                        <span style={{ color:S.red, fontSize:12, fontWeight:700, fontFamily:'monospace' }}>{fmt(p.valor)}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {pagamento.forma_pagamento_nome || '-'}
-                        </div>
-                        {pagamento.conta_bancaria && (
-                          <div className="text-xs text-gray-500">{pagamento.conta_bancaria}</div>
-                        )}
+                      <td style={{ padding:'9px 14px', textAlign:'right' }}>
+                        <p style={{ color:S.muted, fontSize:12, margin:0 }}>{p.forma_pagamento_nome||'—'}</p>
+                        {p.conta_bancaria && <p style={{ color:S.label, fontSize:10, margin:0 }}>{p.conta_bancaria}</p>}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {jaEstornado ? (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
-                            ESTORNADO
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                            Ativo
-                          </span>
-                        )}
+                      <td style={{ padding:'9px 14px', textAlign:'right', whiteSpace:'nowrap' }}>
+                        <span style={{ display:'inline-block', padding:'3px 10px', borderRadius:20, fontSize:10, fontWeight:600,
+                          background: est ? S.redBg : 'rgba(74,222,128,0.1)',
+                          color: est ? S.red : S.green }}>
+                          {est ? 'Estornado' : 'Ativo'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {!jaEstornado && (
-                          <button
-                            onClick={() => abrirModalEstorno(pagamento)}
-                            className="px-3 py-1 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 flex items-center"
-                          >
-                            <RotateCcw className="w-4 h-4 mr-1" />
-                            Estornar
+                      <td style={{ padding:'9px 14px', whiteSpace:'nowrap' }}>
+                        {!est && (
+                          <button onClick={() => { setSelectedPagamento(p); setMotivo(''); setObservacoes(''); setShowEstornoModal(true); }}
+                            style={{ display:'flex', alignItems:'center', gap:5, background:S.orangeBg, border:`1px solid ${S.orangeBorder}`, borderRadius:7, padding:'5px 10px', color:S.orange, fontSize:11, cursor:'pointer', fontWeight:500 }}>
+                            <RotateCcw style={{ width:11, height:11 }} /> Estornar
                           </button>
                         )}
                       </td>
@@ -520,199 +207,80 @@ const HistoricoPagamentosEstorno: React.FC = () => {
                 })}
               </tbody>
             </table>
-
-            {pagamentosFiltrados.length === 0 && (
-              <div className="text-center py-12">
-                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum pagamento encontrado</h3>
-                <p className="text-gray-500">
-                  {pagamentos.length === 0
-                    ? 'Não há pagamentos realizados no período selecionado.'
-                    : 'Nenhum pagamento corresponde aos filtros aplicados.'}
-                </p>
-                {pagamentos.length > 0 && (
-                  <button
-                    onClick={limparFiltros}
-                    className="mt-4 text-[#7D1F2C] hover:text-[#5D1520] text-sm font-medium"
-                  >
-                    Limpar filtros
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Histórico de Estornos */}
-      {estornos.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-base font-medium text-gray-900">Histórico de Estornos</h4>
-              <span className="text-sm text-gray-600">
-                {estornosFiltrados.length} de {estornos.length} estorno(s)
-              </span>
-            </div>
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                value={searchEstornos}
-                onChange={(e) => setSearchEstornos(e.target.value)}
-                placeholder="Buscar por motivo ou usuário..."
-                className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-              />
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left bg-gray-50 border-b">
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Data Estorno
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Valor Estornado
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Motivo
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estornado Por
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {estornosFiltrados.map((estorno) => (
-                  <tr key={estorno.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {dayjs(estorno.data_estorno).format('DD/MM/YYYY HH:mm')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-medium text-red-600">
-                        {formatCurrency(estorno.valor_estornado)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{estorno.motivo || '-'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {estorno.estornado_por_nome || 'Sistema'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {estornosFiltrados.length === 0 && estornos.length > 0 && (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Nenhum estorno corresponde à busca realizada.</p>
-                <button
-                  onClick={() => setSearchEstornos('')}
-                  className="mt-2 text-[#7D1F2C] hover:text-[#5D1520] text-sm font-medium"
-                >
-                  Limpar busca
-                </button>
-              </div>
-            )}
+            {filtrados.length === 0 && <div style={{ textAlign:'center', padding:40, color:S.label, fontSize:13 }}>Nenhum pagamento encontrado</div>}
           </div>
         </div>
       )}
 
-      {/* Modal de Estorno */}
+      {/* Histórico de estornos */}
+      {estornos.length > 0 && (
+        <div style={{ background: S.card, borderRadius:12, border:`1px solid ${S.border}`, overflow:'hidden' }}>
+          <div style={{ padding:'12px 16px', borderBottom:`1px solid ${S.border}` }}>
+            <span style={{ color:S.text, fontSize:13, fontWeight:600 }}>Histórico de Estornos</span>
+          </div>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse' }}>
+              <thead>
+                <tr style={{ background:'rgba(255,255,255,0.03)' }}>
+                  {['Data Estorno','Valor','Motivo','Estornado Por'].map((h,i) => (
+                    <th key={i} style={{ padding:'9px 14px', textAlign:'left', fontSize:10, fontWeight:600, color:S.label, textTransform:'uppercase', letterSpacing:'0.6px', borderBottom:`1px solid ${S.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {estornos.map(e => (
+                  <tr key={e.id} style={{ borderBottom:`1px solid rgba(255,255,255,0.03)` }}>
+                    <td style={{ padding:'9px 14px' }}><span style={{ color:S.text, fontSize:12 }}>{dayjs(e.data_estorno).format('DD/MM/YY HH:mm')}</span></td>
+                    <td style={{ padding:'9px 14px' }}><span style={{ color:S.red, fontSize:12, fontWeight:700, fontFamily:'monospace' }}>{fmt(e.valor_estornado)}</span></td>
+                    <td style={{ padding:'9px 14px' }}><span style={{ color:S.muted, fontSize:12 }}>{e.motivo||'—'}</span></td>
+                    <td style={{ padding:'9px 14px' }}><span style={{ color:S.label, fontSize:12 }}>{e.estornado_por_nome||'Sistema'}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Estorno */}
       {showEstornoModal && selectedPagamento && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <RotateCcw className="w-5 h-5 mr-2 text-orange-600" />
-              Estornar Pagamento
+        <div style={modalOverlay}>
+          <div style={modalCard}>
+            <h3 style={{ color:S.text, fontSize:15, fontWeight:700, margin:'0 0 16px', display:'flex', alignItems:'center', gap:8 }}>
+              <RotateCcw style={{ width:16, height:16, color:S.orange }} /> Estornar Pagamento
             </h3>
-
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-start">
-                <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-3" />
-                <div className="text-sm">
-                  <p className="font-medium text-red-800">Atenção: Esta ação é irreversível!</p>
-                  <p className="text-red-700 mt-1">
-                    O pagamento será estornado e o saldo da conta a pagar será ajustado automaticamente.
-                  </p>
-                </div>
-              </div>
+            <div style={{ background:S.redBg, border:`1px solid ${S.redBorder}`, borderRadius:10, padding:'10px 14px', marginBottom:14, display:'flex', gap:8 }}>
+              <AlertTriangle style={{ width:14, height:14, color:S.red, flexShrink:0, marginTop:1 }} />
+              <p style={{ color:S.red, fontSize:11, margin:0 }}>Esta ação é irreversível e excluirá o lançamento do fluxo de caixa.</p>
             </div>
-
-            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm space-y-2">
-                <div>
-                  <span className="font-medium text-gray-700">Fornecedor:</span>{' '}
-                  <span className="text-gray-900">{selectedPagamento.fornecedor_nome}</span>
+            <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:9, padding:'10px 12px', marginBottom:16, border:`1px solid ${S.border}` }}>
+              {[['Fornecedor', selectedPagamento.fornecedor_nome||'—'], ['Descrição', selectedPagamento.conta_pagar_descricao||selectedPagamento.descricao], ['Data', dayjs(selectedPagamento.data).format('DD/MM/YYYY')], ['Valor', fmt(selectedPagamento.valor)]].map(([l,v],i) => (
+                <div key={i} style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                  <span style={{ color:S.label, fontSize:11 }}>{l}</span>
+                  <span style={{ color: l==='Valor' ? S.red : S.text, fontSize:12, fontWeight: l==='Valor' ? 700 : 400 }}>{v}</span>
                 </div>
-                <div>
-                  <span className="font-medium text-gray-700">Descrição:</span>{' '}
-                  <span className="text-gray-900">{selectedPagamento.conta_pagar_descricao || selectedPagamento.descricao}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-700">Data Pagamento:</span>{' '}
-                  <span className="text-gray-900">{dayjs(selectedPagamento.data).format('DD/MM/YYYY')}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-700">Valor Pago:</span>{' '}
-                  <span className="text-red-600 font-medium">{formatCurrency(selectedPagamento.valor)}</span>
-                </div>
-              </div>
+              ))}
             </div>
-
-            <div className="space-y-4">
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Motivo do Estorno *
-                </label>
-                <select
-                  value={motivo}
-                  onChange={(e) => setMotivo(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                >
+                <label style={{ color:S.label, fontSize:11, display:'block', marginBottom:4 }}>Motivo *</label>
+                <select value={motivo} onChange={e=>setMotivo(e.target.value)} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'8px 12px', color: motivo ? S.text : S.label, fontSize:12, outline:'none', width:'100%' }}>
                   <option value="">Selecione o motivo...</option>
-                  <option value="Pagamento duplicado">Pagamento duplicado</option>
-                  <option value="Valor incorreto">Valor incorreto</option>
-                  <option value="Conta errada">Conta errada</option>
-                  <option value="Fornecedor errado">Fornecedor errado</option>
-                  <option value="Solicitação do fornecedor">Solicitação do fornecedor</option>
-                  <option value="Outro erro operacional">Outro erro operacional</option>
+                  {['Pagamento duplicado','Valor incorreto','Conta errada','Fornecedor errado','Solicitação do fornecedor','Outro erro operacional'].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
                 </select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observações Adicionais
-                </label>
-                <textarea
-                  value={observacoes}
-                  onChange={(e) => setObservacoes(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={3}
-                  placeholder="Descreva detalhes do motivo do estorno..."
-                />
+                <label style={{ color:S.label, fontSize:11, display:'block', marginBottom:4 }}>Observações</label>
+                <textarea value={observacoes} onChange={e=>setObservacoes(e.target.value)} rows={2} placeholder="Detalhes adicionais..." style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'8px 12px', color:S.text, fontSize:12, outline:'none', width:'100%', resize:'vertical', boxSizing:'border-box' }} />
               </div>
             </div>
-
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={fecharModal}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                disabled={loading}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleEstornar}
-                disabled={loading || !motivo}
-                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50 flex items-center"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                {loading ? 'Processando...' : 'Confirmar Estorno'}
+            <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:20 }}>
+              <button onClick={()=>setShowEstornoModal(false)} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'8px 14px', color:S.muted, fontSize:12, cursor:'pointer' }}>Cancelar</button>
+              <button onClick={handleEstornar} disabled={loading||!motivo}
+                style={{ display:'flex', alignItems:'center', gap:6, background:S.orangeBg, border:`1px solid ${S.orangeBorder}`, borderRadius:8, padding:'8px 14px', color:S.orange, fontSize:12, cursor:'pointer', fontWeight:600, opacity:loading||!motivo?0.5:1 }}>
+                <RotateCcw style={{ width:13, height:13 }} /> {loading?'Processando...':'Confirmar Estorno'}
               </button>
             </div>
           </div>
