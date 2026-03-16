@@ -1,36 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Plus,
-  Search,
-  Filter,
-  Edit,
-  Trash2,
-  Eye,
-  EyeOff,
-  Package,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle,
-  Download,
-  FileText,
-  BarChart3,
-  TrendingUp,
-  Activity,
-  Target,
-  Zap,
-  X
+  Plus, Search, Filter, Edit, Trash2, Eye, EyeOff,
+  Package, DollarSign, AlertTriangle, CheckCircle,
+  Download, Target, X, ClipboardX
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { exportToExcel } from '../../utils/reportGenerator';
 import dayjs from 'dayjs';
 
+// ── Grupos de contagem (espelha o banco) ──────────────────────────────────────
+const GRUPOS_CONTAGEM = [
+  { value: 'bebidas',          label: '🍺 Bebidas'       },
+  { value: 'alimentos',       label: '🥩 Alimentos'     },
+  { value: 'hortifruti',      label: '🥦 Hortifruti'    },
+  { value: 'estoque_seco',    label: '🌾 Estoque Seco'  },
+  { value: 'estoque_central', label: '📦 Central'       },
+  { value: 'outros',          label: '🗂️ Outros'        },
+];
+
 interface ItemEstoque {
   id: string;
   nome: string;
+  codigo?: string;
+  descricao?: string;
+  tipo_item?: string;
+  categoria?: string;
   unidade_medida: string;
   custo_medio: number;
   status: string;
   estoque_minimo: number;
+  ponto_reposicao?: number;
+  tem_validade?: boolean;
+  observacoes?: string;
+  estoque_nativo_id?: string;
+  tipo_compra?: string;
+  fornecedor_padrao_id?: string;
+  grupo_contagem?: string;
+  ignorar_contagem?: boolean;
   criado_em: string;
   atualizado_em: string;
   quantidade_total?: number;
@@ -49,9 +55,12 @@ interface FormData {
   observacoes: string;
   status: 'ativo' | 'inativo';
   estoque_minimo: number;
+  ponto_reposicao: number;
   estoque_nativo_id: string;
   tipo_compra: 'fornecedor' | 'rua' | 'ambos';
   fornecedor_padrao_id: string;
+  grupo_contagem: string;
+  ignorar_contagem: boolean;
 }
 
 interface IndicadoresItens {
@@ -64,717 +73,409 @@ interface IndicadoresItens {
 }
 
 const ItensEstoque: React.FC = () => {
-  const [itens, setItens] = useState<ItemEstoque[]>([]);
-  const [estoques, setEstoques] = useState<any[]>([]);
+  const [itens, setItens]             = useState<ItemEstoque[]>([]);
+  const [estoques, setEstoques]       = useState<any[]>([]);
   const [fornecedores, setFornecedores] = useState<any[]>([]);
   const [indicadores, setIndicadores] = useState<IndicadoresItens | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState<string | null>(null);
+  const [showForm, setShowForm]       = useState(false);
   const [editingItem, setEditingItem] = useState<ItemEstoque | null>(null);
-  
+
   // Filtros
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'ativo' | 'inativo'>('all');
+  const [searchTerm, setSearchTerm]       = useState('');
+  const [statusFilter, setStatusFilter]   = useState<'all' | 'ativo' | 'inativo'>('all');
   const [unidadeFilter, setUnidadeFilter] = useState('all');
-  const [custoFilter, setCustoFilter] = useState<'all' | 'sem_custo' | 'com_custo'>('all');
+  const [custoFilter, setCustoFilter]     = useState<'all' | 'sem_custo' | 'com_custo'>('all');
   const [estoqueFilter, setEstoqueFilter] = useState('all');
+  const [grupoFilter, setGrupoFilter]     = useState('all');
+  const [ignorarFilter, setIgnorarFilter] = useState<'all' | 'ignorados' | 'nao_ignorados'>('all');
 
-  // Verificar se há filtros ativos
-  const hasActiveFilters = statusFilter !== 'all' || unidadeFilter !== 'all' || custoFilter !== 'all' || searchTerm !== '' || estoqueFilter !== 'all';
+  const hasActiveFilters = statusFilter !== 'all' || unidadeFilter !== 'all' || custoFilter !== 'all'
+    || searchTerm !== '' || estoqueFilter !== 'all' || grupoFilter !== 'all' || ignorarFilter !== 'all';
 
-  // Função para limpar todos os filtros
   const clearAllFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('all');
-    setUnidadeFilter('all');
-    setCustoFilter('all');
-    setEstoqueFilter('all');
-    // Limpar filtros salvos
+    setSearchTerm(''); setStatusFilter('all'); setUnidadeFilter('all');
+    setCustoFilter('all'); setEstoqueFilter('all'); setGrupoFilter('all'); setIgnorarFilter('all');
     localStorage.removeItem('itensEstoque_filters');
-    // Recarregar dados
     fetchData();
   };
-  
+
   const [formData, setFormData] = useState<FormData>({
-    nome: '',
-    codigo: '',
-    descricao: '',
-    tipo_item: 'insumo',
-    categoria: 'Geral',
-    unidade_medida: 'unidade',
-    custo_medio: 0,
-    tem_validade: false,
-    observacoes: '',
-    status: 'ativo',
-    estoque_minimo: 0,
-    estoque_nativo_id: '',
-    tipo_compra: 'ambos',
-    fornecedor_padrao_id: ''
+    nome: '', codigo: '', descricao: '', tipo_item: 'insumo', categoria: 'Geral',
+    unidade_medida: 'unidade', custo_medio: 0, tem_validade: false, observacoes: '',
+    status: 'ativo', estoque_minimo: 0, ponto_reposicao: 0,
+    estoque_nativo_id: '', tipo_compra: 'ambos', fornecedor_padrao_id: '',
+    grupo_contagem: 'outros', ignorar_contagem: false,
   });
 
-  // Categorias fixas predefinidas
   const categoriasPredefinidas = [
-    'Geral',
-    'Bebidas',
-    'Bebidas Alcoólicas',
-    'Bebidas Não Alcoólicas',
-    'Carnes',
-    'Frutos do Mar',
-    'Vegetais',
-    'Temperos e Condimentos',
-    'Laticínios',
-    'Grãos e Cereais',
-    'Massas',
-    'Pães e Padaria',
-    'Doces e Sobremesas',
-    'Óleos e Gorduras',
-    'Produtos de Limpeza',
-    'Descartáveis',
-    'Utensílios',
-    'Equipamentos',
-    'Material de Escritório',
-    'Uniformes',
-    'Outros'
+    'Geral','Bebidas','Bebidas Alcoólicas','Bebidas Não Alcoólicas','Carnes',
+    'Frutos do Mar','Vegetais','Temperos e Condimentos','Laticínios','Grãos e Cereais',
+    'Massas','Pães e Padaria','Doces e Sobremesas','Óleos e Gorduras',
+    'Produtos de Limpeza','Descartáveis','Utensílios','Equipamentos',
+    'Material de Escritório','Uniformes','Outros',
   ];
 
   const unidadesMedida = [
-    'unidade', 'kg', 'g', 'litro', 'ml', 'metro', 'cm', 'dúzia', 'caixa', 'pacote', 'lata', 'garrafa'
+    'unidade','kg','g','litro','ml','metro','cm','dúzia','caixa','pacote','lata','garrafa',
   ];
 
-  // Estados para criação de nova categoria
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryName, setNewCategoryName]           = useState('');
 
   useEffect(() => {
-    // Carregar filtros salvos do localStorage (se existirem)
-    const savedFilters = localStorage.getItem('itensEstoque_filters');
-    if (savedFilters) {
+    const saved = localStorage.getItem('itensEstoque_filters');
+    if (saved) {
       try {
-        const filters = JSON.parse(savedFilters);
-        if (filters.statusFilter) setStatusFilter(filters.statusFilter);
-        if (filters.unidadeFilter) setUnidadeFilter(filters.unidadeFilter);
-        if (filters.custoFilter) setCustoFilter(filters.custoFilter);
-        if (filters.estoqueFilter) setEstoqueFilter(filters.estoqueFilter);
-      } catch (e) {
-        console.error('Erro ao carregar filtros salvos:', e);
-      }
+        const f = JSON.parse(saved);
+        if (f.statusFilter)   setStatusFilter(f.statusFilter);
+        if (f.unidadeFilter)  setUnidadeFilter(f.unidadeFilter);
+        if (f.custoFilter)    setCustoFilter(f.custoFilter);
+        if (f.estoqueFilter)  setEstoqueFilter(f.estoqueFilter);
+        if (f.grupoFilter)    setGrupoFilter(f.grupoFilter);
+        if (f.ignorarFilter)  setIgnorarFilter(f.ignorarFilter);
+      } catch {}
     }
-
-    fetchData();
-    fetchIndicadores();
-    fetchEstoques();
-    fetchFornecedores();
+    fetchData(); fetchIndicadores(); fetchEstoques(); fetchFornecedores();
   }, []);
 
-  // Auto-aplicar filtros quando mudarem
   useEffect(() => {
-    // Salvar filtros no localStorage
     localStorage.setItem('itensEstoque_filters', JSON.stringify({
-      statusFilter,
-      unidadeFilter,
-      custoFilter,
-      estoqueFilter
+      statusFilter, unidadeFilter, custoFilter, estoqueFilter, grupoFilter, ignorarFilter,
     }));
-
-    // Recarregar dados (skip na primeira renderização)
-    if (estoques.length > 0) {
-      fetchData();
-    }
-  }, [statusFilter, unidadeFilter, custoFilter, estoqueFilter]);
+    if (estoques.length > 0) fetchData();
+  }, [statusFilter, unidadeFilter, custoFilter, estoqueFilter, grupoFilter, ignorarFilter]);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
+      setLoading(true); setError(null);
       let query = supabase.from('itens_estoque').select('*');
-
-      // Aplicar filtros
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
-      if (unidadeFilter !== 'all') {
-        query = query.eq('unidade_medida', unidadeFilter);
-      }
-
-      if (custoFilter === 'sem_custo') {
-        query = query.eq('custo_medio', 0);
-      } else if (custoFilter === 'com_custo') {
-        query = query.gt('custo_medio', 0);
-      }
+      if (statusFilter !== 'all')     query = query.eq('status', statusFilter);
+      if (unidadeFilter !== 'all')    query = query.eq('unidade_medida', unidadeFilter);
+      if (grupoFilter !== 'all')      query = query.eq('grupo_contagem', grupoFilter);
+      if (ignorarFilter === 'ignorados')     query = query.eq('ignorar_contagem', true);
+      if (ignorarFilter === 'nao_ignorados') query = query.eq('ignorar_contagem', false);
+      if (custoFilter === 'sem_custo') query = query.eq('custo_medio', 0);
+      if (custoFilter === 'com_custo') query = query.gt('custo_medio', 0);
 
       const { data, error } = await query.order('nome');
-
       if (error) throw error;
 
-      // Buscar saldos - filtrar por estoque se selecionado
-      let saldosQuery = supabase
-        .from('saldos_estoque')
-        .select('item_id, quantidade_atual, valor_total, estoque_id');
-
-      if (estoqueFilter !== 'all') {
-        saldosQuery = saldosQuery.eq('estoque_id', estoqueFilter);
-      }
-
+      let saldosQuery = supabase.from('saldos_estoque').select('item_id, quantidade_atual, valor_total, estoque_id');
+      if (estoqueFilter !== 'all') saldosQuery = saldosQuery.eq('estoque_id', estoqueFilter);
       const { data: saldosData, error: saldosError } = await saldosQuery;
-
       if (saldosError) throw saldosError;
 
-      // Agregar saldos por item
-      const saldosPorItem = (saldosData || []).reduce((acc: any, saldo: any) => {
-        if (!acc[saldo.item_id]) {
-          acc[saldo.item_id] = { quantidade_total: 0, valor_total: 0 };
-        }
-        acc[saldo.item_id].quantidade_total += parseFloat(saldo.quantidade_atual || 0);
-        acc[saldo.item_id].valor_total += parseFloat(saldo.valor_total || 0);
+      const saldosPorItem = (saldosData || []).reduce((acc: any, s: any) => {
+        if (!acc[s.item_id]) acc[s.item_id] = { quantidade_total: 0, valor_total: 0 };
+        acc[s.item_id].quantidade_total += parseFloat(s.quantidade_atual || 0);
+        acc[s.item_id].valor_total      += parseFloat(s.valor_total || 0);
         return acc;
       }, {});
 
-      // Adicionar saldos aos itens
-      const itensComSaldos = (data || []).map(item => ({
+      setItens((data || []).map(item => ({
         ...item,
-        quantidade_total: saldosPorItem[item.id]?.quantidade_total || 0,
-        valor_total_estoque: saldosPorItem[item.id]?.valor_total || 0
-      }));
-
-      setItens(itensComSaldos);
+        quantidade_total:    saldosPorItem[item.id]?.quantidade_total || 0,
+        valor_total_estoque: saldosPorItem[item.id]?.valor_total || 0,
+      })));
     } catch (err) {
-      console.error('Error fetching items:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar itens');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
-
   const fetchFornecedores = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('fornecedores')
-        .select('id, nome')
-        .eq('status', 'ativo')
-        .order('nome');
-
-      if (error) throw error;
-      setFornecedores(data || []);
-    } catch (err) {
-      console.error('Error fetching fornecedores:', err);
-    }
+    const { data } = await supabase.from('fornecedores').select('id, nome').eq('status', 'ativo').order('nome');
+    setFornecedores(data || []);
   };
 
   const fetchEstoques = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('estoques')
-        .select('id, nome')
-        .eq('status', true)
-        .order('nome');
-
-      if (error) throw error;
-      setEstoques(data || []);
-    } catch (err) {
-      console.error('Error fetching estoques:', err);
-    }
+    const { data } = await supabase.from('estoques').select('id, nome').eq('status', true).order('nome');
+    setEstoques(data || []);
   };
 
   const fetchIndicadores = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('itens_estoque')
-        .select('*');
-
-      if (error) throw error;
-
-      const totalItens = (data || []).length;
-      const itensAtivos = (data || []).filter(i => i.status === 'ativo').length;
-      const itensInativos = totalItens - itensAtivos;
-      const valorMedioItem = totalItens > 0 
-        ? (data || []).reduce((sum, i) => sum + (i.custo_medio || 0), 0) / totalItens
-        : 0;
-      const itensSemCusto = (data || []).filter(i => (i.custo_medio || 0) === 0).length;
-      const unidadesMedidaUnicas = new Set((data || []).map(i => i.unidade_medida)).size;
-
-      setIndicadores({
-        total_itens: totalItens,
-        itens_ativos: itensAtivos,
-        itens_inativos: itensInativos,
-        valor_medio_item: valorMedioItem,
-        itens_sem_custo: itensSemCusto,
-        unidades_medida_unicas: unidadesMedidaUnicas
-      });
-    } catch (err) {
-      console.error('Error fetching indicators:', err);
-    }
+    const { data } = await supabase.from('itens_estoque').select('*');
+    if (!data) return;
+    const total = data.length;
+    setIndicadores({
+      total_itens:           total,
+      itens_ativos:          data.filter(i => i.status === 'ativo').length,
+      itens_inativos:        data.filter(i => i.status !== 'ativo').length,
+      valor_medio_item:      total > 0 ? data.reduce((s, i) => s + (i.custo_medio || 0), 0) / total : 0,
+      itens_sem_custo:       data.filter(i => (i.custo_medio || 0) === 0).length,
+      unidades_medida_unicas: new Set(data.map(i => i.unidade_medida)).size,
+    });
   };
 
   const handleSave = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // Validações
-      if (!formData.nome || !formData.unidade_medida) {
-        throw new Error('Preencha todos os campos obrigatórios');
-      }
+      setLoading(true); setError(null);
+      if (!formData.nome || !formData.unidade_medida) throw new Error('Preencha todos os campos obrigatórios');
 
       const dataToSave = {
         ...formData,
-        custo_medio: parseFloat(formData.custo_medio.toString()) || 0,
-        estoque_minimo: parseFloat(formData.estoque_minimo.toString()) || 0,
-        estoque_nativo_id: formData.estoque_nativo_id || null,
-        fornecedor_padrao_id: formData.fornecedor_padrao_id || null
+        custo_medio:        parseFloat(formData.custo_medio.toString()) || 0,
+        estoque_minimo:     parseFloat(formData.estoque_minimo.toString()) || 0,
+        ponto_reposicao:    parseFloat(formData.ponto_reposicao.toString()) || 0,
+        estoque_nativo_id:  formData.estoque_nativo_id  || null,
+        fornecedor_padrao_id: formData.fornecedor_padrao_id || null,
       };
 
       if (editingItem) {
-        const { error } = await supabase
-          .from('itens_estoque')
-          .update({ ...dataToSave, atualizado_em: new Date().toISOString() })
-          .eq('id', editingItem.id);
-
+        const { error } = await supabase.from('itens_estoque')
+          .update({ ...dataToSave, atualizado_em: new Date().toISOString() }).eq('id', editingItem.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('itens_estoque')
-          .insert([dataToSave]);
-
+        const { error } = await supabase.from('itens_estoque').insert([dataToSave]);
         if (error) throw error;
       }
-
-      setShowForm(false);
-      setEditingItem(null);
-      resetForm();
-      fetchData();
-      fetchIndicadores();
+      setShowForm(false); setEditingItem(null); resetForm(); fetchData(); fetchIndicadores();
     } catch (err) {
-      console.error('Error saving item:', err);
       setError(err instanceof Error ? err.message : 'Erro ao salvar item');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este item?')) return;
-
     try {
       setLoading(true);
-      const { error } = await supabase
-        .from('itens_estoque')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('itens_estoque').delete().eq('id', id);
       if (error) throw error;
-      fetchData();
-      fetchIndicadores();
-    } catch (err) {
-      console.error('Error deleting item:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao excluir item');
-    } finally {
-      setLoading(false);
-    }
+      fetchData(); fetchIndicadores();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Erro ao excluir item'); }
+    finally { setLoading(false); }
   };
 
   const toggleStatus = async (item: ItemEstoque) => {
     try {
       setLoading(true);
-      const { error } = await supabase
-        .from('itens_estoque')
-        .update({ 
-          status: item.status === 'ativo' ? 'inativo' : 'ativo',
-          atualizado_em: new Date().toISOString()
-        })
+      const { error } = await supabase.from('itens_estoque')
+        .update({ status: item.status === 'ativo' ? 'inativo' : 'ativo', atualizado_em: new Date().toISOString() })
         .eq('id', item.id);
-
       if (error) throw error;
-      fetchData();
-      fetchIndicadores();
-    } catch (err) {
-      console.error('Error updating status:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao atualizar status');
-    } finally {
-      setLoading(false);
-    }
+      fetchData(); fetchIndicadores();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Erro ao atualizar status'); }
+    finally { setLoading(false); }
+  };
+
+  // Toggle rápido de ignorar_contagem direto na tabela
+  const toggleIgnorarContagem = async (item: ItemEstoque) => {
+    try {
+      const { error } = await supabase.from('itens_estoque')
+        .update({ ignorar_contagem: !item.ignorar_contagem, atualizado_em: new Date().toISOString() })
+        .eq('id', item.id);
+      if (error) throw error;
+      setItens(prev => prev.map(i => i.id === item.id ? { ...i, ignorar_contagem: !i.ignorar_contagem } : i));
+    } catch (err) { setError('Erro ao atualizar configuração de contagem'); }
   };
 
   const openForm = (item?: ItemEstoque) => {
     if (item) {
       setEditingItem(item);
       setFormData({
-        nome: item.nome,
-        codigo: item.codigo || '',
-        descricao: item.descricao || '',
-        tipo_item: item.tipo_item || 'insumo',
-        categoria: item.categoria || 'Geral',
-        unidade_medida: item.unidade_medida,
-        custo_medio: item.custo_medio || 0,
-        tem_validade: item.tem_validade || false,
-        observacoes: item.observacoes || '',
-        status: item.status,
-        estoque_minimo: item.estoque_minimo || 0,
-        estoque_nativo_id: (item as any).estoque_nativo_id || '',
-        tipo_compra: (item as any).tipo_compra || 'ambos',
-        fornecedor_padrao_id: (item as any).fornecedor_padrao_id || ''
+        nome:               item.nome,
+        codigo:             item.codigo || '',
+        descricao:          item.descricao || '',
+        tipo_item:          (item.tipo_item as any) || 'insumo',
+        categoria:          item.categoria || 'Geral',
+        unidade_medida:     item.unidade_medida,
+        custo_medio:        item.custo_medio || 0,
+        tem_validade:       item.tem_validade || false,
+        observacoes:        item.observacoes || '',
+        status:             item.status as any,
+        estoque_minimo:     item.estoque_minimo || 0,
+        ponto_reposicao:    item.ponto_reposicao || 0,
+        estoque_nativo_id:  item.estoque_nativo_id || '',
+        tipo_compra:        (item.tipo_compra as any) || 'ambos',
+        fornecedor_padrao_id: item.fornecedor_padrao_id || '',
+        grupo_contagem:     item.grupo_contagem || 'outros',
+        ignorar_contagem:   item.ignorar_contagem || false,
       });
     } else {
-      setEditingItem(null);
-      resetForm();
+      setEditingItem(null); resetForm();
     }
     setShowForm(true);
   };
 
   const resetForm = () => {
     setFormData({
-      nome: '',
-      codigo: '',
-      descricao: '',
-      tipo_item: 'insumo',
-      categoria: 'Geral',
-      unidade_medida: 'unidade',
-      custo_medio: 0,
-      tem_validade: false,
-      observacoes: '',
-      status: 'ativo',
-      estoque_minimo: 0,
-      estoque_nativo_id: '',
-      tipo_compra: 'ambos',
-      fornecedor_padrao_id: ''
+      nome: '', codigo: '', descricao: '', tipo_item: 'insumo', categoria: 'Geral',
+      unidade_medida: 'unidade', custo_medio: 0, tem_validade: false, observacoes: '',
+      status: 'ativo', estoque_minimo: 0, ponto_reposicao: 0,
+      estoque_nativo_id: '', tipo_compra: 'ambos', fornecedor_padrao_id: '',
+      grupo_contagem: 'outros', ignorar_contagem: false,
     });
-    setShowNewCategoryInput(false);
-    setNewCategoryName('');
+    setShowNewCategoryInput(false); setNewCategoryName('');
   };
 
   const handleCategoryChange = (value: string) => {
-    if (value === 'nova_categoria') {
-      setShowNewCategoryInput(true);
-      setNewCategoryName('');
-    } else {
-      setFormData({ ...formData, categoria: value });
-      setShowNewCategoryInput(false);
-    }
+    if (value === 'nova_categoria') { setShowNewCategoryInput(true); setNewCategoryName(''); }
+    else { setFormData({ ...formData, categoria: value }); setShowNewCategoryInput(false); }
   };
 
   const handleNewCategoryConfirm = () => {
     if (newCategoryName.trim()) {
       setFormData({ ...formData, categoria: newCategoryName.trim() });
-      setShowNewCategoryInput(false);
-      setNewCategoryName('');
+      setShowNewCategoryInput(false); setNewCategoryName('');
     }
   };
 
-  const handleNewCategoryCancel = () => {
-    setShowNewCategoryInput(false);
-    setNewCategoryName('');
-    setFormData({ ...formData, categoria: 'Geral' });
-  };
+  const filteredItens = itens.filter(item =>
+    item.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const filteredItens = itens.filter(item => {
-    const matchesSearch = item.nome.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const exportData = () => {
-    if (filteredItens.length === 0) {
-      alert('Não há dados para exportar');
-      return;
-    }
-
-    const headers = [
-      'Nome',
-      'Código',
-      'Tipo',
-      'Categoria',
-      'Descrição',
-      'Unidade de Medida',
-      'Custo Médio',
-      'Estoque Mínimo',
-      'Tem Validade',
-      'Status',
-      'Observações',
-      'Criado em'
-    ];
-
+    if (filteredItens.length === 0) { alert('Não há dados para exportar'); return; }
+    const headers = ['Nome','Código','Tipo','Categoria','Grupo Contagem','Não Contar','Unidade',
+                     'Custo Médio','Est. Mínimo','Validade','Status','Observações','Criado em'];
     const data = filteredItens.map(item => [
-      item.nome,
-      item.codigo || '',
-      item.tipo_item === 'insumo' ? 'Insumo' : 'Produto para Venda',
+      item.nome, item.codigo || '', item.tipo_item === 'insumo' ? 'Insumo' : 'Produto para Venda',
       item.categoria || 'Geral',
-      item.descricao || '',
-      item.unidade_medida,
-      item.custo_medio,
-      item.estoque_minimo,
-      item.tem_validade ? 'Sim' : 'Não',
-      item.status ? 'Ativo' : 'Inativo',
-      item.observacoes || '',
-      dayjs(item.criado_em).format('DD/MM/YYYY')
+      GRUPOS_CONTAGEM.find(g => g.value === item.grupo_contagem)?.label || item.grupo_contagem || '',
+      item.ignorar_contagem ? 'Sim' : 'Não',
+      item.unidade_medida, item.custo_medio, item.estoque_minimo,
+      item.tem_validade ? 'Sim' : 'Não', item.status,
+      item.observacoes || '', dayjs(item.criado_em).format('DD/MM/YYYY'),
     ]);
-
-    const fileName = `itens-estoque-${dayjs().format('YYYY-MM-DD')}`;
-    exportToExcel(data, fileName, headers);
+    exportToExcel(data, `itens-estoque-${dayjs().format('YYYY-MM-DD')}`, headers);
   };
+
+  const grupoLabel = (v?: string) => GRUPOS_CONTAGEM.find(g => g.value === v)?.label || '🗂️ Outros';
 
   return (
     <div className="space-y-6">
+      {/* Cabeçalho */}
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Itens de Estoque</h3>
           <p className="text-sm text-gray-500 mt-1">
             {estoqueFilter === 'all'
-              ? 'Visualizando quantidades somadas de todos os estoques'
-              : `Visualizando quantidades do estoque: ${estoques.find(e => e.id === estoqueFilter)?.nome || ''}`
-            }
+              ? 'Quantidades somadas de todos os estoques'
+              : `Estoque: ${estoques.find(e => e.id === estoqueFilter)?.nome || ''}`}
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-          >
-            <Download className="w-4 h-4 inline mr-2" />
-            Exportar Excel
+          <button onClick={exportData}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+            <Download className="w-4 h-4 inline mr-2" />Exportar Excel
           </button>
-          <button
-            onClick={() => openForm()}
-            className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
-          >
-            <Plus className="w-4 h-4 inline mr-2" />
-            Novo Item
+          <button onClick={() => openForm()}
+            className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]">
+            <Plus className="w-4 h-4 inline mr-2" />Novo Item
           </button>
         </div>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="p-4 bg-red-100 text-red-700 rounded-lg">{error}</div>}
 
       {/* Indicadores */}
       {indicadores && (
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <Package className="w-8 h-8 text-blue-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Itens</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {indicadores.total_itens}
-                </p>
-                <p className="text-sm text-gray-600">Cadastrados</p>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {[
+            { icon: Package,       color: 'blue',   label: 'Total Itens',   value: indicadores.total_itens,           sub: 'Cadastrados' },
+            { icon: CheckCircle,   color: 'green',  label: 'Ativos',        value: indicadores.itens_ativos,          sub: 'Em uso' },
+            { icon: EyeOff,        color: 'gray',   label: 'Inativos',      value: indicadores.itens_inativos,        sub: 'Desabilitados' },
+            { icon: DollarSign,    color: 'purple', label: 'Custo Médio',   value: formatCurrency(indicadores.valor_medio_item), sub: 'Por item' },
+            { icon: AlertTriangle, color: 'orange', label: 'Sem Custo',     value: indicadores.itens_sem_custo,       sub: 'Precisam revisão' },
+            { icon: Target,        color: 'teal',   label: 'Unidades',      value: indicadores.unidades_medida_unicas, sub: 'Diferentes' },
+          ].map(({ icon: Icon, color, label, value, sub }) => (
+            <div key={label} className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center">
+                <Icon className={`w-7 h-7 text-${color}-600 mr-3`} />
+                <div>
+                  <p className="text-xs font-medium text-gray-500">{label}</p>
+                  <p className={`text-xl font-bold text-${color}-600`}>{value}</p>
+                  <p className="text-xs text-gray-500">{sub}</p>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <CheckCircle className="w-8 h-8 text-green-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Itens Ativos</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {indicadores.itens_ativos}
-                </p>
-                <p className="text-sm text-gray-600">Em uso</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <EyeOff className="w-8 h-8 text-gray-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Itens Inativos</p>
-                <p className="text-2xl font-bold text-gray-600">
-                  {indicadores.itens_inativos}
-                </p>
-                <p className="text-sm text-gray-600">Desabilitados</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <DollarSign className="w-8 h-8 text-purple-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Custo Médio</p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {formatCurrency(indicadores.valor_medio_item)}
-                </p>
-                <p className="text-sm text-gray-600">Por item</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <AlertTriangle className="w-8 h-8 text-orange-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Sem Custo</p>
-                <p className="text-2xl font-bold text-orange-600">
-                  {indicadores.itens_sem_custo}
-                </p>
-                <p className="text-sm text-gray-600">Precisam revisão</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <Target className="w-8 h-8 text-teal-600 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Unidades</p>
-                <p className="text-2xl font-bold text-teal-600">
-                  {indicadores.unidades_medida_unicas}
-                </p>
-                <p className="text-sm text-gray-600">Diferentes</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       )}
 
-      {/* Aviso de Filtros Ativos */}
+      {/* Aviso filtros ativos */}
       {hasActiveFilters && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-yellow-400 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-yellow-800">
-                  Filtros ativos - Alguns itens podem estar ocultos
-                </p>
-                <p className="text-sm text-yellow-700 mt-1">
-                  Mostrando {filteredItens.length} de {itens.length} itens
-                </p>
-              </div>
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-400" />
+            <div>
+              <p className="text-sm font-medium text-yellow-800">Filtros ativos — alguns itens podem estar ocultos</p>
+              <p className="text-sm text-yellow-700">Mostrando {filteredItens.length} de {itens.length} itens</p>
             </div>
-            <button
-              onClick={clearAllFilters}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 text-sm font-medium"
-            >
-              Limpar Todos os Filtros
-            </button>
           </div>
+          <button onClick={clearAllFilters}
+            className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 text-sm font-medium">
+            Limpar Filtros
+          </button>
         </div>
       )}
 
       {/* Filtros */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtros de Busca
+          <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <Filter className="w-4 h-4" /> Filtros
             {hasActiveFilters && (
-              <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-                {[statusFilter !== 'all', unidadeFilter !== 'all', custoFilter !== 'all', estoqueFilter !== 'all', searchTerm !== ''].filter(Boolean).length} ativo(s)
+              <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                {[statusFilter!=='all', unidadeFilter!=='all', custoFilter!=='all',
+                  estoqueFilter!=='all', grupoFilter!=='all', ignorarFilter!=='all', searchTerm!=='']
+                  .filter(Boolean).length} ativo(s)
               </span>
             )}
           </h4>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar itens..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C] ${
-                  searchTerm !== '' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
-                }`}
-              />
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          {/* Busca */}
+          <div className="col-span-2 md:col-span-2 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input type="text" placeholder="Buscar itens..." value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className={`w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#7D1F2C] ${searchTerm ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'}`} />
           </div>
-
-          <div>
-            <select
-              value={estoqueFilter}
-              onChange={(e) => setEstoqueFilter(e.target.value)}
-              className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C] ${
-                estoqueFilter !== 'all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
-              }`}
-            >
-              <option value="all">Todos os Estoques (Soma)</option>
-              {estoques.map((estoque) => (
-                <option key={estoque.id} value={estoque.id}>
-                  {estoque.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C] ${
-                statusFilter !== 'all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
-              }`}
-            >
-              <option value="all">Todos os Status</option>
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
-            </select>
-          </div>
-
-          <div>
-            <select
-              value={unidadeFilter}
-              onChange={(e) => setUnidadeFilter(e.target.value)}
-              className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C] ${
-                unidadeFilter !== 'all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
-              }`}
-            >
-              <option value="all">Todas as Unidades</option>
-              {unidadesMedida.map((unidade) => (
-                <option key={unidade} value={unidade}>
-                  {unidade}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <select
-              value={custoFilter}
-              onChange={(e) => setCustoFilter(e.target.value as any)}
-              className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C] ${
-                custoFilter !== 'all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
-              }`}
-            >
-              <option value="all">Todos os Custos</option>
-              <option value="com_custo">Com Custo</option>
-              <option value="sem_custo">Sem Custo</option>
-            </select>
-          </div>
-
+          {/* Estoque */}
+          <select value={estoqueFilter} onChange={e => setEstoqueFilter(e.target.value)}
+            className={`border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#7D1F2C] ${estoqueFilter!=='all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'}`}>
+            <option value="all">Todos estoques</option>
+            {estoques.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
+          </select>
+          {/* Status */}
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)}
+            className={`border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#7D1F2C] ${statusFilter!=='all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'}`}>
+            <option value="all">Todos status</option>
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+          {/* Grupo contagem */}
+          <select value={grupoFilter} onChange={e => setGrupoFilter(e.target.value)}
+            className={`border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#7D1F2C] ${grupoFilter!=='all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'}`}>
+            <option value="all">Todos grupos</option>
+            {GRUPOS_CONTAGEM.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+          </select>
+          {/* Ignorar contagem */}
+          <select value={ignorarFilter} onChange={e => setIgnorarFilter(e.target.value as any)}
+            className={`border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#7D1F2C] ${ignorarFilter!=='all' ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'}`}>
+            <option value="all">Contagem: todos</option>
+            <option value="nao_ignorados">✅ Conta normalmente</option>
+            <option value="ignorados">⊘ Não contar</option>
+          </select>
+          {/* Limpar */}
           {hasActiveFilters && (
-            <div>
-              <button
-                onClick={clearAllFilters}
-                className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 flex items-center justify-center gap-2"
-                title="Limpar todos os filtros"
-              >
-                <X className="w-4 h-4" />
-                Limpar
-              </button>
-            </div>
+            <button onClick={clearAllFilters}
+              className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm">
+              <X className="w-3.5 h-3.5" /> Limpar
+            </button>
           )}
         </div>
       </div>
 
-      {/* Lista de Itens */}
+      {/* Tabela */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]" />
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -782,158 +483,93 @@ const ItensEstoque: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-left bg-gray-50 border-b">
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Código
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Categoria
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Unidade de Medida
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Custo Médio
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {estoqueFilter === 'all'
-                      ? 'Qtd. Total (Todos)'
-                      : `Qtd. em ${estoques.find(e => e.id === estoqueFilter)?.nome || 'Estoque'}`
-                    }
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Valor Total
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estoque Mínimo
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Criado em
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ações
-                  </th>
+                  {['Item','Código','Tipo','Categoria','Grupo Contagem','Não Contar',
+                    'Unidade','Custo Médio','Qtd.',`Valor Total`,'Est. Mínimo','Status','Criado em','Ações']
+                    .map(h => (
+                      <th key={h} className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredItens.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-medium text-gray-900">{item.nome}</div>
-                        {item.descricao && (
-                          <div className="text-sm text-gray-500">{item.descricao}</div>
-                        )}
-                      </div>
+              <tbody className="divide-y divide-gray-200">
+                {filteredItens.map(item => (
+                  <tr key={item.id} className={`hover:bg-gray-50 ${item.ignorar_contagem ? 'opacity-60' : ''}`}>
+                    <td className="px-4 py-3">
+                      <div className="font-medium text-gray-900 text-sm">{item.nome}</div>
+                      {item.descricao && <div className="text-xs text-gray-500 truncate max-w-[160px]">{item.descricao}</div>}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
-                        {item.codigo || '-'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{item.codigo || '-'}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                         item.tipo_item === 'insumo' ? 'text-blue-700 bg-blue-100' : 'text-green-700 bg-green-100'
                       }`}>
-                        {item.tipo_item === 'insumo' ? 'Insumo' : 'Produto para Venda'}
+                        {item.tipo_item === 'insumo' ? 'Insumo' : 'Venda'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
-                        {item.categoria || 'Geral'}
-                      </span>
+                    <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{item.categoria || 'Geral'}</td>
+
+                    {/* Grupo de contagem */}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="text-xs text-gray-700">{grupoLabel(item.grupo_contagem)}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+
+                    {/* Toggle rápido ignorar contagem */}
+                    <td className="px-4 py-3 whitespace-nowrap text-center">
+                      <button
+                        onClick={() => toggleIgnorarContagem(item)}
+                        title={item.ignorar_contagem ? 'Clique para incluir nas contagens' : 'Clique para excluir das contagens'}
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                          item.ignorar_contagem
+                            ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'
+                            : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                        }`}>
+                        {item.ignorar_contagem
+                          ? <><ClipboardX className="w-3 h-3" /> Não conta</>
+                          : <><CheckCircle className="w-3 h-3" /> Conta</>}
+                      </button>
+                    </td>
+
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
                         {item.unidade_medida}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`font-medium ${
-                        item.custo_medio > 0 ? 'text-gray-900' : 'text-orange-600'
-                      }`}>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`text-sm font-medium ${item.custo_medio > 0 ? 'text-gray-900' : 'text-orange-600'}`}>
                         {formatCurrency(item.custo_medio)}
-                      </div>
-                      {item.custo_medio === 0 && (
-                        <div className="text-xs text-orange-600 flex items-center">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Sem custo
-                        </div>
-                      )}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`font-medium ${
-                        (item.quantidade_total || 0) < item.estoque_minimo
-                          ? 'text-red-600'
-                          : 'text-gray-900'
-                      }`}>
-                        {(item.quantidade_total || 0).toFixed(3)} {item.unidade_medida}
-                      </div>
-                      {(item.quantidade_total || 0) < item.estoque_minimo && (
-                        <div className="text-xs text-red-600 flex items-center">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Abaixo do mínimo
-                        </div>
-                      )}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`text-sm font-medium ${(item.quantidade_total||0) < item.estoque_minimo ? 'text-red-600' : 'text-gray-900'}`}>
+                        {(item.quantidade_total||0).toFixed(2)} {item.unidade_medida}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`font-medium ${
-                        (item.valor_total_estoque || 0) > 0 ? 'text-green-600' : 'text-gray-400'
-                      }`}>
-                        {formatCurrency(item.valor_total_estoque || 0)}
-                      </div>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                      {formatCurrency(item.valor_total_estoque || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm text-gray-900">
-                          <span className="text-red-600 font-medium">Crítico:</span> {item.estoque_minimo}
-                        </div>
-                        <div className="text-sm text-gray-900">
-                          <span className="text-yellow-600 font-medium">Baixo:</span> {item.ponto_reposicao || 0}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{item.estoque_minimo}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                         item.status === 'ativo' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'
                       }`}>
                         {item.status === 'ativo' ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">
-                        {dayjs(item.criado_em).format('DD/MM/YYYY')}
-                      </div>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                      {dayjs(item.criado_em).format('DD/MM/YYYY')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => openForm(item)}
-                          className="text-blue-600 hover:text-blue-800"
-                          title="Editar"
-                        >
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="flex gap-1.5">
+                        <button onClick={() => openForm(item)} className="text-blue-600 hover:text-blue-800" title="Editar">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => toggleStatus(item)}
+                        <button onClick={() => toggleStatus(item)}
                           className={`${item.status === 'ativo' ? 'text-green-600' : 'text-gray-400'} hover:opacity-75`}
-                          title={item.status === 'ativo' ? 'Desativar' : 'Ativar'}
-                        >
+                          title={item.status === 'ativo' ? 'Desativar' : 'Ativar'}>
                           {item.status === 'ativo' ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                         </button>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="text-red-600 hover:text-red-800"
-                          title="Excluir"
-                        >
+                        <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-800" title="Excluir">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -948,119 +584,83 @@ const ItensEstoque: React.FC = () => {
             <div className="text-center py-12">
               <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum item encontrado</h3>
-              {hasActiveFilters ? (
-                <div>
-                  <p className="text-gray-500 mb-4">
-                    Nenhum item corresponde aos filtros aplicados.
-                  </p>
-                  <button
-                    onClick={clearAllFilters}
-                    className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
-                  >
-                    Limpar Filtros e Ver Todos os Itens
+              {hasActiveFilters
+                ? <button onClick={clearAllFilters} className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]">
+                    Limpar filtros
                   </button>
-                </div>
-              ) : (
-                <p className="text-gray-500">Nenhum item cadastrado.</p>
-              )}
+                : <p className="text-gray-500">Nenhum item cadastrado.</p>}
             </div>
           )}
         </div>
       )}
 
-      {/* Modal do Formulário */}
+      {/* ── MODAL FORMULÁRIO ── */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              {editingItem ? 'Editar Item' : 'Novo Item'}
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <h3 className="text-lg font-bold text-gray-900">
+                {editingItem ? 'Editar Item' : 'Novo Item'}
+              </h3>
+              <button onClick={() => setShowForm(false)} className="p-2 hover:bg-gray-100 rounded-xl">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nome *
-                </label>
-                <input
-                  type="text"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                  placeholder="Ex: Farinha de Trigo"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+                <input type="text" value={formData.nome}
+                  onChange={e => setFormData({ ...formData, nome: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
+                  placeholder="Ex: Farinha de Trigo" required />
               </div>
 
+              {/* Código */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Código
-                </label>
-                <input
-                  type="text"
-                  value={formData.codigo}
-                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  placeholder="Ex: FAR001"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
+                <input type="text" value={formData.codigo}
+                  onChange={e => setFormData({ ...formData, codigo: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
+                  placeholder="Ex: FAR001" />
               </div>
 
+              {/* Tipo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tipo de Item *
-                </label>
-                <select
-                  value={formData.tipo_item}
-                  onChange={(e) => setFormData({ ...formData, tipo_item: e.target.value as 'insumo' | 'produto_final' })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+                <select value={formData.tipo_item}
+                  onChange={e => setFormData({ ...formData, tipo_item: e.target.value as any })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
                   <option value="insumo">Insumo</option>
                   <option value="produto_final">Produto para Venda</option>
                 </select>
               </div>
 
+              {/* Categoria */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Categoria *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
                 {!showNewCategoryInput ? (
-                  <select
-                    value={formData.categoria}
-                    onChange={(e) => handleCategoryChange(e.target.value)}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                    required
-                  >
-                    {categoriasPredefinidas.map((categoria) => (
-                      <option key={categoria} value={categoria}>
-                        {categoria}
-                      </option>
-                    ))}
-                    <option value="nova_categoria">+ Criar Nova Categoria</option>
+                  <select value={formData.categoria} onChange={e => handleCategoryChange(e.target.value)}
+                    className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
+                    {categoriasPredefinidas.map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="nova_categoria">+ Criar nova categoria</option>
                   </select>
                 ) : (
                   <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                      placeholder="Digite o nome da nova categoria..."
-                      autoFocus
-                    />
-                    <div className="flex space-x-2">
-                      <button
-                        type="button"
-                        onClick={handleNewCategoryConfirm}
+                    <input type="text" value={newCategoryName}
+                      onChange={e => setNewCategoryName(e.target.value)}
+                      className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C]"
+                      placeholder="Nome da categoria..." autoFocus />
+                    <div className="flex gap-2">
+                      <button type="button" onClick={handleNewCategoryConfirm}
                         disabled={!newCategoryName.trim()}
-                        className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
-                      >
+                        className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50">
                         Confirmar
                       </button>
-                      <button
-                        type="button"
-                        onClick={handleNewCategoryCancel}
-                        className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700"
-                      >
+                      <button type="button" onClick={() => { setShowNewCategoryInput(false); setNewCategoryName(''); setFormData({ ...formData, categoria: 'Geral' }); }}
+                        className="px-3 py-1 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600">
                         Cancelar
                       </button>
                     </div>
@@ -1068,211 +668,169 @@ const ItensEstoque: React.FC = () => {
                 )}
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descrição
-                </label>
-                <textarea
-                  value={formData.descricao}
-                  onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={2}
-                  placeholder="Descrição detalhada do item..."
-                />
-              </div>
-
+              {/* ★ GRUPO DE CONTAGEM */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unidade de Medida *
+                  Grupo de Contagem
                 </label>
-                <select
-                  value={formData.unidade_medida}
-                  onChange={(e) => setFormData({ ...formData, unidade_medida: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                >
-                  {unidadesMedida.map((unidade) => (
-                    <option key={unidade} value={unidade}>
-                      {unidade}
-                    </option>
-                  ))}
+                <select value={formData.grupo_contagem}
+                  onChange={e => setFormData({ ...formData, grupo_contagem: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
+                  {GRUPOS_CONTAGEM.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+                </select>
+                <p className="text-xs text-gray-400 mt-1">
+                  Define em qual aba este item aparece durante a contagem.
+                </p>
+              </div>
+
+              {/* Descrição */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                <textarea value={formData.descricao}
+                  onChange={e => setFormData({ ...formData, descricao: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
+                  rows={2} placeholder="Descrição detalhada..." />
+              </div>
+
+              {/* Unidade de medida */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Unidade de Medida *</label>
+                <select value={formData.unidade_medida}
+                  onChange={e => setFormData({ ...formData, unidade_medida: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
+                  {unidadesMedida.map(u => <option key={u} value={u}>{u}</option>)}
                 </select>
               </div>
 
+              {/* Custo médio */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Custo Médio
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Custo Médio</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">R$</span>
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.custo_medio}
-                    onChange={(e) => setFormData({ ...formData, custo_medio: parseFloat(e.target.value) || 0 })}
-                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">R$</span>
+                  <input type="number" step="0.01" min="0" value={formData.custo_medio}
+                    onChange={e => setFormData({ ...formData, custo_medio: parseFloat(e.target.value) || 0 })}
+                    className="pl-10 w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20" />
                 </div>
               </div>
 
+              {/* Estoque crítico */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Estoque Crítico (Urgente)
-                </label>
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  value={formData.estoque_minimo}
-                  onChange={(e) => setFormData({ ...formData, estoque_minimo: parseFloat(e.target.value) || 0 })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  placeholder="Quantidade crítica"
-                />
-                <p className="text-xs text-red-600 mt-1">
-                  Abaixo desta quantidade = CRÍTICO/URGENTE
-                </p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estoque Crítico (Urgente)</label>
+                <input type="number" step="0.001" min="0" value={formData.estoque_minimo}
+                  onChange={e => setFormData({ ...formData, estoque_minimo: parseFloat(e.target.value) || 0 })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20" />
+                <p className="text-xs text-red-500 mt-1">Abaixo desta qtd = CRÍTICO</p>
               </div>
 
+              {/* Ponto de reposição */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ponto de Reposição (Estoque Baixo)
-                </label>
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  value={formData.ponto_reposicao}
-                  onChange={(e) => setFormData({ ...formData, ponto_reposicao: parseFloat(e.target.value) || 0 })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  placeholder="Quantidade para reposição"
-                />
-                <p className="text-xs text-yellow-600 mt-1">
-                  Abaixo desta quantidade = ESTOQUE BAIXO
-                </p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ponto de Reposição</label>
+                <input type="number" step="0.001" min="0" value={formData.ponto_reposicao}
+                  onChange={e => setFormData({ ...formData, ponto_reposicao: parseFloat(e.target.value) || 0 })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20" />
+                <p className="text-xs text-yellow-600 mt-1">Abaixo desta qtd = ESTOQUE BAIXO</p>
               </div>
 
-
+              {/* Estoque nativo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Estoque Nativo
-                </label>
-                <select
-                  value={formData.estoque_nativo_id}
-                  onChange={(e) => setFormData({ ...formData, estoque_nativo_id: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estoque Nativo</label>
+                <select value={formData.estoque_nativo_id}
+                  onChange={e => setFormData({ ...formData, estoque_nativo_id: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
                   <option value="">Sem estoque nativo</option>
-                  {estoques.map(estoque => (
-                    <option key={estoque.id} value={estoque.id}>
-                      {estoque.nome}
-                    </option>
-                  ))}
+                  {estoques.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
                 </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  Estoque principal onde este item é normalmente armazenado
-                </p>
               </div>
 
+              {/* Tipo de compra */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tipo de Compra *
-                </label>
-                <select
-                  value={formData.tipo_compra}
-                  onChange={(e) => setFormData({ ...formData, tipo_compra: e.target.value as 'fornecedor' | 'rua' | 'ambos' })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                >
-                  <option value="ambos">Ambos (Fornecedor e Rua)</option>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Compra *</label>
+                <select value={formData.tipo_compra}
+                  onChange={e => setFormData({ ...formData, tipo_compra: e.target.value as any })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
+                  <option value="ambos">Ambos</option>
                   <option value="fornecedor">Apenas Fornecedor</option>
-                  <option value="rua">Apenas Rua (Feira/Mercado)</option>
+                  <option value="rua">Apenas Rua/Feira</option>
                 </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.tipo_compra === 'fornecedor' && 'Item comprado via pedido formal com nota fiscal'}
-                  {formData.tipo_compra === 'rua' && 'Item comprado na rua, feira ou mercado'}
-                  {formData.tipo_compra === 'ambos' && 'Item pode ser comprado de ambas as formas'}
-                </p>
               </div>
 
+              {/* Fornecedor padrão */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fornecedor Padrão
-                </label>
-                <select
-                  value={formData.fornecedor_padrao_id}
-                  onChange={(e) => setFormData({ ...formData, fornecedor_padrao_id: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fornecedor Padrão</label>
+                <select value={formData.fornecedor_padrao_id}
+                  onChange={e => setFormData({ ...formData, fornecedor_padrao_id: e.target.value })}
                   disabled={formData.tipo_compra === 'rua'}
-                >
-                  <option value="">Nenhum fornecedor padrão</option>
-                  {fornecedores.map(fornecedor => (
-                    <option key={fornecedor.id} value={fornecedor.id}>
-                      {fornecedor.nome}
-                    </option>
-                  ))}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20 disabled:opacity-50">
+                  <option value="">Nenhum</option>
+                  {fornecedores.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
                 </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.tipo_compra === 'rua'
-                    ? 'Não disponível para itens comprados na rua'
-                    : 'Fornecedor preferencial para este item'}
-                </p>
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="tem_validade"
-                  checked={formData.tem_validade}
-                  onChange={(e) => setFormData({ ...formData, tem_validade: e.target.checked })}
-                  className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
-                />
-                <label htmlFor="tem_validade" className="ml-2 text-sm text-gray-700">
-                  Item tem validade
+              {/* Checkboxes */}
+              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+                {/* Tem validade */}
+                <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input type="checkbox" id="tem_validade" checked={formData.tem_validade}
+                    onChange={e => setFormData({ ...formData, tem_validade: e.target.checked })}
+                    className="w-4 h-4 rounded text-[#7D1F2C] border-gray-300 focus:ring-[#7D1F2C]" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Tem validade</p>
+                    <p className="text-xs text-gray-500">Controlar vencimento</p>
+                  </div>
+                </label>
+
+                {/* Status */}
+                <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input type="checkbox" id="status" checked={formData.status === 'ativo'}
+                    onChange={e => setFormData({ ...formData, status: e.target.checked ? 'ativo' : 'inativo' })}
+                    className="w-4 h-4 rounded text-[#7D1F2C] border-gray-300 focus:ring-[#7D1F2C]" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Item ativo</p>
+                    <p className="text-xs text-gray-500">Visível no sistema</p>
+                  </div>
+                </label>
+
+                {/* ★ IGNORAR CONTAGEM */}
+                <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors border-2 ${
+                  formData.ignorar_contagem
+                    ? 'bg-red-50 border-red-200 hover:bg-red-100'
+                    : 'bg-gray-50 border-transparent hover:bg-gray-100'
+                }`}>
+                  <input type="checkbox" id="ignorar_contagem" checked={formData.ignorar_contagem}
+                    onChange={e => setFormData({ ...formData, ignorar_contagem: e.target.checked })}
+                    className="w-4 h-4 rounded text-red-600 border-gray-300 focus:ring-red-500" />
+                  <div>
+                    <p className={`text-sm font-medium ${formData.ignorar_contagem ? 'text-red-700' : 'text-gray-700'}`}>
+                      Não contar
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formData.ignorar_contagem
+                        ? 'Excluído das contagens por padrão'
+                        : 'Aparece normalmente na contagem'}
+                    </p>
+                  </div>
                 </label>
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="status"
-                  checked={formData.status === 'ativo'}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'ativo' : 'inativo' })}
-                  className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
-                />
-                <label htmlFor="status" className="ml-2 text-sm text-gray-700">
-                  Item ativo
-                </label>
-              </div>
-
+              {/* Observações */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observações
-                </label>
-                <textarea
-                  value={formData.observacoes}
-                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={2}
-                  placeholder="Observações adicionais sobre o item..."
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                <textarea value={formData.observacoes}
+                  onChange={e => setFormData({ ...formData, observacoes: e.target.value })}
+                  className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
+                  rows={2} placeholder="Observações adicionais..." />
               </div>
             </div>
-            
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
+
+            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+              <button onClick={() => setShowForm(false)}
+                className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50">
                 Cancelar
               </button>
-              <button
-                onClick={handleSave}
+              <button onClick={handleSave}
                 disabled={loading || !formData.nome || !formData.unidade_medida}
-                className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50"
-              >
+                className="px-5 py-2 bg-[#7D1F2C] text-white rounded-xl hover:bg-[#6a1a25] disabled:opacity-50 font-semibold">
                 {loading ? 'Salvando...' : 'Salvar'}
               </button>
             </div>
