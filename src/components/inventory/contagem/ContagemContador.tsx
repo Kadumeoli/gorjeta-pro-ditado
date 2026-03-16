@@ -8,6 +8,7 @@ import type { ContagemItem, GrupoContagem } from './types';
 import { GRUPOS } from './types';
 import * as service from './contagemService';
 import { itemEstaIgnorado } from './contagemService';
+import { supabase } from '../../../lib/supabase';
 import { formatCurrency } from '../../../utils/currency';
 
 interface Props {
@@ -17,7 +18,15 @@ interface Props {
   onFinalizar: () => void;
 }
 
-// URL do app em produção
+interface ItemDisponivel {
+  id: string;
+  nome: string;
+  codigo: string;
+  unidade_medida: string;
+  custo_medio: number;
+  grupo_contagem: string;
+}
+
 const APP_URL = (import.meta.env.VITE_APP_URL as string | undefined)?.replace(/\/$/, '')
   || 'https://sistema-ditado-3-0-d-yntp.bolt.host';
 
@@ -53,19 +62,28 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
   const [gerandoToken, setGerandoToken]   = useState(false);
   const [filtroPendentes, setFiltroPendentes] = useState(false);
 
-  // ── Adicionar item ausente ─────────────────────────────────────────────────
+  // Adicionar item ausente
   const [showAdicionarPanel, setShowAdicionarPanel] = useState(false);
   const [buscaAusente, setBuscaAusente]             = useState('');
-  const [itensDisponiveis, setItensDisponiveis]     = useState<{id:string;nome:string;codigo:string;unidade_medida:string;custo_medio:number;grupo_contagem:string}[]>([]);
+  const [itensDisponiveis, setItensDisponiveis]     = useState<ItemDisponivel[]>([]);
   const [loadingDisponiveis, setLoadingDisponiveis] = useState(false);
   const [adicionando, setAdicionando]               = useState<string | null>(null);
 
   const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const buscaTimer     = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     loadItems();
     return () => { debounceTimers.current.forEach(t => clearTimeout(t)); };
   }, [contagemId]);
+
+  // Debounce para busca de itens ausentes
+  useEffect(() => {
+    if (buscaTimer.current) clearTimeout(buscaTimer.current);
+    if (buscaAusente.length < 2) { setItensDisponiveis([]); return; }
+    buscaTimer.current = setTimeout(() => buscarItensAusentes(buscaAusente), 400);
+    return () => { if (buscaTimer.current) clearTimeout(buscaTimer.current); };
+  }, [buscaAusente]);
 
   const loadItems = async () => {
     setLoading(true);
@@ -74,13 +92,10 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
     finally { setLoading(false); }
   };
 
-  // ── Buscar itens do catálogo que não estão na contagem ────────────────────
-  const buscarItensAusentes = useCallback(async (termo: string) => {
-    if (termo.length < 2) { setItensDisponiveis([]); return; }
+  const buscarItensAusentes = async (termo: string) => {
     setLoadingDisponiveis(true);
     try {
-      const { supabase: sb } = await import('../../../lib/supabase');
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from('itens_estoque')
         .select('id, nome, codigo, unidade_medida, custo_medio, grupo_contagem')
         .eq('status', 'ativo')
@@ -89,23 +104,17 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
         .order('nome')
         .limit(15);
       if (error) throw error;
+      // Excluir os que já estão na contagem
       const idsNaContagem = new Set(itens.map(i => i.item_estoque_id));
-      setItensDisponiveis((data || []).filter((d: any) => !idsNaContagem.has(d.id)));
+      setItensDisponiveis((data || []).filter(d => !idsNaContagem.has(d.id)));
     } catch { setItensDisponiveis([]); }
     finally { setLoadingDisponiveis(false); }
-  }, [itens]);
+  };
 
-  useEffect(() => {
-    const t = setTimeout(() => buscarItensAusentes(buscaAusente), 400);
-    return () => clearTimeout(t);
-  }, [buscaAusente, buscarItensAusentes]);
-
-  // ── Adicionar item ausente com saldo sistema = 0 ──────────────────────────
-  const adicionarItemAusente = useCallback(async (item: typeof itensDisponiveis[0]) => {
+  const adicionarItemAusente = async (item: ItemDisponivel) => {
     setAdicionando(item.id);
     try {
-      const { supabase: sb } = await import('../../../lib/supabase');
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from('contagens_estoque_itens')
         .insert({
           contagem_id:        contagemId,
@@ -118,33 +127,32 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
       if (error) throw error;
 
       const novoItem: ContagemItem = {
-        id:                       data.id,
-        item_estoque_id:          item.id,
-        item_nome:                item.nome,
-        item_codigo:              item.codigo || '',
-        unidade_medida:           item.unidade_medida,
-        grupo_contagem:           (item.grupo_contagem as any) || 'outros',
+        id:                        data.id,
+        item_estoque_id:           item.id,
+        item_nome:                 item.nome,
+        item_codigo:               item.codigo || '',
+        unidade_medida:            item.unidade_medida,
+        grupo_contagem:            (item.grupo_contagem as GrupoContagem) || 'outros',
         ignorar_contagem_cadastro: false,
-        ignorar_override:         null,
-        quantidade_sistema:       0,
-        quantidade_contada:       null,
-        valor_unitario:           item.custo_medio || 0,
-        diferenca:                null,
-        valor_diferenca:          null,
-        observacao:               null,
+        ignorar_override:          null,
+        quantidade_sistema:        0,
+        quantidade_contada:        null,
+        valor_unitario:            item.custo_medio || 0,
+        diferenca:                 null,
+        valor_diferenca:           null,
+        observacao:                null,
       };
       setItens(prev => [...prev, novoItem]);
       setItensDisponiveis(prev => prev.filter(i => i.id !== item.id));
       setBuscaAusente('');
       setShowAdicionarPanel(false);
     } catch (e: any) {
-      alert('Erro ao adicionar item: ' + (e as any).message);
+      alert('Erro ao adicionar item: ' + e.message);
     } finally {
       setAdicionando(null);
     }
-  }, [contagemId, itensDisponiveis]);
+  };
 
-  // Salva com debounce
   const salvarCampo = useCallback((itemId: string, updates: Parameters<typeof service.atualizarItem>[1]) => {
     const key = Object.keys(updates)[0] + '-' + itemId;
     const ex  = debounceTimers.current.get(key);
@@ -180,37 +188,23 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
     salvarCampo(itemId, { observacao: value || '' });
   }, [salvarCampo]);
 
-  // Toggle ignorar — override por contagem
   const handleToggleIgnorar = useCallback(async (item: ContagemItem) => {
     const atualmenteIgnorado = itemEstaIgnorado(item);
-    // Se está ignorado → forçar contar (override false)
-    // Se está contando → ignorar nesta contagem (override true)
     const novoOverride = atualmenteIgnorado ? false : true;
-
-    setItens(prev => prev.map(i =>
-      i.id === item.id ? { ...i, ignorar_override: novoOverride } : i
-    ));
+    setItens(prev => prev.map(i => i.id === item.id ? { ...i, ignorar_override: novoOverride } : i));
     try {
       await service.atualizarItem(item.id, { ignorar_override: novoOverride });
     } catch {
-      // Reverte em caso de erro
-      setItens(prev => prev.map(i =>
-        i.id === item.id ? { ...i, ignorar_override: item.ignorar_override } : i
-      ));
+      setItens(prev => prev.map(i => i.id === item.id ? { ...i, ignorar_override: item.ignorar_override } : i));
     }
   }, []);
 
-  // Resetar override (voltar ao padrão do cadastro)
   const handleResetarOverride = useCallback(async (item: ContagemItem) => {
-    setItens(prev => prev.map(i =>
-      i.id === item.id ? { ...i, ignorar_override: null } : i
-    ));
+    setItens(prev => prev.map(i => i.id === item.id ? { ...i, ignorar_override: null } : i));
     try {
       await service.atualizarItem(item.id, { ignorar_override: null });
     } catch {
-      setItens(prev => prev.map(i =>
-        i.id === item.id ? { ...i, ignorar_override: item.ignorar_override } : i
-      ));
+      setItens(prev => prev.map(i => i.id === item.id ? { ...i, ignorar_override: item.ignorar_override } : i));
     }
   }, []);
 
@@ -233,11 +227,9 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
     setTimeout(() => setCopiado(false), 2500);
   };
 
-  // Separar itens ativos e ignorados
-  const itensAtivos   = useMemo(() => itens.filter(i => !itemEstaIgnorado(i)), [itens]);
+  const itensAtivos    = useMemo(() => itens.filter(i => !itemEstaIgnorado(i)), [itens]);
   const itensIgnorados = useMemo(() => itens.filter(i => itemEstaIgnorado(i)), [itens]);
 
-  // Stats apenas dos ativos
   const statsPorGrupo = useMemo(() => {
     const map: Record<string, { total: number; contados: number }> = {};
     for (const item of itensAtivos) {
@@ -250,12 +242,11 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
   }, [itensAtivos]);
 
   const statsGeral = useMemo(() => ({
-    total: itensAtivos.length,
+    total:    itensAtivos.length,
     contados: itensAtivos.filter(i => i.quantidade_contada !== null).length,
     ignorados: itensIgnorados.length,
   }), [itensAtivos, itensIgnorados]);
 
-  // Lista visível
   const itensFiltrados = useMemo(() => {
     let r: ContagemItem[];
     if (grupoAtivo === 'ignorados') {
@@ -295,11 +286,15 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
               <h2 className="text-base font-bold text-gray-900 truncate">{estoqueName}</h2>
               <p className="text-xs text-gray-500">
                 {statsGeral.contados}/{statsGeral.total} contados
-                {statsGeral.ignorados > 0 && <span className="text-gray-400 ml-1">· {statsGeral.ignorados} ignorados</span>}
+                {statsGeral.ignorados > 0 && (
+                  <span className="text-gray-400 ml-1">· {statsGeral.ignorados} ignorados</span>
+                )}
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2 shrink-0">
+            {/* Link celular */}
             <button
               onClick={token ? () => setShowLinkPanel(!showLinkPanel) : handleGerarLink}
               disabled={gerandoToken}
@@ -308,18 +303,25 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
               {gerandoToken ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
               <span className="hidden sm:inline">Link Celular</span>
             </button>
-            {/* Botão adicionar item ausente */}
+
+            {/* ── BOTÃO ADICIONAR ITEM ── */}
             <button
-              onClick={() => { setShowAdicionarPanel(!showAdicionarPanel); setBuscaAusente(''); setItensDisponiveis([]); }}
+              onClick={() => {
+                setShowAdicionarPanel(v => !v);
+                setBuscaAusente('');
+                setItensDisponiveis([]);
+              }}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${
                 showAdicionarPanel
                   ? 'bg-blue-600 text-white border-blue-600'
-                  : 'border-blue-300 text-blue-700 hover:bg-blue-50'
+                  : 'border-blue-400 text-blue-700 hover:bg-blue-50'
               }`}
-              title="Adicionar item que não aparece na lista">
+              title="Adicionar item com saldo zero ou ausente da lista">
               <PackagePlus className="w-4 h-4" />
               <span className="hidden sm:inline">+ Item</span>
             </button>
+
+            {/* Finalizar */}
             <button
               onClick={onFinalizar}
               disabled={statsGeral.contados === 0}
@@ -330,7 +332,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
           </div>
         </div>
 
-        {/* Progresso */}
+        {/* Barra de progresso */}
         <div className="mt-2.5 flex items-center gap-2">
           <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
             <div
@@ -343,7 +345,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
           </span>
         </div>
 
-        {/* Painel do link */}
+        {/* Painel link celular */}
         {showLinkPanel && token && (
           <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-2">
             <p className="text-xs font-semibold text-blue-800">🔗 Link para celular (válido 7 dias)</p>
@@ -366,59 +368,74 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
 
       {/* ── PAINEL ADICIONAR ITEM AUSENTE ── */}
       {showAdicionarPanel && (
-        <div className="bg-blue-50 border-b border-blue-200 px-4 py-3 space-y-2">
+        <div className="bg-blue-50 border-b-2 border-blue-200 px-4 py-3 space-y-2.5">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-blue-800 flex items-center gap-1.5">
+            <p className="text-xs font-bold text-blue-800 flex items-center gap-1.5">
               <PackagePlus className="w-3.5 h-3.5" />
-              Adicionar item com saldo zero ou ausente da lista
+              Adicionar item ausente da contagem
             </p>
-            <button onClick={() => setShowAdicionarPanel(false)} className="text-blue-400 hover:text-blue-600">
+            <button onClick={() => setShowAdicionarPanel(false)}
+              className="p-1 text-blue-400 hover:text-blue-700 rounded-lg hover:bg-blue-100">
               <X className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-[11px] text-blue-600">
-            Use quando o item foi vendido e zerou antes da contagem, ou quando o sistema está desatualizado mas o produto existe fisicamente.
+          <p className="text-[11px] text-blue-600 leading-relaxed">
+            Use quando o item foi vendido e zerou antes da contagem, ou quando o sistema está desatualizado
+            mas o produto existe fisicamente. Ele entra com <strong>Sistema: 0</strong> e você digita o que encontrou.
           </p>
+
+          {/* Campo de busca */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-blue-400" />
             <input
               type="text"
               value={buscaAusente}
               onChange={e => setBuscaAusente(e.target.value)}
-              placeholder="Buscar item por nome ou código..."
+              placeholder="Digite o nome ou código do item..."
               autoFocus
-              className="w-full pl-8 pr-3 py-2 text-sm border border-blue-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full pl-9 pr-9 py-2.5 text-sm border border-blue-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
             />
             {loadingDisponiveis && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 animate-spin text-blue-400" />
             )}
+            {buscaAusente && !loadingDisponiveis && (
+              <button onClick={() => setBuscaAusente('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 hover:text-blue-600">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
-          {buscaAusente.length >= 2 && itensDisponiveis.length === 0 && !loadingDisponiveis && (
+
+          {/* Mensagem nenhum resultado */}
+          {buscaAusente.length >= 2 && !loadingDisponiveis && itensDisponiveis.length === 0 && (
             <p className="text-xs text-blue-500 italic px-1">
-              Nenhum item encontrado fora da contagem com este nome.
+              Nenhum item encontrado fora da contagem com este nome ou código.
             </p>
           )}
+
+          {/* Resultados */}
           {itensDisponiveis.length > 0 && (
-            <div className="bg-white border border-blue-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto shadow-sm">
+            <div className="bg-white border border-blue-200 rounded-xl overflow-hidden shadow-sm max-h-52 overflow-y-auto">
               {itensDisponiveis.map(item => (
                 <button
                   key={item.id}
                   onClick={() => adicionarItemAusente(item)}
                   disabled={adicionando === item.id}
-                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm hover:bg-blue-50 border-b border-blue-50 last:border-0 transition-colors disabled:opacity-50"
-                >
-                  <div className="text-left min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{item.nome}</p>
-                    <p className="text-[11px] text-gray-400">
+                  className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-blue-50 border-b border-blue-50 last:border-0 transition-colors disabled:opacity-50 text-left">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm truncate">{item.nome}</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">
                       {item.codigo && <span className="mr-2">{item.codigo}</span>}
-                      {item.unidade_medida}
-                      <span className="ml-2 text-orange-500 font-semibold">Sistema: 0</span>
+                      <span>{item.unidade_medida}</span>
+                      <span className="ml-2 font-bold text-orange-500">Sistema: 0</span>
                     </p>
                   </div>
                   <div className="ml-3 shrink-0">
                     {adicionando === item.id
                       ? <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                      : <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">Adicionar</span>
+                      : <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-lg">
+                          Adicionar
+                        </span>
                     }
                   </div>
                 </button>
@@ -431,7 +448,6 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
       {/* ── ABAS DE GRUPO ── */}
       <div className="bg-white border-b border-gray-100 sticky top-[88px] z-10">
         <div className="flex overflow-x-auto scrollbar-hide px-2 py-2 gap-1.5">
-          {/* Todos */}
           <button onClick={() => setGrupoAtivo('todos')}
             className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border-2 transition-all ${
               grupoAtivo === 'todos'
@@ -446,7 +462,6 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
             </span>
           </button>
 
-          {/* Grupos */}
           {GRUPOS.map(g => {
             const s = statsPorGrupo[g.key] || { total: 0, contados: 0 };
             if (s.total === 0) return null;
@@ -455,7 +470,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
             return (
               <button key={g.key} onClick={() => setGrupoAtivo(g.key)}
                 className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border-2 transition-all ${
-                  ativo     ? COR_ABA_ATIVA[g.cor]
+                  ativo      ? COR_ABA_ATIVA[g.cor]
                   : completo ? 'bg-green-50 text-green-700 border-green-200'
                   :            'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                 }`}>
@@ -471,7 +486,6 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
             );
           })}
 
-          {/* Ignorados */}
           {statsGeral.ignorados > 0 && (
             <button onClick={() => setGrupoAtivo('ignorados')}
               className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border-2 transition-all ${
@@ -514,13 +528,11 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
       {/* ── LISTA DE CARDS ── */}
       <div className="flex-1 overflow-auto px-3 py-3 space-y-2">
 
-        {/* Aviso na aba de ignorados */}
         {grupoAtivo === 'ignorados' && itensFiltrados.length > 0 && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs text-gray-500 flex items-start gap-2">
             <EyeOff className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>
-              Estes itens <strong>não serão contados</strong>. Clique em "Contar" em qualquer item para forçar a contagem nesta sessão.
-              Itens marcados no <strong>cadastro</strong> têm um ícone de cadeado — o override dura só nesta contagem.
+              Estes itens <strong>não serão contados</strong>. Clique em "Contar" para incluí-los nesta sessão.
             </span>
           </div>
         )}
@@ -528,28 +540,24 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
         {itensFiltrados.length === 0 && (
           <div className="py-16 text-center text-gray-400">
             <p className="text-sm">
-              {searchTerm
-                ? 'Nenhum item encontrado'
-                : filtroPendentes
-                ? '✅ Todos os itens contados neste grupo!'
-                : grupoAtivo === 'ignorados'
-                ? 'Nenhum item ignorado'
-                : 'Nenhum item neste grupo'}
+              {searchTerm ? 'Nenhum item encontrado'
+               : filtroPendentes ? '✅ Todos os itens contados neste grupo!'
+               : grupoAtivo === 'ignorados' ? 'Nenhum item ignorado'
+               : 'Nenhum item neste grupo'}
             </p>
           </div>
         )}
 
         {itensFiltrados.map(item => {
-          const ignorado   = itemEstaIgnorado(item);
+          const ignorado    = itemEstaIgnorado(item);
           const temOverride = item.ignorar_override !== null;
-          const isContado  = item.quantidade_contada !== null;
-          const isSaving   = savingItems.has(item.id);
-          const isSaved    = savedItems.has(item.id);
-          const hasError   = errorItems.has(item.id);
-          const dif        = item.diferenca;
-          const grupo      = GRUPOS.find(g => g.key === (item.grupo_contagem || 'outros'));
+          const isContado   = item.quantidade_contada !== null;
+          const isSaving    = savingItems.has(item.id);
+          const isSaved     = savedItems.has(item.id);
+          const hasError    = errorItems.has(item.id);
+          const dif         = item.diferenca;
+          const grupo       = GRUPOS.find(g => g.key === (item.grupo_contagem || 'outros'));
 
-          // Card ignorado (aba de ignorados)
           if (ignorado) {
             return (
               <div key={item.id}
@@ -564,23 +572,16 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                       {item.ignorar_contagem_cadastro && !temOverride && (
                         <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">🔒 Cadastro</span>
                       )}
-                      {temOverride && (
-                        <span className="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">Override</span>
-                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-3">
-                  {/* Botão Contar — força este item */}
                   <button onClick={() => handleToggleIgnorar(item)}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-green-200 text-green-600 text-xs font-semibold hover:bg-green-50 transition-all">
-                    <Eye className="w-3 h-3" />
-                    Contar
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-green-200 text-green-600 text-xs font-semibold hover:bg-green-50">
+                    <Eye className="w-3 h-3" /> Contar
                   </button>
-                  {/* Resetar override se tem */}
                   {temOverride && (
-                    <button onClick={() => handleResetarOverride(item)}
-                      title="Voltar ao padrão do cadastro"
+                    <button onClick={() => handleResetarOverride(item)} title="Voltar ao padrão do cadastro"
                       className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50">
                       <RotateCcw className="w-3 h-3" />
                     </button>
@@ -590,20 +591,20 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
             );
           }
 
-          // Card ativo (contagem normal)
           return (
             <div key={item.id}
               className={`bg-white rounded-2xl border-2 shadow-sm transition-all ${
                 hasError              ? 'border-red-300'
                 : isContado && dif === 0 ? 'border-green-200'
                 : isContado && dif !== 0 ? 'border-orange-300'
+                : item.quantidade_sistema === 0 ? 'border-blue-200'
                 : 'border-gray-100'
               }`}>
 
-              {/* Header do card */}
               <div className={`flex items-start justify-between px-4 pt-3 pb-2 ${
                 isContado && dif === 0 ? 'bg-green-50/50 rounded-t-2xl'
                 : isContado && dif !== 0 ? 'bg-orange-50/50 rounded-t-2xl'
+                : item.quantidade_sistema === 0 ? 'bg-blue-50/50 rounded-t-2xl'
                 : ''
               }`}>
                 <div className="flex-1 min-w-0">
@@ -615,6 +616,12 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                         {grupo.emoji} {grupo.label}
                       </span>
                     )}
+                    {/* Badge item adicionado manualmente (sistema = 0) */}
+                    {item.quantidade_sistema === 0 && !isContado && (
+                      <span className="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded-full font-semibold">
+                        Adicionado manualmente
+                      </span>
+                    )}
                     {temOverride && item.ignorar_override === false && (
                       <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full">
                         Forçado a contar
@@ -623,23 +630,18 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                   </div>
                 </div>
                 <div className="flex items-center gap-2 ml-3 shrink-0">
-                  {/* Status de salvamento */}
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                   : isSaved ? <Check className="w-4 h-4 text-green-500" />
-                   : hasError ? <AlertCircle className="w-4 h-4 text-red-500" />
+                  {isSaving    ? <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                   : isSaved   ? <Check className="w-4 h-4 text-green-500" />
+                   : hasError  ? <AlertCircle className="w-4 h-4 text-red-500" />
                    : isContado ? <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center"><Check className="w-2.5 h-2.5 text-white" /></div>
-                   : <div className="w-4 h-4 rounded-full border-2 border-gray-300" />}
-                  {/* Botão ignorar */}
-                  <button onClick={() => handleToggleIgnorar(item)}
-                    title="Não contar este item"
+                   :             <div className="w-4 h-4 rounded-full border-2 border-gray-300" />}
+                  <button onClick={() => handleToggleIgnorar(item)} title="Não contar este item"
                     className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all">
                     <EyeOff className="w-3.5 h-3.5" />
                   </button>
-                  {/* Reset override se existe */}
                   {temOverride && (
-                    <button onClick={() => handleResetarOverride(item)}
-                      title="Voltar ao padrão do cadastro"
-                      className="p-1.5 rounded-lg text-gray-300 hover:text-gray-500 hover:bg-gray-50 transition-all">
+                    <button onClick={() => handleResetarOverride(item)} title="Voltar ao padrão"
+                      className="p-1.5 rounded-lg text-gray-300 hover:text-gray-500 hover:bg-gray-50">
                       <RotateCcw className="w-3 h-3" />
                     </button>
                   )}
@@ -647,11 +649,12 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
               </div>
 
               <div className="px-4 pb-3 space-y-3">
-                {/* Sistema vs Contado vs Diferença */}
                 <div className="flex items-center gap-3">
                   <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2 text-center">
                     <p className="text-[10px] text-gray-500 uppercase font-medium">Sistema</p>
-                    <p className="text-lg font-bold text-gray-700 tabular-nums leading-tight">{item.quantidade_sistema}</p>
+                    <p className={`text-lg font-bold tabular-nums leading-tight ${item.quantidade_sistema === 0 ? 'text-orange-500' : 'text-gray-700'}`}>
+                      {item.quantidade_sistema}
+                    </p>
                     <p className="text-[10px] text-gray-400">{item.unidade_medida}</p>
                   </div>
                   <div className="flex-1">
@@ -662,7 +665,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                       onChange={e => handleQuantidadeChange(item.id, e.target.value)}
                       placeholder="—"
                       className={`w-full text-center text-2xl font-bold border-2 rounded-xl py-2 focus:outline-none focus:ring-2 transition-colors tabular-nums ${
-                        hasError              ? 'border-red-300 bg-red-50 text-red-700 focus:ring-red-200'
+                        hasError               ? 'border-red-300 bg-red-50 text-red-700 focus:ring-red-200'
                         : isContado && dif === 0 ? 'border-green-300 bg-green-50/70 text-green-800 focus:ring-green-200'
                         : isContado && dif !== 0 ? 'border-orange-300 bg-orange-50/70 text-orange-800 focus:ring-orange-200'
                         : 'border-gray-200 bg-white text-gray-900 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]'
@@ -688,7 +691,6 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                     </div>
                   )}
                 </div>
-                {/* Observação */}
                 <input type="text" value={item.observacao || ''}
                   onChange={e => handleObsChange(item.id, e.target.value)}
                   placeholder="Observação (opcional)..."
