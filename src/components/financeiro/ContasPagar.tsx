@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Calendar, DollarSign, Building2, Eye, CreditCard as Edit, Trash2, CheckSquare, XSquare, Clock, AlertTriangle, CheckCircle, XCircle, Download, FileText, Star, MessageSquare, User, CreditCard, Receipt, Target, Activity, Sparkles } from 'lucide-react';
+import { Plus, Search, DollarSign, Eye, CreditCard as Edit, Trash2, CheckSquare, XSquare, Clock, AlertTriangle, CheckCircle, XCircle, Download, FileText, Star, MessageSquare, Receipt, Target, Activity, Sparkles, Calendar } from 'lucide-react';
 import { supabase, testConnection } from '../../lib/supabase';
 import { ReportGenerator, exportToExcel, formatCurrency } from '../../utils/reportGenerator';
 import dayjs from 'dayjs';
@@ -11,2200 +11,576 @@ import { detectarDuplicatas } from '../../services/aiDetectorDuplicatas';
 import { SearchableSelect } from '../common/SearchableSelect';
 
 interface ContaPagar {
-  id: string;
-  fornecedor_id: string;
-  fornecedor_nome: string;
-  descricao: string;
-  categoria_id?: string;
-  categoria_nome?: string;
-  categoria_completa?: string;
-  centro_custo_id?: string;
-  centro_custo_nome?: string;
-  forma_pagamento_id?: string;
-  forma_pagamento_nome?: string;
-  valor_total: number;
-  valor_pago: number;
-  saldo_restante: number;
-  valor_original?: number;
-  valor_final?: number;
-  desconto?: number;
-  juros?: number;
-  data_vencimento: string;
-  data_emissao: string;
-  data_primeira_baixa?: string;
-  data_baixa_integral?: string;
+  id: string; fornecedor_id: string; fornecedor_nome: string; descricao: string;
+  categoria_id?: string; categoria_nome?: string; centro_custo_id?: string; centro_custo_nome?: string;
+  forma_pagamento_id?: string; forma_pagamento_nome?: string;
+  valor_total: number; valor_pago: number; saldo_restante: number;
+  valor_original?: number; valor_final?: number; desconto?: number; juros?: number;
+  data_vencimento: string; data_emissao: string; data_primeira_baixa?: string; data_baixa_integral?: string;
   numero_documento?: string;
-  status: 'em_aberto' | 'parcialmente_pago' | 'pago' | 'vencido' | 'cancelado' | 'autorizado_pagamento';
-  aprovado_para_pagamento: boolean;
-  aprovado_por?: string;
-  data_aprovacao?: string;
-  observacoes?: string;
-  prioridade_sugerida?: 'baixa' | 'media' | 'alta' | 'urgente';
-  observacao_tesouraria?: string;
-  observacao_aprovacao?: string;
-  sugerido_por?: string;
-  data_sugestao?: string;
-  esta_vencida: boolean;
-  dias_vencimento: number;
-  situacao_vencimento?: 'atrasada' | 'vence_hoje' | 'vence_em_breve' | 'no_prazo' | 'paga' | 'cancelada';
-  dias_para_vencer?: number;
-  criado_em: string;
-  criado_por_nome?: string;
-  sugerido_por_nome?: string;
-  aprovado_por_nome?: string;
-  eh_recorrente?: boolean;
-  frequencia_recorrencia?: string;
-  dia_vencimento_recorrente?: number;
-  recorrencia_ativa?: boolean;
-  data_inicio_recorrencia?: string;
-  data_fim_recorrencia?: string;
-  eh_parcelado?: boolean;
-  numero_parcela?: number;
-  total_parcelas?: number;
-  parcelamento_grupo_id?: string;
-  pagamentos_historico?: any[];
-  total_pagamentos_parciais?: number;
+  status: 'em_aberto'|'parcialmente_pago'|'pago'|'vencido'|'cancelado'|'autorizado_pagamento';
+  aprovado_para_pagamento: boolean; aprovado_por?: string; data_aprovacao?: string;
+  observacoes?: string; prioridade_sugerida?: 'baixa'|'media'|'alta'|'urgente';
+  observacao_tesouraria?: string; observacao_aprovacao?: string;
+  sugerido_por?: string; data_sugestao?: string;
+  esta_vencida: boolean; dias_vencimento: number;
+  situacao_vencimento?: 'atrasada'|'vence_hoje'|'vence_em_breve'|'no_prazo'|'paga'|'cancelada';
+  dias_para_vencer?: number; criado_em: string;
+  criado_por_nome?: string; sugerido_por_nome?: string; aprovado_por_nome?: string;
+  eh_recorrente?: boolean; frequencia_recorrencia?: string; dia_vencimento_recorrente?: number;
+  recorrencia_ativa?: boolean; data_inicio_recorrencia?: string; data_fim_recorrencia?: string;
+  eh_parcelado?: boolean; numero_parcela?: number; total_parcelas?: number; parcelamento_grupo_id?: string;
+  pagamentos_historico?: any[]; total_pagamentos_parciais?: number;
 }
-
 interface FormData {
-  fornecedor_id: string;
-  descricao: string;
-  categoria_id: string;
-  centro_custo_id: string;
-  forma_pagamento_id: string;
-  valor_total: number;
-  desconto: number;
-  juros: number;
-  data_emissao: string;
-  data_vencimento: string;
-  numero_documento: string;
-  observacoes: string;
-  prioridade_sugerida: 'baixa' | 'media' | 'alta' | 'urgente';
-  observacao_tesouraria: string;
-  eh_recorrente: boolean;
-  frequencia_recorrencia: string;
-  dia_vencimento_recorrente: number;
-  data_fim_recorrencia: string;
-  eh_parcelado: boolean;
-  total_parcelas: number;
+  fornecedor_id: string; descricao: string; categoria_id: string; centro_custo_id: string;
+  forma_pagamento_id: string; valor_total: number; desconto: number; juros: number;
+  data_emissao: string; data_vencimento: string; numero_documento: string; observacoes: string;
+  prioridade_sugerida: 'baixa'|'media'|'alta'|'urgente'; observacao_tesouraria: string;
+  eh_recorrente: boolean; frequencia_recorrencia: string; dia_vencimento_recorrente: number;
+  data_fim_recorrencia: string; eh_parcelado: boolean; total_parcelas: number;
 }
-
-interface IndicadoresContas {
-  total_contas: number;
-  valor_total: number;
-  valor_pago: number;
-  saldo_pendente: number;
-  contas_vencidas: number;
-  valor_vencido: number;
-  contas_aprovadas: number;
-  valor_aprovado: number;
-  ticket_medio: number;
-  contas_a_vencer: number;
-  valor_a_vencer: number;
-  contas_vence_hoje: number;
-  valor_vence_hoje: number;
-}
-
-interface ContaBancaria {
-  id: string;
-  banco: string;
-  tipo_conta: string;
-  numero_conta?: string;
-  saldo_atual: number;
-}
-
 interface BaixaModal {
-  isOpen: boolean;
-  conta: ContaPagar | null;
-  valorPagamento: number;
-  dataPagamento: string;
-  formaPagamentoId: string;
-  contaBancariaId: string;
-  numeroComprovante: string;
-  observacoes: string;
+  isOpen: boolean; conta: ContaPagar|null; valorPagamento: number; dataPagamento: string;
+  formaPagamentoId: string; contaBancariaId: string; numeroComprovante: string; observacoes: string;
 }
+
+const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+const S = {
+  card:'#12141f', border:'rgba(255,255,255,0.06)', label:'rgba(255,255,255,0.35)',
+  text:'rgba(255,255,255,0.85)', muted:'rgba(255,255,255,0.5)',
+  green:'#4ade80', red:'#f87171', blue:'#60a5fa', gold:'#D4AF37', orange:'#fb923c', amber:'#fbbf24',
+  greenBg:'rgba(74,222,128,0.08)', redBg:'rgba(248,113,113,0.08)',
+  blueBg:'rgba(96,165,250,0.08)', goldBg:'rgba(212,175,55,0.08)', orangeBg:'rgba(251,146,60,0.08)',
+  greenBorder:'rgba(74,222,128,0.15)', redBorder:'rgba(248,113,113,0.15)',
+  blueBorder:'rgba(96,165,250,0.15)', goldBorder:'rgba(212,175,55,0.15)', orangeBorder:'rgba(251,146,60,0.15)',
+  wine:'#7D1F2C', modalBg:'#0f1020',
+};
+
+const inputStyle: React.CSSProperties = { background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'7px 12px', color:S.text, fontSize:12, outline:'none', width:'100%', boxSizing:'border-box' };
+const labelStyle: React.CSSProperties = { color:S.label, fontSize:11, marginBottom:4, display:'block' };
+const fStyle: React.CSSProperties = { display:'flex', flexDirection:'column', gap:2 };
+
+const STATUS_MAP: Record<string, { label:string; color:string; bg:string; icon:React.ElementType }> = {
+  pago:                 { label:'Pago',        color:S.green,  bg:'rgba(74,222,128,0.12)',  icon:CheckCircle },
+  em_aberto:            { label:'Em Aberto',   color:S.blue,   bg:'rgba(96,165,250,0.12)',  icon:Clock },
+  parcialmente_pago:    { label:'Parcial',     color:S.gold,   bg:'rgba(212,175,55,0.12)',  icon:AlertTriangle },
+  vencido:              { label:'Vencido',     color:S.red,    bg:'rgba(248,113,113,0.12)', icon:XCircle },
+  cancelado:            { label:'Cancelado',   color:S.muted,  bg:'rgba(255,255,255,0.06)', icon:FileText },
+  autorizado_pagamento: { label:'Autorizado',  color:'#2dd4bf',bg:'rgba(45,212,191,0.12)', icon:CheckSquare },
+  atrasada:             { label:'Atrasada',    color:S.red,    bg:'rgba(248,113,113,0.12)', icon:AlertTriangle },
+  vence_hoje:           { label:'Vence Hoje',  color:S.amber,  bg:'rgba(251,191,36,0.12)', icon:Clock },
+  vence_em_breve:       { label:'Prox. Venc.', color:S.orange, bg:'rgba(251,146,60,0.12)', icon:Clock },
+};
+
+const PRIORIDADE_MAP: Record<string, { color:string; bg:string }> = {
+  urgente: { color:S.red,    bg:'rgba(248,113,113,0.12)' },
+  alta:    { color:S.orange, bg:'rgba(251,146,60,0.12)' },
+  media:   { color:S.gold,   bg:'rgba(212,175,55,0.12)' },
+  baixa:   { color:S.green,  bg:'rgba(74,222,128,0.12)' },
+};
+
+const getStatusInfo = (conta: ContaPagar) => {
+  if (conta.saldo_restante<=0 && conta.status!=='cancelado') return STATUS_MAP['pago'];
+  if (conta.situacao_vencimento && STATUS_MAP[conta.situacao_vencimento]) return STATUS_MAP[conta.situacao_vencimento];
+  return STATUS_MAP[conta.status] || STATUS_MAP['em_aberto'];
+};
 
 const ContasPagar: React.FC = () => {
   const [contas, setContas] = useState<ContaPagar[]>([]);
-  const [indicadores, setIndicadores] = useState<IndicadoresContas | null>(null);
+  const [indicadores, setIndicadores] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string|null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [editingConta, setEditingConta] = useState<ContaPagar | null>(null);
+  const [editingConta, setEditingConta] = useState<ContaPagar|null>(null);
   const [showIAModal, setShowIAModal] = useState(false);
-
-  // Seleção múltipla
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
-  
-  // Filtros
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'em_aberto' | 'parcialmente_pago' | 'pago' | 'vencido' | 'cancelado' | 'autorizado_pagamento'>('all');
-  const [situacaoFilter, setSituacaoFilter] = useState<'all' | 'atrasada' | 'vence_hoje' | 'vence_em_breve' | 'no_prazo' | 'paga'>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [situacaoFilter, setSituacaoFilter] = useState('all');
   const [fornecedorFilter, setFornecedorFilter] = useState('all');
   const [prioridadeFilter, setPrioridadeFilter] = useState('all');
   const [dataInicial, setDataInicial] = useState('');
   const [dataFinal, setDataFinal] = useState('');
-  
-  // Dados para formulários
   const [fornecedores, setFornecedores] = useState<any[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
   const [centrosCusto, setCentrosCusto] = useState<any[]>([]);
   const [formasPagamento, setFormasPagamento] = useState<any[]>([]);
-  const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([]);
-
-  const [baixaModal, setBaixaModal] = useState<BaixaModal>({
-    isOpen: false,
-    conta: null,
-    valorPagamento: 0,
-    dataPagamento: dayjs().format('YYYY-MM-DD'),
-    formaPagamentoId: '',
-    contaBancariaId: '',
-    numeroComprovante: '',
-    observacoes: ''
-  });
-
+  const [contasBancarias, setContasBancarias] = useState<any[]>([]);
+  const [baixaModal, setBaixaModal] = useState<BaixaModal>({ isOpen:false, conta:null, valorPagamento:0, dataPagamento:dayjs().format('YYYY-MM-DD'), formaPagamentoId:'', contaBancariaId:'', numeroComprovante:'', observacoes:'' });
   const [showLancamentoLoteModal, setShowLancamentoLoteModal] = useState(false);
-  const [modalVisualizacao, setModalVisualizacao] = useState<{ isOpen: boolean; conta: ContaPagar | null }>({
-    isOpen: false,
-    conta: null
-  });
+  const [modalVisualizacao, setModalVisualizacao] = useState<{isOpen:boolean;conta:ContaPagar|null}>({ isOpen:false, conta:null });
+  const [formData, setFormData] = useState<FormData>({ fornecedor_id:'', descricao:'', categoria_id:'', centro_custo_id:'', forma_pagamento_id:'', valor_total:0, desconto:0, juros:0, data_emissao:dayjs().format('YYYY-MM-DD'), data_vencimento:dayjs().add(30,'days').format('YYYY-MM-DD'), numero_documento:'', observacoes:'', prioridade_sugerida:'media', observacao_tesouraria:'', eh_recorrente:false, frequencia_recorrencia:'mensal', dia_vencimento_recorrente:10, data_fim_recorrencia:'', eh_parcelado:false, total_parcelas:1 });
 
-  const [formData, setFormData] = useState<FormData>({
-    fornecedor_id: '',
-    descricao: '',
-    categoria_id: '',
-    centro_custo_id: '',
-    forma_pagamento_id: '',
-    valor_total: 0,
-    desconto: 0,
-    juros: 0,
-    data_emissao: dayjs().format('YYYY-MM-DD'),
-    data_vencimento: dayjs().add(30, 'days').format('YYYY-MM-DD'),
-    numero_documento: '',
-    observacoes: '',
-    prioridade_sugerida: 'media',
-    observacao_tesouraria: '',
-    eh_recorrente: false,
-    frequencia_recorrencia: 'mensal',
-    dia_vencimento_recorrente: 10,
-    data_fim_recorrencia: '',
-    eh_parcelado: false,
-    total_parcelas: 1
-  });
-
-  useEffect(() => {
-    fetchData();
-    fetchIndicadores();
-    fetchFormData();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-    fetchIndicadores();
-  }, [statusFilter, situacaoFilter, fornecedorFilter, prioridadeFilter, dataInicial, dataFinal]);
+  useEffect(() => { fetchData(); fetchIndicadores(); fetchFormData(); }, []);
+  useEffect(() => { fetchData(); fetchIndicadores(); }, [statusFilter,situacaoFilter,fornecedorFilter,prioridadeFilter,dataInicial,dataFinal]);
 
   const fetchFormData = async () => {
     try {
-      // Test connection first
-      const connectionOk = await testConnection();
-
-      if (!connectionOk) {
-        console.warn('Supabase connection failed, cannot fetch form data');
-        setFornecedores([]);
-        setCategorias([]);
-        setCentrosCusto([]);
-        setFormasPagamento([]);
-        setContasBancarias([]);
-        return;
-      }
-
-      const [fornecedoresRes, categoriasRes, centrosRes, formasRes, contasRes] = await Promise.all([
-        supabase.from('fornecedores').select('*').eq('status', 'ativo'),
-        supabase.from('vw_categoria_tree').select('*').eq('tipo', 'despesa').eq('status', 'ativo'),
-        supabase.from('centros_custo').select('*').eq('status', 'ativo'),
-        supabase.from('formas_pagamento').select('*').eq('status', 'ativo'),
-        supabase.from('vw_bancos_contas_saldo').select('*').eq('status', 'ativo')
+      if (!await testConnection()) return;
+      const [a,b,c,d,e] = await Promise.all([
+        supabase.from('fornecedores').select('*').eq('status','ativo'),
+        supabase.from('vw_categoria_tree').select('*').eq('tipo','despesa').eq('status','ativo'),
+        supabase.from('centros_custo').select('*').eq('status','ativo'),
+        supabase.from('formas_pagamento').select('*').eq('status','ativo'),
+        supabase.from('vw_bancos_contas_saldo').select('*').eq('status','ativo'),
       ]);
-
-      setFornecedores(fornecedoresRes.data || []);
-      setCategorias(categoriasRes.data || []);
-      setCentrosCusto(centrosRes.data || []);
-      setFormasPagamento(formasRes.data || []);
-      setContasBancarias(contasRes.data || []);
-    } catch (err) {
-      console.error('Error fetching form data:', err);
-      setFornecedores([]);
-      setCategorias([]);
-      setCentrosCusto([]);
-      setFormasPagamento([]);
-      setContasBancarias([]);
-    }
+      setFornecedores(a.data||[]); setCategorias(b.data||[]); setCentrosCusto(c.data||[]); setFormasPagamento(d.data||[]); setContasBancarias(e.data||[]);
+    } catch {}
   };
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // Test connection first
-      const connectionOk = await testConnection();
-      
-      if (!connectionOk) {
-        console.warn('Supabase connection failed, using empty data');
-        setContas([]);
-        setLoading(false);
-        return;
-      }
-
-      let query = supabase.from('vw_contas_pagar').select('*');
-
-      // Aplicar filtros
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
-      if (fornecedorFilter !== 'all') {
-        query = query.eq('fornecedor_id', fornecedorFilter);
-      }
-
-      if (prioridadeFilter !== 'all') {
-        query = query.eq('prioridade_sugerida', prioridadeFilter);
-      }
-
-      if (dataInicial) {
-        query = query.gte('data_vencimento', dataInicial);
-      }
-
-      if (dataFinal) {
-        query = query.lte('data_vencimento', dataFinal);
-      }
-
-      const { data, error } = await query.order('data_vencimento', { ascending: true });
-
+      setLoading(true); setError(null);
+      if (!await testConnection()) { setContas([]); setLoading(false); return; }
+      let q = supabase.from('vw_contas_pagar').select('*');
+      if (statusFilter!=='all') q=q.eq('status',statusFilter);
+      if (fornecedorFilter!=='all') q=q.eq('fornecedor_id',fornecedorFilter);
+      if (prioridadeFilter!=='all') q=q.eq('prioridade_sugerida',prioridadeFilter);
+      if (dataInicial) q=q.gte('data_vencimento',dataInicial);
+      if (dataFinal) q=q.lte('data_vencimento',dataFinal);
+      const { data, error } = await q.order('data_vencimento',{ascending:true});
       if (error) throw error;
-      setContas(data || []);
-    } catch (err) {
-      console.error('Error fetching accounts payable:', err);
-      console.warn('Using empty data due to connection issues');
-      setContas([]);
-    } finally {
-      setLoading(false);
-    }
+      setContas(data||[]);
+    } catch { setContas([]); }
+    finally { setLoading(false); }
   };
 
   const fetchIndicadores = async () => {
     try {
-      const connectionOk = await testConnection();
-      if (!connectionOk) {
-        setIndicadores(null);
-        return;
-      }
-
-      let query = supabase
-        .from('vw_contas_pagar')
-        .select('valor_total, valor_pago, saldo_restante, status, data_vencimento, aprovado_para_pagamento, fornecedor_id, prioridade_sugerida, situacao_vencimento');
-
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-      if (fornecedorFilter !== 'all') {
-        query = query.eq('fornecedor_id', fornecedorFilter);
-      }
-      if (prioridadeFilter !== 'all') {
-        query = query.eq('prioridade_sugerida', prioridadeFilter);
-      }
-      if (dataInicial) {
-        query = query.gte('data_vencimento', dataInicial);
-      }
-      if (dataFinal) {
-        query = query.lte('data_vencimento', dataFinal);
-      }
-
-      const { data: contasData, error } = await query;
-      if (error) throw error;
-
-      const pendentes = (contasData || []).filter(c => c.saldo_restante > 0);
-      const totalContas = pendentes.length;
-      const valorTotal = pendentes.reduce((sum, c) => sum + (c.valor_total || 0), 0);
-      const valorPago = pendentes.reduce((sum, c) => sum + (c.valor_pago || 0), 0);
-      const saldoPendente = pendentes.reduce((sum, c) => sum + (c.saldo_restante || 0), 0);
-
-      const atrasadas = pendentes.filter(c => c.situacao_vencimento === 'atrasada');
-      const aVencer = pendentes.filter(c => c.situacao_vencimento === 'vence_em_breve' || c.situacao_vencimento === 'no_prazo');
-      const venceHoje = pendentes.filter(c => c.situacao_vencimento === 'vence_hoje');
-
-      const contasAprovadas = pendentes.filter(c => c.aprovado_para_pagamento === true).length;
-      const valorAprovado = pendentes.filter(c => c.aprovado_para_pagamento === true)
-        .reduce((sum, c) => sum + (c.saldo_restante || 0), 0);
-
-      const ticketMedio = totalContas > 0 ? valorTotal / totalContas : 0;
-
+      if (!await testConnection()) { setIndicadores(null); return; }
+      let q = supabase.from('vw_contas_pagar').select('valor_total,valor_pago,saldo_restante,status,data_vencimento,aprovado_para_pagamento,fornecedor_id,prioridade_sugerida,situacao_vencimento');
+      if (statusFilter!=='all') q=q.eq('status',statusFilter);
+      if (fornecedorFilter!=='all') q=q.eq('fornecedor_id',fornecedorFilter);
+      if (prioridadeFilter!=='all') q=q.eq('prioridade_sugerida',prioridadeFilter);
+      if (dataInicial) q=q.gte('data_vencimento',dataInicial);
+      if (dataFinal) q=q.lte('data_vencimento',dataFinal);
+      const { data: d } = await q;
+      const p=(d||[]).filter(c=>c.saldo_restante>0);
       setIndicadores({
-        total_contas: totalContas,
-        valor_total: valorTotal,
-        valor_pago: valorPago,
-        saldo_pendente: saldoPendente,
-        contas_vencidas: atrasadas.length,
-        valor_vencido: atrasadas.reduce((sum, c) => sum + (c.saldo_restante || 0), 0),
-        contas_aprovadas: contasAprovadas,
-        valor_aprovado: valorAprovado,
-        ticket_medio: ticketMedio,
-        contas_a_vencer: aVencer.length,
-        valor_a_vencer: aVencer.reduce((sum, c) => sum + (c.saldo_restante || 0), 0),
-        contas_vence_hoje: venceHoje.length,
-        valor_vence_hoje: venceHoje.reduce((sum, c) => sum + (c.saldo_restante || 0), 0),
+        total_contas:p.length,
+        saldo_pendente:p.reduce((s,c)=>s+(c.saldo_restante||0),0),
+        contas_vencidas:p.filter(c=>c.situacao_vencimento==='atrasada').length,
+        valor_vencido:p.filter(c=>c.situacao_vencimento==='atrasada').reduce((s,c)=>s+(c.saldo_restante||0),0),
+        contas_vence_hoje:p.filter(c=>c.situacao_vencimento==='vence_hoje').length,
+        valor_vence_hoje:p.filter(c=>c.situacao_vencimento==='vence_hoje').reduce((s,c)=>s+(c.saldo_restante||0),0),
+        contas_a_vencer:p.filter(c=>c.situacao_vencimento==='vence_em_breve'||c.situacao_vencimento==='no_prazo').length,
+        valor_a_vencer:p.filter(c=>c.situacao_vencimento==='vence_em_breve'||c.situacao_vencimento==='no_prazo').reduce((s,c)=>s+(c.saldo_restante||0),0),
+        valor_pago:p.reduce((s,c)=>s+(c.valor_pago||0),0),
+        valor_total:p.reduce((s,c)=>s+(c.valor_total||0),0),
       });
-    } catch (err) {
-      console.error('Error fetching indicators:', err);
-      setIndicadores(null);
-    }
+    } catch { setIndicadores(null); }
   };
 
-  // Handler para dados extraídos pela IA
   const handleIAExtraction = async (extracted: any) => {
     try {
-      setLoading(true);
-      setShowIAModal(false);
-
-      // 1. Buscar ou criar fornecedor
-      let fornecedorId = '';
-      const fornecedorNome = extracted.beneficiario.nome;
-      const fornecedorCNPJ = extracted.beneficiario.cnpj;
-
-      if (fornecedorCNPJ) {
-        // Buscar por CNPJ
-        const { data: fornecedorExistente } = await supabase
-          .from('fornecedores')
-          .select('id')
-          .eq('cnpj', fornecedorCNPJ.replace(/\D/g, ''))
-          .maybeSingle();
-
-        if (fornecedorExistente) {
-          fornecedorId = fornecedorExistente.id;
-        } else {
-          // Criar novo fornecedor
-          const { data: novoFornecedor, error: fornecedorError } = await supabase
-            .from('fornecedores')
-            .insert({
-              nome: fornecedorNome,
-              cnpj: fornecedorCNPJ.replace(/\D/g, ''),
-            })
-            .select()
-            .single();
-
-          if (fornecedorError) throw fornecedorError;
-          fornecedorId = novoFornecedor.id;
-        }
-      } else if (fornecedorNome) {
-        // Buscar por nome similar
-        const { data: fornecedorSimilar } = await supabase
-          .from('fornecedores')
-          .select('id')
-          .ilike('nome', `%${fornecedorNome}%`)
-          .limit(1)
-          .maybeSingle();
-
-        if (fornecedorSimilar) {
-          fornecedorId = fornecedorSimilar.id;
-        } else {
-          // Criar novo
-          const { data: novoFornecedor, error: fornecedorError } = await supabase
-            .from('fornecedores')
-            .insert({ nome: fornecedorNome })
-            .select()
-            .single();
-
-          if (fornecedorError) throw fornecedorError;
-          fornecedorId = novoFornecedor.id;
-        }
+      setLoading(true); setShowIAModal(false);
+      let fornecedorId='';
+      const nome=extracted.beneficiario.nome, cnpj=extracted.beneficiario.cnpj;
+      if (cnpj) {
+        const { data: e } = await supabase.from('fornecedores').select('id').eq('cnpj',cnpj.replace(/\D/g,'')).maybeSingle();
+        if (e) { fornecedorId=e.id; }
+        else { const { data: n, error: ne } = await supabase.from('fornecedores').insert({nome,cnpj:cnpj.replace(/\D/g,'')}).select().single(); if(ne)throw ne; fornecedorId=n.id; }
+      } else if (nome) {
+        const { data: s } = await supabase.from('fornecedores').select('id').ilike('nome',`%${nome}%`).limit(1).maybeSingle();
+        if (s) { fornecedorId=s.id; }
+        else { const { data: n, error: ne } = await supabase.from('fornecedores').insert({nome}).select().single(); if(ne)throw ne; fornecedorId=n.id; }
       }
-
-      // 2. Detectar duplicatas
-      const duplicatas = await detectarDuplicatas({
-        fornecedor_id: fornecedorId,
-        fornecedor_nome: fornecedorNome,
-        valor: extracted.valores.total,
-        data_vencimento: extracted.datas.vencimento,
-        numero_documento: extracted.codigo_barras || extracted.linha_digitavel,
-        descricao: extracted.descricao,
-      }, 'pagar');
-
-      // Alertar se encontrou duplicatas
-      if (duplicatas.length > 0 && duplicatas[0].tipo === 'exata') {
-        const confirmar = window.confirm(
-          `⚠️ DUPLICATA DETECTADA!\n\n` +
-          `Uma conta similar já existe:\n` +
-          `Fornecedor: ${duplicatas[0].conta.fornecedor_nome}\n` +
-          `Valor: ${formatCurrency(duplicatas[0].conta.valor)}\n` +
-          `Vencimento: ${dayjs(duplicatas[0].conta.data_vencimento).format('DD/MM/YYYY')}\n\n` +
-          `Deseja continuar mesmo assim?`
-        );
-        if (!confirmar) {
-          setLoading(false);
-          return;
-        }
-      } else if (duplicatas.length > 0 && duplicatas[0].similaridade >= 0.7) {
-        const confirmar = window.confirm(
-          `💡 Conta similar encontrada (${(duplicatas[0].similaridade * 100).toFixed(0)}% similar)\n\n` +
-          `${duplicatas[0].motivos.join('\n')}\n\n` +
-          `Deseja continuar?`
-        );
-        if (!confirmar) {
-          setLoading(false);
-          return;
-        }
-      }
-
-      // 3. Sugerir categoria automaticamente
-      const categoriaSugerida = await sugerirCategoria(
-        fornecedorId,
-        fornecedorNome,
-        extracted.descricao || extracted.categoria_sugerida,
-        extracted.valores.total
-      );
-
-      // 4. Preencher formulário com dados extraídos
-      setFormData({
-        fornecedor_id: fornecedorId,
-        descricao: extracted.descricao || `Boleto - ${fornecedorNome}`,
-        categoria_id: categoriaSugerida?.categoria_id || '',
-        centro_custo_id: '',
-        forma_pagamento_id: '',
-        valor_total: extracted.valores.total,
-        desconto: extracted.valores.desconto,
-        juros: extracted.valores.juros + extracted.valores.multa,
-        data_emissao: extracted.datas.emissao || dayjs().format('YYYY-MM-DD'),
-        data_vencimento: extracted.datas.vencimento,
-        numero_documento: extracted.codigo_barras || extracted.linha_digitavel || '',
-        observacoes: extracted.observacoes || '',
-        prioridade_sugerida: 'media',
-        observacao_tesouraria: categoriaSugerida ? `IA sugeriu categoria: ${categoriaSugerida.categoria_nome} (${(categoriaSugerida.confianca * 100).toFixed(0)}% confiança)` : '',
-        eh_recorrente: false,
-        frequencia_recorrencia: '',
-        dia_vencimento_recorrente: 0,
-        data_fim_recorrencia: '',
-        eh_parcelado: false,
-        total_parcelas: 0,
-      });
-
-      // 5. Registrar auditoria de IA
-      await supabase.from('ia_extractions_financeiro').insert({
-        tipo_extracao: 'boleto',
-        tipo_conta: 'pagar',
-        dados_extraidos: extracted,
-        confidence_media: Object.values(extracted.confidences).reduce((a: any, b: any) => a + b, 0) / Object.keys(extracted.confidences).length,
-        categoria_sugerida_id: categoriaSugerida?.categoria_id,
-        duplicatas_detectadas: duplicatas.length,
-        arquivo_nome: 'boleto.jpg',
-        modelo_ia: 'gpt-4o',
-      });
-
-      // 6. Abrir formulário com dados pré-preenchidos
-      setShowForm(true);
-      setLoading(false);
-
-      // Mostrar notificação
-      if (categoriaSugerida) {
-        alert(
-          `✨ Dados extraídos com sucesso!\n\n` +
-          `📊 Categoria sugerida: ${categoriaSugerida.categoria_nome}\n` +
-          `🎯 Confiança: ${(categoriaSugerida.confianca * 100).toFixed(0)}%\n` +
-          `💡 ${categoriaSugerida.razao}\n\n` +
-          `Revise os dados e confirme para salvar.`
-        );
-      }
-    } catch (err) {
-      console.error('Erro ao processar extração IA:', err);
-      setError('Erro ao processar dados da IA. Tente novamente.');
-      setLoading(false);
-    }
+      const duplicatas = await detectarDuplicatas({ fornecedor_id:fornecedorId, fornecedor_nome:nome, valor:extracted.valores.total, data_vencimento:extracted.datas.vencimento, numero_documento:extracted.codigo_barras||extracted.linha_digitavel, descricao:extracted.descricao }, 'pagar');
+      if (duplicatas.length>0 && duplicatas[0].tipo==='exata') { if(!window.confirm(`⚠️ DUPLICATA DETECTADA!\n\nDeseja continuar?`)){setLoading(false);return;} }
+      else if (duplicatas.length>0 && duplicatas[0].similaridade>=0.7) { if(!window.confirm(`💡 Conta similar encontrada. Deseja continuar?`)){setLoading(false);return;} }
+      const cat = await sugerirCategoria(fornecedorId, nome, extracted.descricao||extracted.categoria_sugerida, extracted.valores.total);
+      setFormData({ fornecedor_id:fornecedorId, descricao:extracted.descricao||`Boleto - ${nome}`, categoria_id:cat?.categoria_id||'', centro_custo_id:'', forma_pagamento_id:'', valor_total:extracted.valores.total, desconto:extracted.valores.desconto, juros:extracted.valores.juros+extracted.valores.multa, data_emissao:extracted.datas.emissao||dayjs().format('YYYY-MM-DD'), data_vencimento:extracted.datas.vencimento, numero_documento:extracted.codigo_barras||extracted.linha_digitavel||'', observacoes:extracted.observacoes||'', prioridade_sugerida:'media', observacao_tesouraria:cat?`IA sugeriu: ${cat.categoria_nome} (${(cat.confianca*100).toFixed(0)}%)`:'', eh_recorrente:false, frequencia_recorrencia:'', dia_vencimento_recorrente:0, data_fim_recorrencia:'', eh_parcelado:false, total_parcelas:0 });
+      await supabase.from('ia_extractions_financeiro').insert({ tipo_extracao:'boleto', tipo_conta:'pagar', dados_extraidos:extracted, confidence_media:Object.values(extracted.confidences).reduce((a:any,b:any)=>a+b,0)/Object.keys(extracted.confidences).length, categoria_sugerida_id:cat?.categoria_id, duplicatas_detectadas:duplicatas.length, arquivo_nome:'boleto.jpg', modelo_ia:'gpt-4o' });
+      setShowForm(true); setLoading(false);
+      if (cat) alert(`✨ Dados extraídos!\n\nCategoria: ${cat.categoria_nome}\nConfiança: ${(cat.confianca*100).toFixed(0)}%`);
+    } catch (err: any) { setError('Erro ao processar dados da IA.'); setLoading(false); }
   };
 
   const handleSave = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const valorOriginal = parseFloat(formData.valor_total.toString());
-      const desconto = parseFloat(formData.desconto.toString()) || 0;
-      const juros = parseFloat(formData.juros.toString()) || 0;
-      const valorFinal = valorOriginal - desconto + juros;
-
+      setLoading(true); setError(null);
+      const vo=parseFloat(formData.valor_total.toString()), desc=parseFloat(formData.desconto.toString())||0, jur=parseFloat(formData.juros.toString())||0, vf=vo-desc+jur;
       if (editingConta) {
-        const dataToSave = {
-          ...formData,
-          valor_original: valorOriginal,
-          valor_total: valorFinal,
-          valor_final: valorFinal,
-          desconto,
-          juros,
-          data_fim_recorrencia: formData.data_fim_recorrencia || null
-        };
-
-        const { error } = await supabase
-          .from('contas_pagar')
-          .update(dataToSave)
-          .eq('id', editingConta.id);
-
+        const { error } = await supabase.from('contas_pagar').update({ ...formData, valor_original:vo, valor_total:vf, valor_final:vf, desconto:desc, juros:jur, data_fim_recorrencia:formData.data_fim_recorrencia||null }).eq('id',editingConta.id);
         if (error) throw error;
+      } else if (formData.eh_parcelado && formData.total_parcelas>1) {
+        const gid=crypto.randomUUID(), vp=vf/formData.total_parcelas;
+        const parcelas=Array.from({length:formData.total_parcelas},(_,i)=>({ fornecedor_id:formData.fornecedor_id, descricao:`${formData.descricao} - Parcela ${i+1}/${formData.total_parcelas}`, categoria_id:formData.categoria_id||null, centro_custo_id:formData.centro_custo_id||null, forma_pagamento_id:formData.forma_pagamento_id||null, valor_original:vp, valor_total:vp, valor_final:vp, desconto:0, juros:0, data_emissao:formData.data_emissao, data_vencimento:dayjs(formData.data_vencimento).add(i,'month').format('YYYY-MM-DD'), numero_documento:formData.numero_documento||null, observacoes:formData.observacoes||null, prioridade_sugerida:formData.prioridade_sugerida, observacao_tesouraria:formData.observacao_tesouraria||null, eh_parcelado:true, numero_parcela:i+1, total_parcelas:formData.total_parcelas, parcelamento_grupo_id:gid, eh_recorrente:false, frequencia_recorrencia:null, dia_vencimento_recorrente:null, data_fim_recorrencia:null }));
+        const { error } = await supabase.from('contas_pagar').insert(parcelas); if(error)throw error;
       } else {
-        if (formData.eh_parcelado && formData.total_parcelas > 1) {
-          const parcelamentoGrupoId = crypto.randomUUID();
-          const valorParcela = valorFinal / formData.total_parcelas;
-          const parcelas = [];
-
-          for (let i = 1; i <= formData.total_parcelas; i++) {
-            const dataVencimento = dayjs(formData.data_vencimento).add(i - 1, 'month').format('YYYY-MM-DD');
-            parcelas.push({
-              fornecedor_id: formData.fornecedor_id,
-              descricao: `${formData.descricao} - Parcela ${i}/${formData.total_parcelas}`,
-              categoria_id: formData.categoria_id || null,
-              centro_custo_id: formData.centro_custo_id || null,
-              forma_pagamento_id: formData.forma_pagamento_id || null,
-              valor_original: valorParcela,
-              valor_total: valorParcela,
-              valor_final: valorParcela,
-              desconto: 0,
-              juros: 0,
-              data_emissao: formData.data_emissao,
-              data_vencimento: dataVencimento,
-              numero_documento: formData.numero_documento || null,
-              observacoes: formData.observacoes || null,
-              prioridade_sugerida: formData.prioridade_sugerida,
-              observacao_tesouraria: formData.observacao_tesouraria || null,
-              eh_parcelado: true,
-              numero_parcela: i,
-              total_parcelas: formData.total_parcelas,
-              parcelamento_grupo_id: parcelamentoGrupoId,
-              eh_recorrente: false,
-              frequencia_recorrencia: null,
-              dia_vencimento_recorrente: null,
-              data_fim_recorrencia: null
-            });
-          }
-
-          const { error } = await supabase
-            .from('contas_pagar')
-            .insert(parcelas);
-
-          if (error) throw error;
-        } else if (formData.eh_recorrente) {
-          const dataToSave = {
-            fornecedor_id: formData.fornecedor_id,
-            descricao: formData.descricao,
-            categoria_id: formData.categoria_id || null,
-            centro_custo_id: formData.centro_custo_id || null,
-            forma_pagamento_id: formData.forma_pagamento_id || null,
-            valor_original: valorOriginal,
-            valor_total: valorFinal,
-            valor_final: valorFinal,
-            desconto,
-            juros,
-            data_emissao: formData.data_emissao,
-            data_vencimento: formData.data_vencimento,
-            numero_documento: formData.numero_documento || null,
-            observacoes: formData.observacoes || null,
-            prioridade_sugerida: formData.prioridade_sugerida,
-            observacao_tesouraria: formData.observacao_tesouraria || null,
-            eh_recorrente: true,
-            frequencia_recorrencia: formData.frequencia_recorrencia,
-            dia_vencimento_recorrente: formData.dia_vencimento_recorrente,
-            data_inicio_recorrencia: formData.data_vencimento,
-            recorrencia_ativa: true,
-            data_fim_recorrencia: formData.data_fim_recorrencia || null,
-            eh_parcelado: false,
-            numero_parcela: null,
-            total_parcelas: null,
-            parcelamento_grupo_id: null
-          };
-
-          const { error } = await supabase
-            .from('contas_pagar')
-            .insert([dataToSave]);
-
-          if (error) throw error;
-        } else {
-          const dataToSave = {
-            fornecedor_id: formData.fornecedor_id,
-            descricao: formData.descricao,
-            categoria_id: formData.categoria_id || null,
-            centro_custo_id: formData.centro_custo_id || null,
-            forma_pagamento_id: formData.forma_pagamento_id || null,
-            valor_original: valorOriginal,
-            valor_total: valorFinal,
-            valor_final: valorFinal,
-            desconto,
-            juros,
-            data_emissao: formData.data_emissao,
-            data_vencimento: formData.data_vencimento,
-            numero_documento: formData.numero_documento || null,
-            observacoes: formData.observacoes || null,
-            prioridade_sugerida: formData.prioridade_sugerida,
-            observacao_tesouraria: formData.observacao_tesouraria || null,
-            eh_recorrente: false,
-            frequencia_recorrencia: null,
-            dia_vencimento_recorrente: null,
-            data_fim_recorrencia: null,
-            eh_parcelado: false,
-            numero_parcela: null,
-            total_parcelas: null,
-            parcelamento_grupo_id: null
-          };
-
-          const { error } = await supabase
-            .from('contas_pagar')
-            .insert([dataToSave]);
-
-          if (error) throw error;
-        }
+        const d = { fornecedor_id:formData.fornecedor_id, descricao:formData.descricao, categoria_id:formData.categoria_id||null, centro_custo_id:formData.centro_custo_id||null, forma_pagamento_id:formData.forma_pagamento_id||null, valor_original:vo, valor_total:vf, valor_final:vf, desconto:desc, juros:jur, data_emissao:formData.data_emissao, data_vencimento:formData.data_vencimento, numero_documento:formData.numero_documento||null, observacoes:formData.observacoes||null, prioridade_sugerida:formData.prioridade_sugerida, observacao_tesouraria:formData.observacao_tesouraria||null, eh_recorrente:formData.eh_recorrente, frequencia_recorrencia:formData.eh_recorrente?formData.frequencia_recorrencia:null, dia_vencimento_recorrente:formData.eh_recorrente?formData.dia_vencimento_recorrente:null, data_inicio_recorrencia:formData.eh_recorrente?formData.data_vencimento:null, recorrencia_ativa:formData.eh_recorrente||null, data_fim_recorrencia:formData.data_fim_recorrencia||null, eh_parcelado:false, numero_parcela:null, total_parcelas:null, parcelamento_grupo_id:null };
+        const { error } = await supabase.from('contas_pagar').insert([d]); if(error)throw error;
       }
-
-      setShowForm(false);
-      setEditingConta(null);
-      resetForm();
-      fetchData();
-      fetchIndicadores();
-    } catch (err) {
-      console.error('Error saving account:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao salvar conta');
-    } finally {
-      setLoading(false);
-    }
+      setShowForm(false); setEditingConta(null); resetForm(); fetchData(); fetchIndicadores();
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta conta? Esta ação irá excluir também todos os pagamentos e lançamentos vinculados.')) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      console.log('🗑️ Excluindo conta:', id);
-
-      const { data, error } = await supabase
-        .from('contas_pagar')
-        .delete()
-        .eq('id', id)
-        .select();
-
-      if (error) {
-        console.error('❌ Erro ao excluir:', error);
-        throw error;
-      }
-
-      console.log('✅ Conta excluída com sucesso:', data);
-
-      // Recarregar dados
-      await fetchData();
-      await fetchIndicadores();
-
-      alert('Conta excluída com sucesso!');
-    } catch (err) {
-      console.error('❌ Error deleting account:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir conta';
-      setError(errorMessage);
-      alert(`Erro ao excluir conta: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Funções de seleção múltipla
-  const toggleSelect = (id: string) => {
-    const newSelected = new Set(selectedIds);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedIds(newSelected);
-    setShowBulkActions(newSelected.size > 0);
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filteredContas.length && filteredContas.length > 0) {
-      setSelectedIds(new Set());
-      setShowBulkActions(false);
-    } else {
-      setSelectedIds(new Set(filteredContas.map(c => c.id)));
-      setShowBulkActions(true);
-    }
+    if (!confirm('Excluir esta conta?')) return;
+    try { setLoading(true); const { error } = await supabase.from('contas_pagar').delete().eq('id',id).select(); if(error)throw error; await fetchData(); await fetchIndicadores(); alert('Conta excluída!'); }
+    catch (err: any) { setError(err.message); alert(`Erro: ${err.message}`); }
+    finally { setLoading(false); }
   };
 
   const handleBulkDelete = async () => {
-    if (selectedIds.size === 0) return;
-
-    if (!confirm(`Tem certeza que deseja excluir ${selectedIds.size} conta(s)? Esta ação irá excluir também todos os pagamentos e lançamentos vinculados.`)) return;
-
+    if (!selectedIds.size||!confirm(`Excluir ${selectedIds.size} conta(s)?`)) return;
     try {
       setLoading(true);
-      setError(null);
-
-      console.log(`🗑️ Excluindo ${selectedIds.size} contas em lote`);
-
-      const errors = [];
-      for (const id of Array.from(selectedIds)) {
-        const { error } = await supabase
-          .from('contas_pagar')
-          .delete()
-          .eq('id', id);
-
-        if (error) {
-          console.error(`❌ Erro ao excluir conta ${id}:`, error);
-          errors.push(error.message);
-        }
-      }
-
-      if (errors.length > 0) {
-        throw new Error(`Erro ao excluir ${errors.length} conta(s): ${errors.join(', ')}`);
-      }
-
-      console.log(`✅ ${selectedIds.size} conta(s) excluída(s) com sucesso`);
-
-      setSelectedIds(new Set());
-      setShowBulkActions(false);
-      await fetchData();
-      await fetchIndicadores();
-
-      alert(`${selectedIds.size} conta(s) excluída(s) com sucesso!`);
-    } catch (err) {
-      console.error('❌ Error deleting accounts:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir contas';
-      setError(errorMessage);
-      alert(`Erro ao excluir contas: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
+      for (const id of Array.from(selectedIds)) { await supabase.from('contas_pagar').delete().eq('id',id); }
+      setSelectedIds(new Set()); setShowBulkActions(false); await fetchData(); await fetchIndicadores();
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
+  const toggleSelect = (id: string) => { const n=new Set(selectedIds); n.has(id)?n.delete(id):n.add(id); setSelectedIds(n); setShowBulkActions(n.size>0); };
+  const toggleSelectAll = () => { if(selectedIds.size===filteredContas.length&&filteredContas.length>0){setSelectedIds(new Set());setShowBulkActions(false);}else{setSelectedIds(new Set(filteredContas.map(c=>c.id)));setShowBulkActions(true);} };
+
   const openForm = (conta?: ContaPagar) => {
-    if (conta) {
-      setEditingConta(conta);
-      setFormData({
-        fornecedor_id: conta.fornecedor_id,
-        descricao: conta.descricao,
-        categoria_id: conta.categoria_id || '',
-        centro_custo_id: conta.centro_custo_id || '',
-        forma_pagamento_id: conta.forma_pagamento_id || '',
-        valor_total: conta.valor_original || conta.valor_total,
-        desconto: conta.desconto || 0,
-        juros: conta.juros || 0,
-        data_emissao: conta.data_emissao,
-        data_vencimento: conta.data_vencimento,
-        numero_documento: conta.numero_documento || '',
-        observacoes: conta.observacoes || '',
-        prioridade_sugerida: conta.prioridade_sugerida || 'media',
-        observacao_tesouraria: conta.observacao_tesouraria || '',
-        eh_recorrente: conta.eh_recorrente || false,
-        frequencia_recorrencia: conta.frequencia_recorrencia || 'mensal',
-        dia_vencimento_recorrente: conta.dia_vencimento_recorrente || 10,
-        data_fim_recorrencia: conta.data_fim_recorrencia || '',
-        eh_parcelado: conta.eh_parcelado || false,
-        total_parcelas: conta.total_parcelas || 1
-      });
-    } else {
-      setEditingConta(null);
-      resetForm();
-    }
+    if (conta) { setEditingConta(conta); setFormData({ fornecedor_id:conta.fornecedor_id, descricao:conta.descricao, categoria_id:conta.categoria_id||'', centro_custo_id:conta.centro_custo_id||'', forma_pagamento_id:conta.forma_pagamento_id||'', valor_total:conta.valor_original||conta.valor_total, desconto:conta.desconto||0, juros:conta.juros||0, data_emissao:conta.data_emissao, data_vencimento:conta.data_vencimento, numero_documento:conta.numero_documento||'', observacoes:conta.observacoes||'', prioridade_sugerida:conta.prioridade_sugerida||'media', observacao_tesouraria:conta.observacao_tesouraria||'', eh_recorrente:conta.eh_recorrente||false, frequencia_recorrencia:conta.frequencia_recorrencia||'mensal', dia_vencimento_recorrente:conta.dia_vencimento_recorrente||10, data_fim_recorrencia:conta.data_fim_recorrencia||'', eh_parcelado:conta.eh_parcelado||false, total_parcelas:conta.total_parcelas||1 }); }
+    else { setEditingConta(null); resetForm(); }
     setShowForm(true);
   };
 
-  const resetForm = () => {
-    setFormData({
-      fornecedor_id: '',
-      descricao: '',
-      categoria_id: '',
-      centro_custo_id: '',
-      forma_pagamento_id: '',
-      valor_total: 0,
-      desconto: 0,
-      juros: 0,
-      data_emissao: dayjs().format('YYYY-MM-DD'),
-      data_vencimento: dayjs().add(30, 'days').format('YYYY-MM-DD'),
-      numero_documento: '',
-      observacoes: '',
-      prioridade_sugerida: 'media',
-      observacao_tesouraria: '',
-      eh_recorrente: false,
-      frequencia_recorrencia: 'mensal',
-      dia_vencimento_recorrente: 10,
-      data_fim_recorrencia: '',
-      eh_parcelado: false,
-      total_parcelas: 1
-    });
-  };
+  const resetForm = () => setFormData({ fornecedor_id:'', descricao:'', categoria_id:'', centro_custo_id:'', forma_pagamento_id:'', valor_total:0, desconto:0, juros:0, data_emissao:dayjs().format('YYYY-MM-DD'), data_vencimento:dayjs().add(30,'days').format('YYYY-MM-DD'), numero_documento:'', observacoes:'', prioridade_sugerida:'media', observacao_tesouraria:'', eh_recorrente:false, frequencia_recorrencia:'mensal', dia_vencimento_recorrente:10, data_fim_recorrencia:'', eh_parcelado:false, total_parcelas:1 });
 
-  const abrirModalBaixa = (conta: ContaPagar) => {
-    setBaixaModal({
-      isOpen: true,
-      conta,
-      valorPagamento: conta.saldo_restante,
-      dataPagamento: dayjs().format('YYYY-MM-DD'),
-      formaPagamentoId: '',
-      contaBancariaId: '',
-      numeroComprovante: '',
-      observacoes: ''
-    });
-  };
-
-  const fecharModalBaixa = () => {
-    setBaixaModal({
-      isOpen: false,
-      conta: null,
-      valorPagamento: 0,
-      dataPagamento: dayjs().format('YYYY-MM-DD'),
-      formaPagamentoId: '',
-      contaBancariaId: '',
-      numeroComprovante: '',
-      observacoes: ''
-    });
-  };
+  const abrirModalBaixa = (conta: ContaPagar) => setBaixaModal({ isOpen:true, conta, valorPagamento:conta.saldo_restante, dataPagamento:dayjs().format('YYYY-MM-DD'), formaPagamentoId:'', contaBancariaId:'', numeroComprovante:'', observacoes:'' });
+  const fecharModalBaixa = () => setBaixaModal({ isOpen:false, conta:null, valorPagamento:0, dataPagamento:dayjs().format('YYYY-MM-DD'), formaPagamentoId:'', contaBancariaId:'', numeroComprovante:'', observacoes:'' });
 
   const handleDarBaixa = async () => {
     if (!baixaModal.conta) return;
-
     try {
-      setLoading(true);
-      setError(null);
-
-      if (!baixaModal.formaPagamentoId || !baixaModal.contaBancariaId) {
-        throw new Error('Selecione a forma de pagamento e a conta bancária');
-      }
-
-      if (baixaModal.valorPagamento <= 0) {
-        throw new Error('Valor de pagamento deve ser maior que zero');
-      }
-
-      if (baixaModal.valorPagamento > baixaModal.conta.saldo_restante) {
-        throw new Error('Valor de pagamento maior que saldo restante');
-      }
-
-      const { data: userData } = await supabase.auth.getUser();
-
-      const { error: rpcError } = await supabase.rpc('api_fin_dar_baixa_conta', {
-        p_conta_pagar_id: baixaModal.conta.id,
-        p_valor_pagamento: baixaModal.valorPagamento,
-        p_data_pagamento: baixaModal.dataPagamento,
-        p_forma_pagamento_id: baixaModal.formaPagamentoId,
-        p_conta_bancaria_id: baixaModal.contaBancariaId,
-        p_numero_comprovante: baixaModal.numeroComprovante || null,
-        p_observacoes: baixaModal.observacoes || null,
-        p_usuario: userData?.user?.id || null
-      });
-
-      if (rpcError) throw rpcError;
-
-      fecharModalBaixa();
-      fetchData();
-      fetchIndicadores();
-    } catch (err) {
-      console.error('Error recording payment:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao dar baixa');
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true); setError(null);
+      if (!baixaModal.formaPagamentoId||!baixaModal.contaBancariaId) throw new Error('Selecione forma de pagamento e conta bancária');
+      if (baixaModal.valorPagamento<=0) throw new Error('Valor deve ser maior que zero');
+      if (baixaModal.valorPagamento>baixaModal.conta.saldo_restante) throw new Error('Valor maior que saldo restante');
+      const { data: ud } = await supabase.auth.getUser();
+      const { error: re } = await supabase.rpc('api_fin_dar_baixa_conta', { p_conta_pagar_id:baixaModal.conta.id, p_valor_pagamento:baixaModal.valorPagamento, p_data_pagamento:baixaModal.dataPagamento, p_forma_pagamento_id:baixaModal.formaPagamentoId, p_conta_bancaria_id:baixaModal.contaBancariaId, p_numero_comprovante:baixaModal.numeroComprovante||null, p_observacoes:baixaModal.observacoes||null, p_usuario:ud?.user?.id||null });
+      if (re) throw re;
+      fecharModalBaixa(); fetchData(); fetchIndicadores();
+    } catch (err: any) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
-  const filteredContas = contas.filter(conta => {
-    const matchesSearch = conta.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         conta.fornecedor_nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         conta.numero_documento?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSituacao = situacaoFilter === 'all' || conta.situacao_vencimento === situacaoFilter;
-    return matchesSearch && matchesSituacao;
+  const filteredContas = contas.filter(c => {
+    const ms = c.descricao.toLowerCase().includes(searchTerm.toLowerCase())||c.fornecedor_nome.toLowerCase().includes(searchTerm.toLowerCase())||c.numero_documento?.toLowerCase().includes(searchTerm.toLowerCase());
+    const msit = situacaoFilter==='all'||c.situacao_vencimento===situacaoFilter;
+    return ms && msit;
   });
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const getStatusColor = (status: string, conta?: ContaPagar) => {
-    if (conta && conta.saldo_restante <= 0 && status !== 'cancelado') return 'text-green-700 bg-green-100';
-    if (conta?.situacao_vencimento === 'atrasada') return 'text-red-700 bg-red-100';
-    if (conta?.situacao_vencimento === 'vence_hoje') return 'text-amber-700 bg-amber-100';
-    if (conta?.situacao_vencimento === 'vence_em_breve') return 'text-orange-700 bg-orange-100';
-    switch (status) {
-      case 'pago': return 'text-green-700 bg-green-100';
-      case 'em_aberto': return 'text-blue-700 bg-blue-100';
-      case 'parcialmente_pago': return 'text-yellow-700 bg-yellow-100';
-      case 'vencido': return 'text-red-700 bg-red-100';
-      case 'cancelado': return 'text-gray-700 bg-gray-100';
-      case 'autorizado_pagamento': return 'text-teal-700 bg-teal-100';
-      default: return 'text-gray-700 bg-gray-100';
-    }
-  };
-
-  const getStatusIcon = (status: string, conta?: ContaPagar) => {
-    if (conta && conta.saldo_restante <= 0 && status !== 'cancelado') return <CheckCircle className="w-4 h-4" />;
-    if (conta?.situacao_vencimento === 'atrasada') return <AlertTriangle className="w-4 h-4" />;
-    if (conta?.situacao_vencimento === 'vence_hoje') return <Clock className="w-4 h-4" />;
-    switch (status) {
-      case 'pago': return <CheckCircle className="w-4 h-4" />;
-      case 'em_aberto': return <Clock className="w-4 h-4" />;
-      case 'parcialmente_pago': return <AlertTriangle className="w-4 h-4" />;
-      case 'vencido': return <XCircle className="w-4 h-4" />;
-      case 'cancelado': return <FileText className="w-4 h-4" />;
-      case 'autorizado_pagamento': return <CheckSquare className="w-4 h-4" />;
-      default: return <AlertTriangle className="w-4 h-4" />;
-    }
-  };
-
-  const getStatusText = (status: string, conta?: ContaPagar) => {
-    if (conta && conta.saldo_restante <= 0 && status !== 'cancelado') return 'Pago';
-    if (conta?.situacao_vencimento === 'atrasada') return 'Atrasada';
-    if (conta?.situacao_vencimento === 'vence_hoje') return 'Vence Hoje';
-    if (conta?.situacao_vencimento === 'vence_em_breve') return 'Prox. Venc.';
-    switch (status) {
-      case 'pago': return 'Pago';
-      case 'em_aberto': return 'Em Aberto';
-      case 'parcialmente_pago': return 'Parcial';
-      case 'vencido': return 'Vencido';
-      case 'cancelado': return 'Cancelado';
-      case 'autorizado_pagamento': return 'Autorizado';
-      default: return 'Desconhecido';
-    }
-  };
-
-  const getPrioridadeColor = (prioridade?: string) => {
-    switch (prioridade) {
-      case 'urgente':
-        return 'text-red-700 bg-red-100 border-red-200';
-      case 'alta':
-        return 'text-orange-700 bg-orange-100 border-orange-200';
-      case 'media':
-        return 'text-yellow-700 bg-yellow-100 border-yellow-200';
-      case 'baixa':
-        return 'text-green-700 bg-green-100 border-green-200';
-      default:
-        return 'text-gray-700 bg-gray-100 border-gray-200';
-    }
-  };
-
-  const getPrioridadeIcon = (prioridade?: string) => {
-    switch (prioridade) {
-      case 'urgente':
-        return <AlertTriangle className="w-4 h-4" />;
-      case 'alta':
-        return <Star className="w-4 h-4" />;
-      case 'media':
-        return <Clock className="w-4 h-4" />;
-      case 'baixa':
-        return <CheckCircle className="w-4 h-4" />;
-      default:
-        return <FileText className="w-4 h-4" />;
-    }
-  };
-
-  const getPrioridadeText = (prioridade?: string) => {
-    switch (prioridade) {
-      case 'urgente':
-        return 'Urgente';
-      case 'alta':
-        return 'Alta';
-      case 'media':
-        return 'Média';
-      case 'baixa':
-        return 'Baixa';
-      default:
-        return 'Não definida';
-    }
-  };
-
   const exportData = () => {
-    if (filteredContas.length === 0) {
-      alert('Não há dados para exportar');
-      return;
-    }
-
-    const headers = [
-      'Fornecedor',
-      'Descrição',
-      'Categoria',
-      'Centro de Custo',
-      'Valor Total',
-      'Valor Pago',
-      'Saldo Restante',
-      'Data Vencimento',
-      'Data Emissão',
-      'Número Documento',
-      'Status',
-      'Prioridade',
-      'Observação Tesouraria',
-      'Sugerido Por',
-      'Data Sugestão',
-      'Aprovado Para Pagamento',
-      'Observação Aprovação'
-    ];
-
-    const data = filteredContas.map(conta => [
-      conta.fornecedor_nome,
-      conta.descricao,
-      conta.categoria_nome || '',
-      conta.centro_custo_nome || '',
-      conta.valor_total,
-      conta.valor_pago,
-      conta.saldo_restante,
-      dayjs(conta.data_vencimento).format('DD/MM/YYYY'),
-      dayjs(conta.data_emissao).format('DD/MM/YYYY'),
-      conta.numero_documento || '',
-      getStatusText(conta.status, conta),
-      getPrioridadeText(conta.prioridade_sugerida),
-      conta.observacao_tesouraria || '',
-      conta.sugerido_por_nome || '',
-      conta.data_sugestao ? dayjs(conta.data_sugestao).format('DD/MM/YYYY HH:mm') : '',
-      conta.aprovado_para_pagamento ? 'Sim' : 'Não',
-      conta.observacao_aprovacao || ''
-    ]);
-
-    const filename = `contas-pagar-${dayjs().format('YYYY-MM-DD')}`;
-    exportToExcel(data, filename, headers);
+    if(!filteredContas.length){alert('Sem dados');return;}
+    const headers=['Fornecedor','Descrição','Categoria','Valor Total','Valor Pago','Saldo','Vencimento','Status','Prioridade'];
+    const data=filteredContas.map(c=>[c.fornecedor_nome,c.descricao,c.categoria_nome||'',c.valor_total,c.valor_pago,c.saldo_restante,dayjs(c.data_vencimento).format('DD/MM/YYYY'),getStatusInfo(c).label,c.prioridade_sugerida||'']);
+    exportToExcel(data,`contas-pagar-${dayjs().format('YYYY-MM-DD')}`,headers);
   };
 
-  const generatePDFReport = () => {
-    if (filteredContas.length === 0) {
-      alert('Não há dados para gerar relatório');
-      return;
-    }
-
-    const reportGenerator = new ReportGenerator({
-      title: 'Relatório de Contas a Pagar',
-      subtitle: `Gerado em ${dayjs().format('DD/MM/YYYY')} - Total de ${filteredContas.length} contas`,
-      filename: `contas-pagar-${dayjs().format('YYYY-MM-DD')}.pdf`,
-      orientation: 'landscape'
-    });
-    
-    let currentY = reportGenerator.addHeader('Relatório de Contas a Pagar', `Período: ${dayjs().format('DD/MM/YYYY')} - ${filteredContas.length} contas`);
-
-    // Resumo executivo
-    if (indicadores) {
-      const resumo = [
-        ['Total de Contas', indicadores.total_contas.toString()],
-        ['Valor Total', formatCurrency(indicadores.valor_total)],
-        ['Valor Pago', formatCurrency(indicadores.valor_pago)],
-        ['Saldo Pendente', formatCurrency(indicadores.saldo_pendente)],
-        ['Contas Vencidas', `${indicadores.contas_vencidas} (${formatCurrency(indicadores.valor_vencido)})`],
-        ['Contas Aprovadas', `${indicadores.contas_aprovadas} (${formatCurrency(indicadores.valor_aprovado)})`],
-        ['Ticket Médio', formatCurrency(indicadores.ticket_medio)]
-      ];
-
-      currentY = reportGenerator.addSection('Resumo Executivo', [], currentY);
-      currentY = reportGenerator.addTable(['Indicador', 'Valor'], resumo, currentY);
-    }
-
-    // Análise por Prioridade
-    const prioridades = ['urgente', 'alta', 'media', 'baixa'];
-    const analisesPrioridade = prioridades.map(prioridade => {
-      const contasPrioridade = filteredContas.filter(c => c.prioridade_sugerida === prioridade);
-      const valorTotal = contasPrioridade.reduce((sum, c) => sum + c.saldo_restante, 0);
-      return [
-        getPrioridadeText(prioridade),
-        contasPrioridade.length.toString(),
-        formatCurrency(valorTotal),
-        contasPrioridade.length > 0 ? formatCurrency(valorTotal / contasPrioridade.length) : formatCurrency(0)
-      ];
-    });
-
-    currentY = reportGenerator.addSection('Análise por Prioridade', [], currentY + 10);
-    currentY = reportGenerator.addTable(['Prioridade', 'Quantidade', 'Valor Total', 'Ticket Médio'], analisesPrioridade, currentY);
-
-    // Análise por Status
-    const statusList = ['em_aberto', 'parcialmente_pago', 'vencido', 'pago'];
-    const analiseStatus = statusList.map(status => {
-      const contasStatus = filteredContas.filter(c => c.status === status);
-      const valorTotal = contasStatus.reduce((sum, c) => sum + c.saldo_restante, 0);
-      return [
-        getStatusText(status),
-        contasStatus.length.toString(),
-        formatCurrency(valorTotal),
-        contasStatus.length > 0 ? `${((contasStatus.length / filteredContas.length) * 100).toFixed(1)}%` : '0%'
-      ];
-    });
-
-    currentY = reportGenerator.addSection('Análise por Status', [], currentY + 10);
-    currentY = reportGenerator.addTable(['Status', 'Quantidade', 'Saldo Restante', '% do Total'], analiseStatus, currentY);
-
-    // Top 10 Fornecedores por Saldo Pendente
-    const fornecedoresSaldo = {};
-    filteredContas.forEach(conta => {
-      const fornecedor = conta.fornecedor_nome;
-      if (!fornecedoresSaldo[fornecedor]) {
-        fornecedoresSaldo[fornecedor] = {
-          total_contas: 0,
-          saldo_pendente: 0,
-          valor_total: 0,
-          contas_vencidas: 0
-        };
-      }
-      fornecedoresSaldo[fornecedor].total_contas += 1;
-      fornecedoresSaldo[fornecedor].saldo_pendente += conta.saldo_restante;
-      fornecedoresSaldo[fornecedor].valor_total += conta.valor_total;
-      if (conta.esta_vencida) {
-        fornecedoresSaldo[fornecedor].contas_vencidas += 1;
-      }
-    });
-
-    const top10Fornecedores = Object.entries(fornecedoresSaldo)
-      .sort(([,a], [,b]) => (b as any).saldo_pendente - (a as any).saldo_pendente)
-      .slice(0, 10)
-      .map(([fornecedor, dados]: [string, any]) => [
-        fornecedor,
-        dados.total_contas.toString(),
-        formatCurrency(dados.valor_total),
-        formatCurrency(dados.saldo_pendente),
-        dados.contas_vencidas.toString()
-      ]);
-
-    currentY = reportGenerator.addSection('Top 10 Fornecedores por Saldo Pendente', [], currentY + 10);
-    currentY = reportGenerator.addTable(['Fornecedor', 'Qtd Contas', 'Valor Total', 'Saldo Pendente', 'Vencidas'], top10Fornecedores, currentY);
-
-    // Contas Críticas (Vencidas e de Alta Prioridade)
-    const contasCriticas = filteredContas
-      .filter(c => c.esta_vencida || c.prioridade_sugerida === 'urgente' || c.prioridade_sugerida === 'alta')
-      .slice(0, 20) // Primeiras 20 para não estourar o PDF
-      .map(conta => [
-        conta.fornecedor_nome,
-        conta.descricao.length > 40 ? conta.descricao.substring(0, 40) + '...' : conta.descricao,
-        dayjs(conta.data_vencimento).format('DD/MM/YYYY'),
-        formatCurrency(conta.saldo_restante),
-        getPrioridadeText(conta.prioridade_sugerida),
-        conta.esta_vencida ? `${conta.dias_vencimento} dias` : 'No prazo',
-        getStatusText(conta.status, conta)
-      ]);
-
-    if (contasCriticas.length > 0) {
-      currentY = reportGenerator.addSection('Contas Críticas (Vencidas e Alta Prioridade)', [], currentY + 10);
-      currentY = reportGenerator.addTable(['Fornecedor', 'Descrição', 'Vencimento', 'Saldo', 'Prioridade', 'Situação', 'Status'], contasCriticas, currentY);
-    }
-
-    reportGenerator.save(`relatorio-contas-pagar-${dayjs().format('YYYY-MM-DD')}.pdf`);
-  };
+  const modalOverlay: React.CSSProperties = { position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:50, padding:16 };
+  const modalCard: React.CSSProperties = { background:S.modalBg, border:`1px solid ${S.border}`, borderRadius:16, padding:24, width:'100%', maxHeight:'90vh', overflowY:'auto' };
+  const sectionTitle: React.CSSProperties = { color:S.label, fontSize:10, fontWeight:600, margin:'0 0 10px', textTransform:'uppercase', letterSpacing:'0.6px', borderBottom:`1px solid ${S.border}`, paddingBottom:6 };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Contas a Pagar</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-          >
-            <Download className="w-4 h-4 inline mr-2" />
-            Exportar Excel
-          </button>
-          <button
-            onClick={generatePDFReport}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            <FileText className="w-4 h-4 inline mr-2" />
-            Relatório PDF
-          </button>
-          <button
-            onClick={() => setShowLancamentoLoteModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 flex items-center"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Lançamento em Lote (IA)
-          </button>
-          <button
-            onClick={() => setShowIAModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 flex items-center"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Importar Boleto (IA)
-          </button>
-          <button
-            onClick={() => openForm()}
-            className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
-          >
-            <Plus className="w-4 h-4 inline mr-2" />
-            Nova Conta a Pagar
-          </button>
-        </div>
+    <div style={{ display:'flex', flexDirection:'column', gap:16, fontFamily:'-apple-system,BlinkMacSystemFont,"Inter",sans-serif' }}>
+
+      {/* Header */}
+      <div style={{ display:'flex', justifyContent:'flex-end', gap:8, flexWrap:'wrap' }}>
+        <button onClick={exportData} style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'7px 12px', color:S.muted, fontSize:11, cursor:'pointer' }}>
+          <Download style={{ width:12, height:12 }} /> Excel
+        </button>
+        <button onClick={()=>setShowLancamentoLoteModal(true)} style={{ display:'flex', alignItems:'center', gap:5, background:'rgba(74,222,128,0.1)', border:`1px solid rgba(74,222,128,0.2)`, borderRadius:8, padding:'7px 12px', color:S.green, fontSize:11, cursor:'pointer', fontWeight:500 }}>
+          <Sparkles style={{ width:12, height:12 }} /> Lote IA
+        </button>
+        <button onClick={()=>setShowIAModal(true)} style={{ display:'flex', alignItems:'center', gap:5, background:'rgba(167,139,250,0.1)', border:`1px solid rgba(167,139,250,0.2)`, borderRadius:8, padding:'7px 12px', color:'#a78bfa', fontSize:11, cursor:'pointer', fontWeight:500 }}>
+          <Sparkles style={{ width:12, height:12 }} /> Boleto IA
+        </button>
+        <button onClick={()=>openForm()} style={{ display:'flex', alignItems:'center', gap:5, background:S.wine, border:'none', borderRadius:8, padding:'7px 12px', color:'white', fontSize:11, cursor:'pointer', fontWeight:500 }}>
+          <Plus style={{ width:12, height:12 }} /> Nova Conta
+        </button>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div style={{ background:S.redBg, border:`1px solid ${S.redBorder}`, borderRadius:10, padding:'10px 14px', color:S.red, fontSize:12 }}>{error}</div>}
 
-      {/* Barra de Ações em Lote */}
+      {/* Bulk actions */}
       {showBulkActions && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-gray-900">
-              {selectedIds.size} conta(s) selecionada(s)
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleBulkDelete}
-              disabled={loading}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 disabled:opacity-50"
-            >
-              <Trash2 className="w-4 h-4" />
-              Excluir Selecionadas
+        <div style={{ background:'rgba(96,165,250,0.08)', border:`1px solid rgba(96,165,250,0.15)`, borderRadius:10, padding:'10px 14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <span style={{ color:S.blue, fontSize:12 }}>{selectedIds.size} conta(s) selecionada(s)</span>
+          <div style={{ display:'flex', gap:8 }}>
+            <button onClick={handleBulkDelete} disabled={loading} style={{ display:'flex', alignItems:'center', gap:5, background:S.redBg, border:`1px solid ${S.redBorder}`, borderRadius:7, padding:'5px 10px', color:S.red, fontSize:11, cursor:'pointer' }}>
+              <Trash2 style={{ width:11, height:11 }} /> Excluir
             </button>
-            <button
-              onClick={() => {
-                setSelectedIds(new Set());
-                setShowBulkActions(false);
-              }}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2"
-            >
-              <XSquare className="w-4 h-4" />
-              Cancelar
-            </button>
+            <button onClick={()=>{setSelectedIds(new Set());setShowBulkActions(false);}} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:7, padding:'5px 10px', color:S.muted, fontSize:11, cursor:'pointer' }}>Cancelar</button>
           </div>
         </div>
       )}
 
       {/* Indicadores */}
       {indicadores && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Pendentes</p>
-                <p className="text-xl font-bold text-gray-900">{indicadores.total_contas}</p>
-                <p className="text-xs text-gray-500 truncate">{formatCurrency(indicadores.saldo_pendente)}</p>
-              </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10 }}>
+          {[
+            { label:'Pendentes',    value:indicadores.total_contas,              sub:fmt(indicadores.saldo_pendente),  color:S.blue,   bg:S.blueBg,   border:S.blueBorder },
+            { label:'Atrasadas',    value:indicadores.contas_vencidas,           sub:fmt(indicadores.valor_vencido),   color:S.red,    bg:S.redBg,    border:S.redBorder },
+            { label:'Vencem Hoje',  value:indicadores.contas_vence_hoje,         sub:fmt(indicadores.valor_vence_hoje),color:S.amber,  bg:'rgba(251,191,36,0.08)', border:'rgba(251,191,36,0.15)' },
+            { label:'A Vencer',     value:indicadores.contas_a_vencer,           sub:fmt(indicadores.valor_a_vencer),  color:S.orange, bg:S.orangeBg, border:S.orangeBorder },
+            { label:'Já Pago',      value:fmt(indicadores.valor_pago),           sub:`de ${fmt(indicadores.valor_total)}`,color:S.green,bg:S.greenBg,border:S.greenBorder },
+          ].map((c,i) => (
+            <div key={i} style={{ background:c.bg, borderRadius:12, padding:'12px 14px', border:`1px solid ${c.border}` }}>
+              <p style={{ color:c.color, opacity:.6, fontSize:10, margin:'0 0 6px', textTransform:'uppercase', letterSpacing:'.6px' }}>{c.label}</p>
+              <p style={{ color:c.color, fontSize:i===4?16:20, fontWeight:800, margin:'0 0 4px', letterSpacing:'-.5px' }}>{c.value}</p>
+              <p style={{ color:c.color, opacity:.45, fontSize:10, margin:0 }}>{c.sub}</p>
             </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-red-200 border-l-4 border-l-red-500">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-red-600 uppercase tracking-wide">Atrasadas</p>
-                <p className="text-xl font-bold text-red-700">{indicadores.contas_vencidas}</p>
-                <p className="text-xs text-red-500 truncate">{formatCurrency(indicadores.valor_vencido)}</p>
-              </div>
-            </div>
-          </div>
-
-          {indicadores.contas_vence_hoje > 0 && (
-            <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-200 border-l-4 border-l-amber-500">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-amber-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-amber-600 uppercase tracking-wide">Vencem Hoje</p>
-                  <p className="text-xl font-bold text-amber-700">{indicadores.contas_vence_hoje}</p>
-                  <p className="text-xs text-amber-500 truncate">{formatCurrency(indicadores.valor_vence_hoje)}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-200 border-l-4 border-l-blue-500">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">A Vencer</p>
-                <p className="text-xl font-bold text-blue-700">{indicadores.contas_a_vencer}</p>
-                <p className="text-xs text-blue-500 truncate">{formatCurrency(indicadores.valor_a_vencer)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-                <DollarSign className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Ja Pago</p>
-                <p className="text-xl font-bold text-green-700">{formatCurrency(indicadores.valor_pago)}</p>
-                <p className="text-xs text-gray-500 truncate">de {formatCurrency(indicadores.valor_total)}</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       )}
 
       {/* Filtros */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-3">
-          <div className="md:col-span-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar contas..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <SearchableSelect
-              options={[
-                { value: 'all', label: 'Todas as Situações' },
-                { value: 'atrasada', label: 'Atrasadas' },
-                { value: 'vence_hoje', label: 'Vencem Hoje' },
-                { value: 'vence_em_breve', label: 'Próximos 7 dias' },
-                { value: 'no_prazo', label: 'No Prazo' },
-                { value: 'paga', label: 'Pagas' }
-              ]}
-              value={situacaoFilter}
-              onChange={(value) => setSituacaoFilter(value as any)}
-              placeholder="Situação"
-              theme="light"
-            />
-          </div>
-
-          <div>
-            <SearchableSelect
-              options={[
-                { value: 'all', label: 'Todos os Status' },
-                { value: 'em_aberto', label: 'Em Aberto' },
-                { value: 'parcialmente_pago', label: 'Parcial' },
-                { value: 'autorizado_pagamento', label: 'Autorizado' },
-                { value: 'pago', label: 'Pago' },
-                { value: 'cancelado', label: 'Cancelado' }
-              ]}
-              value={statusFilter}
-              onChange={(value) => setStatusFilter(value as any)}
-              placeholder="Status"
-              theme="light"
-            />
-          </div>
-
-          <div>
-            <SearchableSelect
-              options={[
-                { value: 'all', label: 'Todos os Fornecedores' },
-                ...fornecedores.map((f) => ({
-                  value: f.id,
-                  label: f.nome
-                }))
-              ]}
-              value={fornecedorFilter}
-              onChange={(value) => setFornecedorFilter(value)}
-              placeholder="Fornecedor"
-              theme="light"
-            />
-          </div>
-
-          <div>
-            <SearchableSelect
-              options={[
-                { value: 'all', label: 'Todas as Prioridades' },
-                { value: 'urgente', label: 'Urgente' },
-                { value: 'alta', label: 'Alta' },
-                { value: 'media', label: 'Média' },
-                { value: 'baixa', label: 'Baixa' }
-              ]}
-              value={prioridadeFilter}
-              onChange={(value) => setPrioridadeFilter(value)}
-              placeholder="Prioridade"
-              theme="light"
-            />
-          </div>
-
-          <div>
-            <input
-              type="date"
-              value={dataInicial}
-              onChange={(e) => setDataInicial(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
-              placeholder="Data inicial"
-            />
-          </div>
-
-          <div>
-            <input
-              type="date"
-              value={dataFinal}
-              onChange={(e) => setDataFinal(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
-              placeholder="Data final"
-            />
-          </div>
+      <div style={{ background:S.card, borderRadius:12, padding:'12px 14px', border:`1px solid ${S.border}`, display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr 1fr 1fr', gap:8 }}>
+        <div style={{ position:'relative' }}>
+          <Search style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', width:12, height:12, color:S.label }} />
+          <input type="text" placeholder="Buscar..." value={searchTerm} onChange={e=>setSearchTerm(e.target.value)} style={{ ...inputStyle, paddingLeft:28 }} />
         </div>
+        <SearchableSelect options={[{value:'all',label:'Situação'},{value:'atrasada',label:'Atrasadas'},{value:'vence_hoje',label:'Vence Hoje'},{value:'vence_em_breve',label:'Próx. 7 dias'},{value:'no_prazo',label:'No Prazo'},{value:'paga',label:'Pagas'}]} value={situacaoFilter} onChange={v=>setSituacaoFilter(v)} placeholder="Situação" theme="dark" />
+        <SearchableSelect options={[{value:'all',label:'Status'},{value:'em_aberto',label:'Em Aberto'},{value:'parcialmente_pago',label:'Parcial'},{value:'autorizado_pagamento',label:'Autorizado'},{value:'pago',label:'Pago'},{value:'cancelado',label:'Cancelado'}]} value={statusFilter} onChange={v=>setStatusFilter(v)} placeholder="Status" theme="dark" />
+        <SearchableSelect options={[{value:'all',label:'Fornecedor'},...fornecedores.map(f=>({value:f.id,label:f.nome}))]} value={fornecedorFilter} onChange={v=>setFornecedorFilter(v)} placeholder="Fornecedor" theme="dark" />
+        <SearchableSelect options={[{value:'all',label:'Prioridade'},{value:'urgente',label:'Urgente'},{value:'alta',label:'Alta'},{value:'media',label:'Média'},{value:'baixa',label:'Baixa'}]} value={prioridadeFilter} onChange={v=>setPrioridadeFilter(v)} placeholder="Prioridade" theme="dark" />
+        <input type="date" value={dataInicial} onChange={e=>setDataInicial(e.target.value)} style={inputStyle} />
+        <input type="date" value={dataFinal} onChange={e=>setDataFinal(e.target.value)} style={inputStyle} />
       </div>
 
       {/* Tabela */}
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]"></div>
+        <div style={{ display:'flex', justifyContent:'center', padding:48 }}>
+          <div style={{ width:32, height:32, borderRadius:'50%', border:`2px solid rgba(212,175,55,0.15)`, borderTop:`2px solid ${S.gold}`, animation:'spin 0.8s linear infinite' }} />
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <div style={{ background:S.card, borderRadius:12, border:`1px solid ${S.border}`, overflow:'hidden' }}>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead>
-                <tr className="text-left bg-gray-50 border-b">
-                  <th className="px-2 py-2 sticky left-0 bg-gray-50 z-10">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.size === filteredContas.length && filteredContas.length > 0}
-                      onChange={toggleSelectAll}
-                      className="rounded border-gray-300"
-                    />
+                <tr style={{ background:'rgba(255,255,255,0.03)' }}>
+                  <th style={{ padding:'9px 10px', borderBottom:`1px solid ${S.border}` }}>
+                    <input type="checkbox" checked={selectedIds.size===filteredContas.length&&filteredContas.length>0} onChange={toggleSelectAll} style={{ accentColor:S.wine }} />
                   </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase">
-                    Prioridade
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase min-w-[180px]">
-                    Fornecedor / Descrição
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase">
-                    Vencimento
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase text-right">
-                    Valor Total
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase text-right">
-                    Saldo
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase">
-                    Status
-                  </th>
-                  <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase sticky right-0 bg-gray-50 z-10 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.1)]">
-                    Ações
-                  </th>
+                  {['Prioridade','Fornecedor / Descrição','Vencimento','Total','Saldo','Status','Ações'].map((h,i) => (
+                    <th key={i} style={{ padding:'9px 12px', textAlign:i>=3&&i<=4?'right':'left', fontSize:10, fontWeight:600, color:S.label, textTransform:'uppercase', letterSpacing:'0.6px', borderBottom:`1px solid ${S.border}`, whiteSpace:'nowrap' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredContas.map((conta) => (
-                  <tr key={conta.id} className="hover:bg-gray-50">
-                    <td className="px-2 py-2 sticky left-0 bg-white z-10">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.has(conta.id)}
-                        onChange={() => toggleSelect(conta.id)}
-                        className="rounded border-gray-300"
-                      />
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded border ${getPrioridadeColor(conta.prioridade_sugerida)}`}>
-                        {getPrioridadeIcon(conta.prioridade_sugerida)}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2">
-                      <div className="space-y-0.5">
-                        <div className="font-semibold text-gray-900 text-sm">{conta.fornecedor_nome}</div>
-                        <div className="text-xs text-gray-700">{conta.descricao}</div>
-                        {conta.numero_documento && (
-                          <div className="text-xs text-gray-500">Doc: {conta.numero_documento}</div>
-                        )}
-                        {conta.categoria_nome && (
-                          <div className="text-xs text-gray-500 flex items-center gap-1">
-                            <Target className="w-3 h-3" />
-                            {conta.categoria_nome}
-                          </div>
-                        )}
-                        {conta.observacao_tesouraria && (
-                          <div className="text-xs text-blue-600 flex items-center gap-1">
-                            <MessageSquare className="w-3 h-3" />
-                            {conta.observacao_tesouraria}
-                          </div>
-                        )}
-                        {conta.total_pagamentos_parciais > 0 && (
-                          <div className="flex items-center gap-1 text-xs text-gray-600">
-                            <Activity className="w-3 h-3" />
-                            {conta.total_pagamentos_parciais === 1 ? (
-                              <span>Pago em {dayjs(conta.data_primeira_baixa).format('DD/MM/YY')}</span>
-                            ) : (
-                              <span>{conta.total_pagamentos_parciais} pagamentos</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className={`text-sm ${
-                        conta.situacao_vencimento === 'atrasada' ? 'text-red-600 font-semibold' :
-                        conta.situacao_vencimento === 'vence_hoje' ? 'text-amber-600 font-semibold' :
-                        conta.situacao_vencimento === 'vence_em_breve' ? 'text-orange-600 font-medium' :
-                        'text-gray-700'
-                      }`}>
-                        {dayjs(conta.data_vencimento).format('DD/MM/YY')}
-                        {conta.situacao_vencimento === 'atrasada' && (
-                          <div className="text-[10px] text-red-500">{conta.dias_vencimento}d atraso</div>
-                        )}
-                        {conta.situacao_vencimento === 'vence_hoje' && (
-                          <div className="text-[10px] text-amber-500 font-semibold">HOJE</div>
-                        )}
-                        {conta.situacao_vencimento === 'vence_em_breve' && conta.dias_para_vencer != null && (
-                          <div className="text-[10px] text-orange-500">{conta.dias_para_vencer}d</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-right">
-                      <div className="font-semibold text-gray-900 text-sm">
-                        {formatCurrency(conta.valor_total)}
-                      </div>
-                      {conta.valor_pago > 0 && (
-                        <div className="text-xs text-green-600">
-                          Pago: {formatCurrency(conta.valor_pago)}
+              <tbody>
+                {filteredContas.map(conta => {
+                  const st = getStatusInfo(conta);
+                  const Ico = st.icon;
+                  const prior = PRIORIDADE_MAP[conta.prioridade_sugerida||'media'] || PRIORIDADE_MAP['media'];
+                  return (
+                    <tr key={conta.id} style={{ borderBottom:`1px solid rgba(255,255,255,0.03)` }}
+                      onMouseEnter={e=>(e.currentTarget as HTMLElement).style.background='rgba(255,255,255,0.02)'}
+                      onMouseLeave={e=>(e.currentTarget as HTMLElement).style.background='transparent'}>
+                      <td style={{ padding:'9px 10px' }}>
+                        <input type="checkbox" checked={selectedIds.has(conta.id)} onChange={()=>toggleSelect(conta.id)} style={{ accentColor:S.wine }} />
+                      </td>
+                      <td style={{ padding:'9px 12px' }}>
+                        <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:22, height:22, borderRadius:6, background:prior.bg }}>
+                          <span style={{ width:6, height:6, borderRadius:'50%', background:prior.color }} />
+                        </span>
+                      </td>
+                      <td style={{ padding:'9px 12px', minWidth:180 }}>
+                        <p style={{ color:S.text, fontSize:12, fontWeight:600, margin:0 }}>{conta.fornecedor_nome}</p>
+                        <p style={{ color:S.muted, fontSize:11, margin:'1px 0 0' }}>{conta.descricao}</p>
+                        {conta.numero_documento && <p style={{ color:S.label, fontSize:10, margin:0 }}>Doc: {conta.numero_documento}</p>}
+                        {conta.categoria_nome && <p style={{ color:S.label, fontSize:10, margin:0, display:'flex', alignItems:'center', gap:3 }}><Target style={{ width:9, height:9 }} />{conta.categoria_nome}</p>}
+                        {conta.observacao_tesouraria && <p style={{ color:'rgba(96,165,250,0.7)', fontSize:10, margin:0, display:'flex', alignItems:'center', gap:3 }}><MessageSquare style={{ width:9, height:9 }} />{conta.observacao_tesouraria}</p>}
+                        {(conta.total_pagamentos_parciais||0)>0 && <p style={{ color:S.label, fontSize:10, margin:0, display:'flex', alignItems:'center', gap:3 }}><Activity style={{ width:9, height:9 }} />{conta.total_pagamentos_parciais===1?`Pago em ${dayjs(conta.data_primeira_baixa).format('DD/MM/YY')}`:`${conta.total_pagamentos_parciais} pagamentos`}</p>}
+                      </td>
+                      <td style={{ padding:'9px 12px', whiteSpace:'nowrap' }}>
+                        <p style={{ color:conta.situacao_vencimento==='atrasada'?S.red:conta.situacao_vencimento==='vence_hoje'?S.amber:conta.situacao_vencimento==='vence_em_breve'?S.orange:S.text, fontSize:12, fontWeight:conta.situacao_vencimento==='atrasada'||conta.situacao_vencimento==='vence_hoje'?600:400, margin:0 }}>
+                          {dayjs(conta.data_vencimento).format('DD/MM/YY')}
+                        </p>
+                        {conta.situacao_vencimento==='atrasada'&&<p style={{ color:S.red, fontSize:10, margin:0 }}>{conta.dias_vencimento}d atraso</p>}
+                        {conta.situacao_vencimento==='vence_hoje'&&<p style={{ color:S.amber, fontSize:10, margin:0, fontWeight:700 }}>HOJE</p>}
+                        {conta.situacao_vencimento==='vence_em_breve'&&conta.dias_para_vencer!=null&&<p style={{ color:S.orange, fontSize:10, margin:0 }}>{conta.dias_para_vencer}d</p>}
+                      </td>
+                      <td style={{ padding:'9px 12px', textAlign:'right', whiteSpace:'nowrap' }}>
+                        <p style={{ color:S.text, fontSize:12, fontWeight:600, margin:0, fontFamily:'monospace' }}>{fmt(conta.valor_total)}</p>
+                        {conta.valor_pago>0&&<p style={{ color:S.green, fontSize:10, margin:0 }}>Pago: {fmt(conta.valor_pago)}</p>}
+                      </td>
+                      <td style={{ padding:'9px 12px', textAlign:'right', whiteSpace:'nowrap' }}>
+                        <p style={{ color:conta.saldo_restante>0?S.red:S.green, fontSize:12, fontWeight:700, margin:0, fontFamily:'monospace' }}>{fmt(conta.saldo_restante)}</p>
+                        {conta.valor_pago>0&&conta.saldo_restante>0&&<p style={{ color:S.label, fontSize:10, margin:0 }}>{((conta.valor_pago/conta.valor_total)*100).toFixed(0)}%</p>}
+                      </td>
+                      <td style={{ padding:'9px 12px', whiteSpace:'nowrap' }}>
+                        <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:st.bg, borderRadius:20, padding:'3px 9px' }}>
+                          <Ico style={{ width:10, height:10, color:st.color }} />
+                          <span style={{ color:st.color, fontSize:10, fontWeight:600 }}>{st.label}</span>
                         </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-right">
-                      <div className={`font-semibold text-sm ${
-                        conta.saldo_restante > 0 ? 'text-red-600' : 'text-green-600'
-                      }`}>
-                        {formatCurrency(conta.saldo_restante)}
-                      </div>
-                      {conta.valor_pago > 0 && conta.saldo_restante > 0 && (
-                        <div className="text-xs text-gray-500">
-                          {((conta.valor_pago / conta.valor_total) * 100).toFixed(0)}%
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full ${getStatusColor(conta.status, conta)}`}>
-                        {getStatusIcon(conta.status, conta)}
-                        {getStatusText(conta.status, conta)}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap sticky right-0 bg-white z-10 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.1)]">
-                      <div className="flex items-center gap-1">
-                        {conta.saldo_restante > 0 && (
-                          <button
-                            onClick={() => abrirModalBaixa(conta)}
-                            className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-medium flex items-center gap-1"
-                            title="Dar Baixa"
-                          >
-                            <Receipt className="w-3.5 h-3.5" />
-                            Baixa
+                      </td>
+                      <td style={{ padding:'9px 12px', whiteSpace:'nowrap' }}>
+                        <div style={{ display:'flex', gap:5, alignItems:'center' }}>
+                          {conta.saldo_restante>0&&(
+                            <button onClick={()=>abrirModalBaixa(conta)} style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(74,222,128,0.1)', border:`1px solid rgba(74,222,128,0.2)`, borderRadius:6, padding:'4px 8px', color:S.green, fontSize:10, cursor:'pointer', fontWeight:600 }}>
+                              <Receipt style={{ width:10, height:10 }} /> Baixa
+                            </button>
+                          )}
+                          <button onClick={()=>setModalVisualizacao({isOpen:true,conta})} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:6, padding:'4px 6px', cursor:'pointer', color:S.muted }}>
+                            <Eye style={{ width:12, height:12 }} />
                           </button>
-                        )}
-                        <button
-                          onClick={() => setModalVisualizacao({ isOpen: true, conta })}
-                          className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
-                          title="Visualizar"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => openForm(conta)}
-                          className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
-                          title="Editar"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(conta.id)}
-                          className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded disabled:opacity-50"
-                          title="Excluir"
-                          disabled={loading}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <button onClick={()=>openForm(conta)} style={{ background:'rgba(96,165,250,0.1)', border:`1px solid rgba(96,165,250,0.2)`, borderRadius:6, padding:'4px 6px', cursor:'pointer', color:S.blue }}>
+                            <Edit style={{ width:12, height:12 }} />
+                          </button>
+                          <button onClick={()=>handleDelete(conta.id)} disabled={loading} style={{ background:S.redBg, border:`1px solid ${S.redBorder}`, borderRadius:6, padding:'4px 6px', cursor:'pointer', color:S.red, opacity:loading?.5:1 }}>
+                            <Trash2 style={{ width:12, height:12 }} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+            {filteredContas.length===0&&<div style={{ textAlign:'center', padding:40, color:S.label, fontSize:13 }}>Nenhuma conta encontrada</div>}
           </div>
-
-          {filteredContas.length === 0 && (
-            <div className="text-center py-12">
-              <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma conta encontrada</h3>
-              <p className="text-gray-500">
-                {searchTerm || statusFilter !== 'all' || situacaoFilter !== 'all' || fornecedorFilter !== 'all'
-                  ? 'Nenhuma conta corresponde aos filtros aplicados.'
-                  : 'Nenhuma conta a pagar cadastrada.'}
-              </p>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Modal do Formulário */}
+      {/* Modal Formulário */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 z-10">
-              <h3 className="text-xl font-semibold text-gray-900">
-                {editingConta ? 'Editar Conta a Pagar' : 'Nova Conta a Pagar'}
-              </h3>
+        <div style={modalOverlay}>
+          <div style={{ ...modalCard, maxWidth:760 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20, paddingBottom:12, borderBottom:`1px solid ${S.border}` }}>
+              <h3 style={{ color:S.text, fontSize:15, fontWeight:700, margin:0 }}>{editingConta?'Editar Conta a Pagar':'Nova Conta a Pagar'}</h3>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
               {/* Informações Básicas */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Informações Básicas</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fornecedor *
-                </label>
-                <SearchableSelect
-                  options={fornecedores.map((f: any) => ({
-                    value: f.id,
-                    label: f.nome
-                  }))}
-                  value={formData.fornecedor_id}
-                  onChange={(value) => setFormData({ ...formData, fornecedor_id: value })}
-                  placeholder="Buscar fornecedor..."
-                  theme="light"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Valor Total *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">R$</span>
+                <p style={sectionTitle}>Informações Básicas</p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                  <div style={fStyle}><label style={labelStyle}>Fornecedor *</label><SearchableSelect options={fornecedores.map(f=>({value:f.id,label:f.nome}))} value={formData.fornecedor_id} onChange={v=>setFormData({...formData,fornecedor_id:v})} placeholder="Buscar..." theme="dark" /></div>
+                  <div style={fStyle}><label style={labelStyle}>Valor Total *</label><div style={{ position:'relative' }}><span style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:S.label, fontSize:12 }}>R$</span><input type="number" step="0.01" value={formData.valor_total} onChange={e=>setFormData({...formData,valor_total:parseFloat(e.target.value)||0})} style={{ ...inputStyle, paddingLeft:36 }} /></div></div>
+                  <div style={fStyle}><label style={labelStyle}>Desconto</label><div style={{ position:'relative' }}><span style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:S.label, fontSize:12 }}>R$</span><input type="number" step="0.01" value={formData.desconto} onChange={e=>setFormData({...formData,desconto:parseFloat(e.target.value)||0})} style={{ ...inputStyle, paddingLeft:36 }} /></div></div>
+                  <div style={fStyle}><label style={labelStyle}>Juros</label><div style={{ position:'relative' }}><span style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:S.label, fontSize:12 }}>R$</span><input type="number" step="0.01" value={formData.juros} onChange={e=>setFormData({...formData,juros:parseFloat(e.target.value)||0})} style={{ ...inputStyle, paddingLeft:36 }} /></div></div>
+                  <div style={{ gridColumn:'span 2', background:'rgba(212,175,55,0.06)', border:`1px solid ${S.goldBorder}`, borderRadius:8, padding:'10px 14px' }}>
+                    <p style={{ color:S.gold, fontSize:14, fontWeight:700, margin:0 }}>Valor Final: {fmt((formData.valor_total||0)-(formData.desconto||0)+(formData.juros||0))}</p>
+                    {(formData.desconto>0||formData.juros>0)&&<p style={{ color:S.label, fontSize:11, margin:'4px 0 0' }}>Original: {fmt(formData.valor_total||0)}{formData.desconto>0&&` — Desconto: -${fmt(formData.desconto)}`}{formData.juros>0&&` + Juros: ${fmt(formData.juros)}`}</p>}
                   </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.valor_total}
-                    onChange={(e) => setFormData({ ...formData, valor_total: parseFloat(e.target.value) || 0 })}
-                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Desconto
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">R$</span>
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.desconto}
-                    onChange={(e) => setFormData({ ...formData, desconto: parseFloat(e.target.value) || 0 })}
-                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Juros
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">R$</span>
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.juros}
-                    onChange={(e) => setFormData({ ...formData, juros: parseFloat(e.target.value) || 0 })}
-                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Para pagamentos atrasados ou valor maior que o original
-                </p>
-              </div>
-
-              <div className="md:col-span-2">
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                  <div className="text-base font-semibold text-gray-900 mb-2">
-                    Valor Final: {formatCurrency((formData.valor_total || 0) - (formData.desconto || 0) + (formData.juros || 0))}
-                  </div>
-                  {(formData.desconto > 0 || formData.juros > 0) && (
-                    <div className="text-sm text-gray-700 space-y-1">
-                      <div>Valor Original: {formatCurrency(formData.valor_total || 0)}</div>
-                      {formData.desconto > 0 && <div className="text-green-700">Desconto: -{formatCurrency(formData.desconto)}</div>}
-                      {formData.juros > 0 && <div className="text-red-700">Juros: +{formatCurrency(formData.juros)}</div>}
-                    </div>
-                  )}
-                </div>
-              </div>
                 </div>
               </div>
 
               {/* Datas */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Datas</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Data de Emissão *
-                </label>
-                <input
-                  type="date"
-                  value={formData.data_emissao}
-                  onChange={(e) => setFormData({ ...formData, data_emissao: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Data de Vencimento *
-                </label>
-                <input
-                  type="date"
-                  value={formData.data_vencimento}
-                  onChange={(e) => setFormData({ ...formData, data_vencimento: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                />
-              </div>
+                <p style={sectionTitle}>Datas</p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                  <div style={fStyle}><label style={labelStyle}>Data Emissão *</label><input type="date" value={formData.data_emissao} onChange={e=>setFormData({...formData,data_emissao:e.target.value})} style={inputStyle} /></div>
+                  <div style={fStyle}><label style={labelStyle}>Data Vencimento *</label><input type="date" value={formData.data_vencimento} onChange={e=>setFormData({...formData,data_vencimento:e.target.value})} style={inputStyle} /></div>
                 </div>
               </div>
 
               {/* Categorização */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Categorização</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Categoria
-                </label>
-                <SearchableSelect
-                  options={categorias.map((cat: any) => ({
-                    value: cat.id,
-                    label: cat.caminho_completo || cat.nome
-                  }))}
-                  value={formData.categoria_id}
-                  onChange={(value) => setFormData({ ...formData, categoria_id: value })}
-                  placeholder="Buscar categoria..."
-                  theme="light"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Centro de Custo
-                </label>
-                <SearchableSelect
-                  options={centrosCusto.map((cc: any) => ({
-                    value: cc.id,
-                    label: cc.nome
-                  }))}
-                  value={formData.centro_custo_id}
-                  onChange={(value) => setFormData({ ...formData, centro_custo_id: value })}
-                  placeholder="Buscar centro de custo..."
-                  theme="light"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Forma de Pagamento
-                </label>
-                <SearchableSelect
-                  options={formasPagamento.map((fp: any) => ({
-                    value: fp.id,
-                    label: fp.nome
-                  }))}
-                  value={formData.forma_pagamento_id}
-                  onChange={(value) => setFormData({ ...formData, forma_pagamento_id: value })}
-                  placeholder="Buscar forma de pagamento..."
-                  theme="light"
-                />
-              </div>
-
+                <p style={sectionTitle}>Categorização</p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12 }}>
+                  <div style={fStyle}><label style={labelStyle}>Categoria</label><SearchableSelect options={categorias.map(c=>({value:c.id,label:c.caminho_completo||c.nome}))} value={formData.categoria_id} onChange={v=>setFormData({...formData,categoria_id:v})} placeholder="Buscar..." theme="dark" /></div>
+                  <div style={fStyle}><label style={labelStyle}>Centro de Custo</label><SearchableSelect options={centrosCusto.map(c=>({value:c.id,label:c.nome}))} value={formData.centro_custo_id} onChange={v=>setFormData({...formData,centro_custo_id:v})} placeholder="Buscar..." theme="dark" /></div>
+                  <div style={fStyle}><label style={labelStyle}>Forma de Pagamento</label><SearchableSelect options={formasPagamento.map(f=>({value:f.id,label:f.nome}))} value={formData.forma_pagamento_id} onChange={v=>setFormData({...formData,forma_pagamento_id:v})} placeholder="Buscar..." theme="dark" /></div>
                 </div>
               </div>
 
-              {/* Detalhes Adicionais */}
+              {/* Detalhes */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Detalhes Adicionais</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descrição *
-                </label>
-                <input
-                  type="text"
-                  value={formData.descricao}
-                  onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Número do Documento
-                </label>
-                <input
-                  type="text"
-                  value={formData.numero_documento}
-                  onChange={(e) => setFormData({ ...formData, numero_documento: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Prioridade Sugerida
-                </label>
-                <select
-                  value={formData.prioridade_sugerida}
-                  onChange={(e) => setFormData({ ...formData, prioridade_sugerida: e.target.value as any })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                >
-                  <option value="baixa">Baixa</option>
-                  <option value="media">Média</option>
-                  <option value="alta">Alta</option>
-                  <option value="urgente">Urgente</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observações
-                </label>
-                <textarea
-                  value={formData.observacoes}
-                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={2}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observação da Tesouraria
-                </label>
-                <textarea
-                  value={formData.observacao_tesouraria}
-                  onChange={(e) => setFormData({ ...formData, observacao_tesouraria: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={2}
-                />
-              </div>
+                <p style={sectionTitle}>Detalhes Adicionais</p>
+                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:12 }}>
+                  <div style={fStyle}><label style={labelStyle}>Descrição *</label><input type="text" value={formData.descricao} onChange={e=>setFormData({...formData,descricao:e.target.value})} style={inputStyle} /></div>
+                  <div style={fStyle}><label style={labelStyle}>Número do Documento</label><input type="text" value={formData.numero_documento} onChange={e=>setFormData({...formData,numero_documento:e.target.value})} style={inputStyle} /></div>
+                  <div style={fStyle}><label style={labelStyle}>Prioridade</label><select value={formData.prioridade_sugerida} onChange={e=>setFormData({...formData,prioridade_sugerida:e.target.value as any})} style={{ ...inputStyle, color:S.text }}><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select></div>
+                  <div style={fStyle}><label style={labelStyle}>Observações</label><textarea value={formData.observacoes} onChange={e=>setFormData({...formData,observacoes:e.target.value})} rows={2} style={{ ...inputStyle, resize:'vertical' }} /></div>
+                  <div style={{ ...fStyle, gridColumn:'span 2' }}><label style={labelStyle}>Observação da Tesouraria</label><textarea value={formData.observacao_tesouraria} onChange={e=>setFormData({...formData,observacao_tesouraria:e.target.value})} rows={2} style={{ ...inputStyle, resize:'vertical' }} /></div>
                 </div>
               </div>
 
-              {/* Seção de Parcelamento */}
-              <div className="border-t pt-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <input
-                    type="checkbox"
-                    id="eh_parcelado"
-                    checked={formData.eh_parcelado}
-                    onChange={(e) => setFormData({ ...formData, eh_parcelado: e.target.checked })}
-                    className="h-4 w-4 text-[#7D1F2C] focus:ring-[#7D1F2C] border-gray-300 rounded"
-                  />
-                  <label htmlFor="eh_parcelado" className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                    Pagamento Parcelado
-                  </label>
-                </div>
-
-                {formData.eh_parcelado && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Número de Parcelas
-                      </label>
-                      <input
-                        type="number"
-                        min="2"
-                        value={formData.total_parcelas}
-                        onChange={(e) => setFormData({ ...formData, total_parcelas: parseInt(e.target.value) || 2 })}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      <div className="text-sm font-medium text-gray-700">
-                        Valor por parcela: <span className="text-[#7D1F2C]">{formatCurrency(((formData.valor_total || 0) - (formData.desconto || 0) + (formData.juros || 0)) / (formData.total_parcelas || 1))}</span>
-                      </div>
-                    </div>
-                    </div>
+              {/* Parcelamento */}
+              <div style={{ borderTop:`1px solid ${S.border}`, paddingTop:16 }}>
+                <label style={{ display:'flex', alignItems:'center', gap:8, cursor:'pointer', marginBottom:10 }}>
+                  <input type="checkbox" checked={formData.eh_parcelado} onChange={e=>setFormData({...formData,eh_parcelado:e.target.checked})} style={{ accentColor:S.wine, width:14, height:14 }} />
+                  <span style={{ color:S.label, fontSize:11, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.6px' }}>Pagamento Parcelado</span>
+                </label>
+                {formData.eh_parcelado&&(
+                  <div style={{ display:'flex', gap:12, alignItems:'center', background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'10px 12px' }}>
+                    <div style={fStyle}><label style={labelStyle}>Número de Parcelas</label><input type="number" min="2" value={formData.total_parcelas} onChange={e=>setFormData({...formData,total_parcelas:parseInt(e.target.value)||2})} style={{ ...inputStyle, width:120 }} /></div>
+                    <p style={{ color:S.gold, fontSize:12, margin:'16px 0 0', fontWeight:600 }}>Valor/parcela: {fmt(((formData.valor_total||0)-(formData.desconto||0)+(formData.juros||0))/(formData.total_parcelas||1))}</p>
                   </div>
                 )}
               </div>
 
-              {/* Seção de Recorrência */}
-              <div className="border-t pt-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <input
-                    type="checkbox"
-                    id="eh_recorrente"
-                    checked={formData.eh_recorrente}
-                    onChange={(e) => setFormData({ ...formData, eh_recorrente: e.target.checked })}
-                    className="h-4 w-4 text-[#7D1F2C] focus:ring-[#7D1F2C] border-gray-300 rounded"
-                  />
-                  <label htmlFor="eh_recorrente" className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                    Pagamento Recorrente
-                  </label>
-                </div>
-
-                {formData.eh_recorrente && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Frequência
-                      </label>
-                      <select
-                        value={formData.frequencia_recorrencia}
-                        onChange={(e) => setFormData({ ...formData, frequencia_recorrencia: e.target.value })}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                      >
-                        <option value="mensal">Mensal</option>
-                        <option value="bimestral">Bimestral</option>
-                        <option value="trimestral">Trimestral</option>
-                        <option value="semestral">Semestral</option>
-                        <option value="anual">Anual</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Dia do Vencimento
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="31"
-                        value={formData.dia_vencimento_recorrente}
-                        onChange={(e) => setFormData({ ...formData, dia_vencimento_recorrente: parseInt(e.target.value) || 10 })}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Data Fim (Opcional)
-                      </label>
-                      <input
-                        type="date"
-                        value={formData.data_fim_recorrencia}
-                        onChange={(e) => setFormData({ ...formData, data_fim_recorrencia: e.target.value })}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                      />
-                    </div>
-
-                    <div className="md:col-span-3">
-                      <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+              {/* Recorrência */}
+              <div style={{ borderTop:`1px solid ${S.border}`, paddingTop:16 }}>
+                <label style={{ display:'flex', alignItems:'center', gap:8, cursor:'pointer', marginBottom:10 }}>
+                  <input type="checkbox" checked={formData.eh_recorrente} onChange={e=>setFormData({...formData,eh_recorrente:e.target.checked})} style={{ accentColor:S.wine, width:14, height:14 }} />
+                  <span style={{ color:S.label, fontSize:11, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.6px' }}>Pagamento Recorrente</span>
+                </label>
+                {formData.eh_recorrente&&(
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12, background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'12px' }}>
+                    <div style={fStyle}><label style={labelStyle}>Frequência</label><select value={formData.frequencia_recorrencia} onChange={e=>setFormData({...formData,frequencia_recorrencia:e.target.value})} style={{ ...inputStyle, color:S.text }}><option value="mensal">Mensal</option><option value="bimestral">Bimestral</option><option value="trimestral">Trimestral</option><option value="semestral">Semestral</option><option value="anual">Anual</option></select></div>
+                    <div style={fStyle}><label style={labelStyle}>Dia do Vencimento</label><input type="number" min="1" max="31" value={formData.dia_vencimento_recorrente} onChange={e=>setFormData({...formData,dia_vencimento_recorrente:parseInt(e.target.value)||10})} style={inputStyle} /></div>
+                    <div style={fStyle}><label style={labelStyle}>Data Fim (Opcional)</label><input type="date" value={formData.data_fim_recorrencia} onChange={e=>setFormData({...formData,data_fim_recorrencia:e.target.value})} style={inputStyle} /></div>
+                    <div style={{ gridColumn:'span 3' }}>
+                      <p style={{ color:'rgba(96,165,250,0.7)', fontSize:11, background:'rgba(96,165,250,0.06)', border:`1px solid rgba(96,165,250,0.15)`, borderRadius:7, padding:'8px 12px', margin:0 }}>
                         💡 O sistema gerará automaticamente as próximas contas conforme a frequência definida
                       </p>
                     </div>
-                    </div>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={loading || !formData.fornecedor_id || !formData.descricao || !formData.valor_total}
-                className="px-6 py-2.5 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25] disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
-              >
-                {loading ? 'Salvando...' : 'Salvar Conta'}
+            <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:20, paddingTop:16, borderTop:`1px solid ${S.border}` }}>
+              <button onClick={()=>setShowForm(false)} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'9px 18px', color:S.muted, fontSize:12, cursor:'pointer' }}>Cancelar</button>
+              <button onClick={handleSave} disabled={loading||!formData.fornecedor_id||!formData.descricao||!formData.valor_total}
+                style={{ background:S.wine, border:'none', borderRadius:8, padding:'9px 18px', color:'white', fontSize:12, cursor:'pointer', fontWeight:500, opacity:loading||!formData.fornecedor_id||!formData.descricao?0.5:1 }}>
+                {loading?'Salvando...':'Salvar Conta'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de Baixa */}
+      {/* Modal Baixa */}
       {baixaModal.isOpen && baixaModal.conta && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Dar Baixa em Conta a Pagar
-            </h3>
-
-            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm">
-                <div className="font-medium text-gray-900 mb-1">{baixaModal.conta.fornecedor_nome}</div>
-                <div className="text-gray-700 mb-1">{baixaModal.conta.descricao}</div>
-                <div className="text-gray-600">
-                  <span className="font-medium">Valor Total:</span> {formatCurrency(baixaModal.conta.valor_total)}
-                </div>
-                <div className="text-gray-600">
-                  <span className="font-medium">Valor Pago:</span> {formatCurrency(baixaModal.conta.valor_pago)}
-                </div>
-                <div className="text-orange-600 font-medium">
-                  <span className="font-medium">Saldo Restante:</span> {formatCurrency(baixaModal.conta.saldo_restante)}
-                </div>
+        <div style={modalOverlay}>
+          <div style={{ ...modalCard, maxWidth:560 }}>
+            <h3 style={{ color:S.text, fontSize:15, fontWeight:700, margin:'0 0 16px' }}>Dar Baixa em Conta a Pagar</h3>
+            <div style={{ background:'rgba(255,255,255,0.03)', border:`1px solid ${S.border}`, borderRadius:10, padding:'12px 14px', marginBottom:16 }}>
+              <p style={{ color:S.text, fontSize:13, fontWeight:600, margin:'0 0 8px' }}>{baixaModal.conta.fornecedor_nome}</p>
+              <p style={{ color:S.muted, fontSize:12, margin:'0 0 8px' }}>{baixaModal.conta.descricao}</p>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+                {[['Total', fmt(baixaModal.conta.valor_total), S.text], ['Pago', fmt(baixaModal.conta.valor_pago), S.green], ['Saldo', fmt(baixaModal.conta.saldo_restante), S.orange]].map(([l,v,c],i)=>(
+                  <div key={i}><span style={{ color:S.label, fontSize:10 }}>{l}</span><p style={{ color:c as string, fontSize:13, fontWeight:700, margin:0, fontFamily:'monospace' }}>{v}</p></div>
+                ))}
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Valor do Pagamento *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">R$</span>
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    max={baixaModal.conta.saldo_restante}
-                    value={baixaModal.valorPagamento}
-                    onChange={(e) => setBaixaModal({
-                      ...baixaModal,
-                      valorPagamento: parseFloat(e.target.value) || 0
-                    })}
-                    className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Máximo: {formatCurrency(baixaModal.conta.saldo_restante)}
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Data do Pagamento *
-                </label>
-                <input
-                  type="date"
-                  value={baixaModal.dataPagamento}
-                  onChange={(e) => setBaixaModal({ ...baixaModal, dataPagamento: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Forma de Pagamento *
-                </label>
-                <SearchableSelect
-                  options={formasPagamento.map((fp) => ({
-                    value: fp.id,
-                    label: fp.nome
-                  }))}
-                  value={baixaModal.formaPagamentoId}
-                  onChange={(value) => setBaixaModal({ ...baixaModal, formaPagamentoId: value })}
-                  placeholder="Buscar forma de pagamento..."
-                  theme="light"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Conta Bancária *
-                </label>
-                <SearchableSelect
-                  options={contasBancarias.map((cb) => ({
-                    value: cb.id,
-                    label: `${cb.banco} - ${cb.tipo_conta}${cb.numero_conta ? ` (${cb.numero_conta})` : ''}`,
-                    sublabel: `Saldo: ${formatCurrency(cb.saldo_atual)}`
-                  }))}
-                  value={baixaModal.contaBancariaId}
-                  onChange={(value) => setBaixaModal({ ...baixaModal, contaBancariaId: value })}
-                  placeholder="Buscar conta bancária..."
-                  theme="light"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Número do Comprovante
-                </label>
-                <input
-                  type="text"
-                  value={baixaModal.numeroComprovante}
-                  onChange={(e) => setBaixaModal({ ...baixaModal, numeroComprovante: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  placeholder="Ex: 123456"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observações
-                </label>
-                <textarea
-                  value={baixaModal.observacoes}
-                  onChange={(e) => setBaixaModal({ ...baixaModal, observacoes: e.target.value })}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
-                  rows={3}
-                  placeholder="Observações sobre o pagamento"
-                />
-              </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div style={fStyle}><label style={labelStyle}>Valor do Pagamento *</label><div style={{ position:'relative' }}><span style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:S.label, fontSize:12 }}>R$</span><input type="number" step="0.01" min="0.01" max={baixaModal.conta.saldo_restante} value={baixaModal.valorPagamento} onChange={e=>setBaixaModal({...baixaModal,valorPagamento:parseFloat(e.target.value)||0})} style={{ ...inputStyle, paddingLeft:36 }} /></div><p style={{ color:S.label, fontSize:10, margin:'3px 0 0' }}>Máx: {fmt(baixaModal.conta.saldo_restante)}</p></div>
+              <div style={fStyle}><label style={labelStyle}>Data do Pagamento *</label><input type="date" value={baixaModal.dataPagamento} onChange={e=>setBaixaModal({...baixaModal,dataPagamento:e.target.value})} style={inputStyle} /></div>
+              <div style={fStyle}><label style={labelStyle}>Forma de Pagamento *</label><SearchableSelect options={formasPagamento.map(f=>({value:f.id,label:f.nome}))} value={baixaModal.formaPagamentoId} onChange={v=>setBaixaModal({...baixaModal,formaPagamentoId:v})} placeholder="Buscar..." theme="dark" /></div>
+              <div style={fStyle}><label style={labelStyle}>Conta Bancária *</label><SearchableSelect options={contasBancarias.map(c=>({value:c.id,label:`${c.banco} - ${c.tipo_conta}`,sublabel:`Saldo: ${fmt(c.saldo_atual)}`}))} value={baixaModal.contaBancariaId} onChange={v=>setBaixaModal({...baixaModal,contaBancariaId:v})} placeholder="Buscar..." theme="dark" /></div>
+              <div style={fStyle}><label style={labelStyle}>Número do Comprovante</label><input type="text" value={baixaModal.numeroComprovante} onChange={e=>setBaixaModal({...baixaModal,numeroComprovante:e.target.value})} placeholder="Ex: 123456" style={inputStyle} /></div>
+              <div style={fStyle}><label style={labelStyle}>Observações</label><textarea value={baixaModal.observacoes} onChange={e=>setBaixaModal({...baixaModal,observacoes:e.target.value})} rows={2} style={{ ...inputStyle, resize:'vertical' }} /></div>
             </div>
-
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={fecharModalBaixa}
-                disabled={loading}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDarBaixa}
-                disabled={
-                  loading ||
-                  !baixaModal.formaPagamentoId ||
-                  !baixaModal.contaBancariaId ||
-                  baixaModal.valorPagamento <= 0 ||
-                  baixaModal.valorPagamento > baixaModal.conta.saldo_restante
-                }
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-              >
-                {loading ? 'Processando...' : 'Confirmar Baixa'}
+            <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:20 }}>
+              <button onClick={fecharModalBaixa} disabled={loading} style={{ background:'rgba(255,255,255,0.05)', border:`1px solid ${S.border}`, borderRadius:8, padding:'8px 16px', color:S.muted, fontSize:12, cursor:'pointer' }}>Cancelar</button>
+              <button onClick={handleDarBaixa} disabled={loading||!baixaModal.formaPagamentoId||!baixaModal.contaBancariaId||baixaModal.valorPagamento<=0||baixaModal.valorPagamento>baixaModal.conta.saldo_restante}
+                style={{ background:'rgba(74,222,128,0.15)', border:`1px solid rgba(74,222,128,0.25)`, borderRadius:8, padding:'8px 16px', color:S.green, fontSize:12, cursor:'pointer', fontWeight:600, opacity:loading?0.5:1 }}>
+                {loading?'Processando...':'Confirmar Baixa'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de Lançamento em Lote com IA */}
-      <LancamentoLoteIA
-        isOpen={showLancamentoLoteModal}
-        onClose={() => setShowLancamentoLoteModal(false)}
-        onSuccess={() => {
-          fetchData();
-          setShowLancamentoLoteModal(false);
-        }}
-      />
-
-      {/* Modal de Importação de Boleto com IA */}
-      <ImportarBoletoIA
-        isOpen={showIAModal}
-        onClose={() => setShowIAModal(false)}
-        onConfirm={handleIAExtraction}
-        tipo="pagar"
-      />
-
-      {/* Modal de Visualização de Conta */}
-      <ModalVisualizarConta
-        isOpen={modalVisualizacao.isOpen}
-        conta={modalVisualizacao.conta}
-        onClose={() => setModalVisualizacao({ isOpen: false, conta: null })}
-      />
+      <LancamentoLoteIA isOpen={showLancamentoLoteModal} onClose={()=>setShowLancamentoLoteModal(false)} onSuccess={()=>{fetchData();setShowLancamentoLoteModal(false);}} />
+      <ImportarBoletoIA isOpen={showIAModal} onClose={()=>setShowIAModal(false)} onConfirm={handleIAExtraction} tipo="pagar" />
+      <ModalVisualizarConta isOpen={modalVisualizacao.isOpen} conta={modalVisualizacao.conta} onClose={()=>setModalVisualizacao({isOpen:false,conta:null})} />
     </div>
   );
 };
