@@ -475,6 +475,278 @@ function AbaMapeamento() {
 }
 
 
+
+// ════════════════════════════════════════════════════════════════════════════
+// TELA DE REVISÃO — filtro encapsulado como state interno do componente
+// ════════════════════════════════════════════════════════════════════════════
+function AbaRevisao({
+  dtinicio, dtfim, produtos, estoques, itens, fichas,
+  update, toggleIgnorar, handleProcessar, processando,
+  onVoltar, onMapeamento,
+}: {
+  dtinicio:string; dtfim:string; produtos:ProdutoEditavel[];
+  estoques:Estoque[]; itens:ItemEstoque[]; fichas:Ficha[];
+  update:(id:string,c:Partial<ProdutoEditavel>)=>void;
+  toggleIgnorar:(p:ProdutoEditavel)=>void;
+  handleProcessar:()=>void; processando:boolean;
+  onVoltar:()=>void; onMapeamento:()=>void;
+}) {
+  // Tudo calculado AQUI DENTRO — sem depender de props derivadas do pai
+  const [filtro, setFiltro] = useState<'todos'|'prontos'|'pendentes'|'ignorados'|'expandidos'>('todos');
+  const [buscaVinculo, setBuscaVinculo] = useState<Record<string,string>>({});
+
+  const pronto = (p:ProdutoEditavel) => p.ignorado || !!(p.estoqueId && (p.itemEstoqueId || p.fichaId));
+  const ativos    = produtos.filter(p => !p.ignorado && !p.eh_produto_composto);
+  const ignorados = produtos.filter(p => p.ignorado  || p.eh_produto_composto);
+  const todosProntos = produtos.every(pronto);
+  const qtdPendentes = ativos.filter(p => !pronto(p)).length;
+
+  const nomeItem  = (id:string) => itens.find(i=>i.id===id)?.nome  || '—';
+  const nomeFicha = (id:string) => fichas.find(f=>f.id===id)?.nome || '—';
+  const filtrarVinculo = (prodId:string, tipo:'item'|'ficha') => {
+    const q=(buscaVinculo[prodId]||'').toLowerCase();
+    if(tipo==='item') return q ? itens.filter(i=>i.nome.toLowerCase().includes(q)) : itens;
+    return q ? fichas.filter(f=>f.nome.toLowerCase().includes(q)) : fichas;
+  };
+
+  // Listas filtradas — state local garante re-render correto
+  const ativosVisiveis =
+    filtro === 'ignorados'  ? [] :
+    filtro === 'prontos'    ? ativos.filter(p => pronto(p)) :
+    filtro === 'pendentes'  ? ativos.filter(p => !pronto(p)) :
+    filtro === 'expandidos' ? ativos.filter(p => !!p.expandido_de) :
+    ativos;
+  const ignoradosVisiveis =
+    filtro === 'todos' || filtro === 'ignorados' ? ignorados : [];
+
+  const qtdExpandidos = ativos.filter(p => !!p.expandido_de).length;
+
+  const badges = [
+    {f:'todos',     label:`Todos (${produtos.length})`,        bg:'bg-gray-100',  text:'text-gray-600',   border:'border-gray-200'},
+    {f:'prontos',   label:`✓ ${produtos.filter(pronto).length} prontos`,bg:'bg-green-50',text:'text-green-700',border:'border-green-200'},
+    ...(qtdPendentes>0  ? [{f:'pendentes', label:`⚠ ${qtdPendentes} pendentes`, bg:'bg-amber-50',  text:'text-amber-700',  border:'border-amber-200'}] : []),
+    ...(ignorados.length>0 ? [{f:'ignorados', label:`⊘ ${ignorados.length} ignorados`,bg:'bg-gray-100',text:'text-gray-500',border:'border-gray-200'}] : []),
+    ...(qtdExpandidos>0 ? [{f:'expandidos',label:`🧩 ${qtdExpandidos} expandidos`,bg:'bg-purple-50',text:'text-purple-700',border:'border-purple-200'}] : []),
+  ] as {f:string;label:string;bg:string;text:string;border:string}[];
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto space-y-4">
+      {/* Cabeçalho + badges */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <button onClick={onVoltar} className="text-gray-400 hover:text-gray-700 text-sm">← Voltar</button>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Revisar vendas</h1>
+            <p className="text-sm text-gray-500">{dtinicio} → {dtfim} · {produtos.length} produtos</p>
+          </div>
+        </div>
+        <div className="flex gap-2 text-xs flex-wrap">
+          {badges.map(b => (
+            <button
+              key={b.f}
+              onClick={() => setFiltro(b.f as any)}
+              className={`px-2 py-1 rounded-lg border font-medium transition-all ${b.bg} ${b.text} ${b.border} ${filtro === b.f ? 'ring-2 ring-offset-1 ring-current' : 'opacity-60 hover:opacity-100'}`}>
+              {b.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {!todosProntos && filtro !== 'ignorados' && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 text-sm text-amber-800 flex items-start gap-2">
+          <AlertTriangle size={16} className="mt-0.5 flex-shrink-0"/>
+          <span>
+            <strong>{qtdPendentes} produto(s)</strong> sem mapeamento.{' '}
+            <button onClick={onMapeamento} className="underline font-semibold hover:text-amber-900">
+              Mapear na aba Mapeamento →
+            </button>
+          </span>
+        </div>
+      )}
+
+      {filtro !== 'ignorados' && ativosVisiveis.length === 0 && (
+        <div className="text-center py-10 text-gray-400 text-sm italic">
+          Nenhum produto nesta categoria
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {ativosVisiveis.map(prod=>{
+          const ok=pronto(prod);
+          const q=buscaVinculo[prod.productId]||'';
+          return (
+            <div key={prod.productId}
+              className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
+                prod.expandido_de ? 'border-purple-200 ml-4' : ok ? 'border-green-200' : 'border-amber-300'
+              }`}>
+              <div className={`flex items-center justify-between px-4 py-3 ${
+                prod.expandido_de ? 'bg-purple-50' : ok ? 'bg-green-50' : 'bg-amber-50'
+              }`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  {prod.expandido_de
+                    ? <span className="text-purple-500 flex-shrink-0 text-base">↳</span>
+                    : ok
+                      ? <Check size={15} className="text-green-600 flex-shrink-0"/>
+                      : <AlertTriangle size={15} className="text-amber-500 flex-shrink-0"/>}
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm">{prod.productName}</p>
+                    <p className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+                      {prod.expandido_de && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-md text-[10px] font-semibold">
+                          🧩 de: {prod.expandido_de}
+                        </span>
+                      )}
+                      {prod.productCategory&&<span className="italic">{prod.productCategory}</span>}
+                      {prod.mapeado&&<span className="text-blue-500">mapeado</span>}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-gray-800">{prod.count}</p>
+                    <p className="text-xs text-gray-400">unid.</p>
+                  </div>
+                  <button onClick={()=>toggleIgnorar(prod)} disabled={prod.salvandoIgnore}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all bg-white border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 disabled:opacity-50">
+                    <EyeOff size={12}/> Ignorar
+                  </button>
+                </div>
+              </div>
+              <div className="px-4 py-4 space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1 mb-1"><Warehouse size={11}/> Estoque de saída</label>
+                  <select value={prod.estoqueId} onChange={e=>update(prod.productId,{estoqueId:e.target.value})}
+                    className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 ${prod.estoqueId?'border-gray-200':'border-amber-300 bg-amber-50'}`}>
+                    <option value="">— Selecione o estoque —</option>
+                    {estoques.map(e=><option key={e.id} value={e.id}>{e.nome}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1 mb-2"><Link2 size={11}/> Vínculo de baixa</label>
+                  {!prod.itemEstoqueId&&!prod.fichaId&&(
+                    <div className="flex gap-2 mb-3">
+                      <button onClick={()=>update(prod.productId,{vinculoTipo:'item'})}
+                        className={`flex-1 py-2 rounded-xl text-xs font-medium border ${prod.vinculoTipo==='item'?'bg-[#7D1F2C] text-white border-[#7D1F2C]':'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
+                        Item de estoque
+                      </button>
+                      <button onClick={()=>update(prod.productId,{vinculoTipo:'ficha'})}
+                        className={`flex-1 py-2 rounded-xl text-xs font-medium border ${prod.vinculoTipo==='ficha'?'bg-[#7D1F2C] text-white border-[#7D1F2C]':'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
+                        Ficha técnica
+                      </button>
+                    </div>
+                  )}
+                  {prod.itemEstoqueId&&(
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
+                        <Package size={13} className="text-gray-400"/>{nomeItem(prod.itemEstoqueId)}<span className="text-xs text-gray-400 ml-1">— item</span>
+                      </div>
+                      <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
+                    </div>
+                  )}
+                  {prod.fichaId&&(
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
+                        <RefreshCw size={13} className="text-gray-400"/>{nomeFicha(prod.fichaId)}<span className="text-xs text-gray-400 ml-1">— ficha técnica</span>
+                      </div>
+                      <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
+                    </div>
+                  )}
+                  {!prod.itemEstoqueId&&!prod.fichaId&&prod.vinculoTipo==='item'&&(
+                    <div>
+                      <div className="relative mb-1">
+                        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
+                        <input type="text" placeholder="Buscar item de estoque..." value={q} autoFocus
+                          onChange={e=>setBuscaVinculo(prev=>({...prev,[prod.productId]:e.target.value}))}
+                          className="w-full border border-amber-300 bg-amber-50 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 focus:bg-white focus:border-gray-200"/>
+                      </div>
+                      {q&&(
+                        <div className="border border-gray-200 rounded-xl bg-white shadow-lg max-h-44 overflow-y-auto">
+                          {filtrarVinculo(prod.productId,'item').slice(0,20).map(item=>(
+                            <button key={item.id}
+                              onClick={()=>{update(prod.productId,{itemEstoqueId:item.id,fichaId:'',vinculoTipo:'item'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
+                              <span className="font-medium text-gray-800">{item.nome}</span>
+                              <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{item.unidade_medida}{item.custo_medio>0&&` · R$ ${Number(item.custo_medio).toFixed(2)}`}</span>
+                            </button>
+                          ))}
+                          {filtrarVinculo(prod.productId,'item').length===0&&<p className="px-3 py-3 text-sm text-gray-400 italic text-center">Nenhum item encontrado</p>}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!prod.itemEstoqueId&&!prod.fichaId&&prod.vinculoTipo==='ficha'&&(
+                    <div>
+                      <div className="relative mb-1">
+                        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
+                        <input type="text" placeholder="Buscar ficha técnica..." value={q} autoFocus
+                          onChange={e=>setBuscaVinculo(prev=>({...prev,[prod.productId]:e.target.value}))}
+                          className="w-full border border-amber-300 bg-amber-50 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 focus:bg-white focus:border-gray-200"/>
+                      </div>
+                      {q&&(
+                        <div className="border border-gray-200 rounded-xl bg-white shadow-lg max-h-44 overflow-y-auto">
+                          {filtrarVinculo(prod.productId,'ficha').slice(0,20).map(f=>(
+                            <button key={f.id}
+                              onClick={()=>{update(prod.productId,{fichaId:f.id,itemEstoqueId:'',vinculoTipo:'ficha'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
+                              <span className="font-medium text-gray-800">{f.nome}</span>
+                              <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{f.porcoes>0&&`${f.porcoes} porç.`}{f.custo_total>0&&` · R$ ${Number(f.custo_total).toFixed(2)}`}</span>
+                            </button>
+                          ))}
+                          {filtrarVinculo(prod.productId,'ficha').length===0&&<p className="px-3 py-3 text-sm text-gray-400 italic text-center">Nenhuma ficha encontrada</p>}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!prod.itemEstoqueId&&!prod.fichaId&&!prod.vinculoTipo&&<p className="text-xs text-amber-600 italic">Escolha o tipo de vínculo acima</p>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {ignoradosVisiveis.length>0&&(
+        <div className="mt-2">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1"><EyeOff size={11}/> Ignorados / Compostos</p>
+          <div className="space-y-2">
+            {ignoradosVisiveis.map(prod=>(
+              <div key={prod.productId} className={`rounded-2xl border px-4 py-3 flex items-center justify-between opacity-60 hover:opacity-80 ${prod.eh_produto_composto?'bg-purple-50 border-purple-200':'bg-gray-50 border-gray-200'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  {prod.eh_produto_composto ? <span className="text-purple-400 text-sm">🧩</span> : <EyeOff size={14} className="text-gray-400 flex-shrink-0"/>}
+                  <div>
+                    <p className={`text-sm font-medium ${prod.eh_produto_composto?'text-purple-700':'text-gray-600 line-through'}`}>{prod.productName}</p>
+                    <p className="text-xs text-gray-400">
+                      {prod.eh_produto_composto
+                        ? `subitens expandidos: ${prod.additions_expandidos?.join(', ') || '—'}`
+                        : `${prod.productCategory||'—'} · ${prod.count} unid.`}
+                    </p>
+                  </div>
+                </div>
+                {!prod.eh_produto_composto&&(
+                  <button onClick={()=>toggleIgnorar(prod)} disabled={prod.salvandoIgnore}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-500 hover:border-green-300 hover:text-green-600 hover:bg-green-50 transition-all disabled:opacity-50">
+                    <Eye size={12}/> Reativar
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="sticky bottom-4 pt-2">
+        <button onClick={handleProcessar} disabled={!todosProntos||processando}
+          className={`w-full flex items-center justify-center gap-2 font-bold py-4 rounded-2xl transition-all shadow-lg text-white ${todosProntos?'bg-[#7D1F2C] hover:bg-[#6a1a25] shadow-[#7D1F2C]/30':'bg-gray-300 cursor-not-allowed'}`}>
+          <Play size={18} className={processando?'animate-pulse':''}/>
+          {processando?'Processando baixas...':todosProntos
+            ?`Processar ${ativos.filter(p=>p.estoqueId).length} produto(s)${ignorados.length>0?` · ${ignorados.length} ignorado(s)`:''}`
+            :`Aguardando ${qtdPendentes} mapeamento(s)`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // COMPONENTE PRINCIPAL
 // ════════════════════════════════════════════════════════════════════════════
@@ -494,7 +766,6 @@ export default function ZigVendasSync() {
   const [logs, setLogs]           = useState<SyncLog[]>([]);
   const [logAberto, setLogAberto] = useState<string|null>(null);
   const [abaLog, setAbaLog]       = useState<'processados'|'pendentes'|'ignorados'>('processados');
-  const [filtroRevisao, setFiltroRevisao] = useState<'todos'|'prontos'|'pendentes'|'ignorados'|'expandidos'>('todos');
   const [buscaVinculo, setBuscaVinculo] = useState<Record<string,string>>({});
 
   useEffect(() => { carregarLogs(); }, []);
@@ -562,13 +833,6 @@ export default function ZigVendasSync() {
   const ignorados    = produtos.filter(p=>p.ignorado || p.eh_produto_composto);
   const todosProntos = produtos.every(pronto);
   const qtdPendentes = ativos.filter(p=>!pronto(p)).length;
-  // Listas filtradas pelos badges — recalculadas sempre que filtroRevisao muda
-  const ativosVisiveis = filtroRevisao === 'ignorados'  ? [] :
-                         filtroRevisao === 'prontos'    ? ativos.filter(p => pronto(p)) :
-                         filtroRevisao === 'pendentes'  ? ativos.filter(p => !pronto(p)) :
-                         filtroRevisao === 'expandidos' ? ativos.filter(p => !!p.expandido_de) :
-                         ativos; // 'todos'
-  const ignoradosVisiveis = filtroRevisao === 'todos' || filtroRevisao === 'ignorados' ? ignorados : [];
 
   const filtrarVinculo = (prodId:string, tipo:'item'|'ficha') => {
     const q=(buscaVinculo[prodId]||'').toLowerCase();
@@ -859,217 +1123,15 @@ export default function ZigVendasSync() {
           )}
 
           {etapa==='revisao' && (
-            <div className="p-6 max-w-4xl mx-auto space-y-4">
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <button onClick={()=>setEtapa('busca')} className="text-gray-400 hover:text-gray-700 text-sm">← Voltar</button>
-                  <div>
-                    <h1 className="text-xl font-bold text-gray-900">Revisar vendas</h1>
-                    <p className="text-sm text-gray-500">{dtinicio} → {dtfim} · {produtos.length} produtos</p>
-                  </div>
-                </div>
-                <div className="flex gap-2 text-xs flex-wrap">
-                  {([
-                    {f:'todos',   label:`Todos (${produtos.length})`,                          bg:'bg-gray-100',    text:'text-gray-600',   border:'border-gray-200'},
-                    {f:'prontos', label:`✓ ${produtos.filter(pronto).length} prontos`,         bg:'bg-green-50',   text:'text-green-700',  border:'border-green-200'},
-                    {f:'pendentes',label:`⚠ ${qtdPendentes} pendentes`,                       bg:'bg-amber-50',   text:'text-amber-700',  border:'border-amber-200', hide: qtdPendentes===0},
-                    {f:'ignorados',label:`⊘ ${ignorados.length} ignorados`,                   bg:'bg-gray-100',   text:'text-gray-500',   border:'border-gray-200',  hide: ignorados.length===0},
-                    {f:'expandidos',label:`🧩 ${ativos.filter(p=>p.expandido_de).length} expandidos`, bg:'bg-purple-50', text:'text-purple-700', border:'border-purple-200', hide: ativos.filter(p=>p.expandido_de).length===0},
-                  ] as {f:string;label:string;bg:string;text:string;border:string;hide?:boolean}[])
-                    .filter(b=>!b.hide)
-                    .map(b=>(
-                      <button key={b.f} onClick={()=>setFiltroRevisao(b.f as any)}
-                        className={`px-2 py-1 rounded-lg border font-medium transition-all ${b.bg} ${b.text} ${b.border} ${filtroRevisao===b.f?'ring-2 ring-offset-1 ring-current opacity-100':'opacity-70 hover:opacity-100'}`}>
-                        {b.label}
-                      </button>
-                    ))
-                  }
-                </div>
-              </div>
-
-              {!todosProntos && (
-                <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 text-sm text-amber-800 flex items-start gap-2">
-                  <AlertTriangle size={16} className="mt-0.5 flex-shrink-0"/>
-                  <span>
-                    <strong>{qtdPendentes} produto(s)</strong> sem mapeamento.{' '}
-                    <button onClick={()=>setAba('mapeamento')} className="underline font-semibold hover:text-amber-900">
-                      Mapear na aba Mapeamento →
-                    </button>
-                  </span>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {ativosVisiveis.map(prod=>{
-                  const ok=pronto(prod);
-                  const q=buscaVinculo[prod.productId]||'';
-                  return (
-                    <div key={prod.productId}
-                      className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
-                        prod.expandido_de ? 'border-purple-200 ml-4' : ok ? 'border-green-200' : 'border-amber-300'
-                      }`}>
-                      <div className={`flex items-center justify-between px-4 py-3 ${
-                        prod.expandido_de ? 'bg-purple-50' : ok ? 'bg-green-50' : 'bg-amber-50'
-                      }`}>
-                        <div className="flex items-center gap-3 min-w-0">
-                          {prod.expandido_de
-                            ? <span className="text-purple-500 flex-shrink-0 text-base">↳</span>
-                            : ok
-                              ? <Check size={15} className="text-green-600 flex-shrink-0"/>
-                              : <AlertTriangle size={15} className="text-amber-500 flex-shrink-0"/>}
-                          <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 text-sm">{prod.productName}</p>
-                            <p className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
-                              {prod.expandido_de && (
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-md text-[10px] font-semibold">
-                                  🧩 de: {prod.expandido_de}
-                                </span>
-                              )}
-                              {prod.productCategory&&<span className="italic">{prod.productCategory}</span>}
-                              {prod.mapeado&&<span className="text-blue-500">mapeado</span>}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-gray-800">{prod.count}</p>
-                            <p className="text-xs text-gray-400">unid.</p>
-                          </div>
-                          <button onClick={()=>toggleIgnorar(prod)} disabled={prod.salvandoIgnore}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all bg-white border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 disabled:opacity-50">
-                            <EyeOff size={12}/> Ignorar
-                          </button>
-                        </div>
-                      </div>
-                      <div className="px-4 py-4 space-y-4">
-                        <div>
-                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1 mb-1"><Warehouse size={11}/> Estoque de saída</label>
-                          <select value={prod.estoqueId} onChange={e=>update(prod.productId,{estoqueId:e.target.value})}
-                            className={`w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 ${prod.estoqueId?'border-gray-200':'border-amber-300 bg-amber-50'}`}>
-                            <option value="">— Selecione o estoque —</option>
-                            {estoques.map(e=><option key={e.id} value={e.id}>{e.nome}</option>)}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1 mb-2"><Link2 size={11}/> Vínculo de baixa</label>
-                          {!prod.itemEstoqueId&&!prod.fichaId&&(
-                            <div className="flex gap-2 mb-3">
-                              <button onClick={()=>update(prod.productId,{vinculoTipo:'item'})}
-                                className={`flex-1 py-2 rounded-xl text-xs font-medium border ${prod.vinculoTipo==='item'?'bg-[#7D1F2C] text-white border-[#7D1F2C]':'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
-                                Item de estoque
-                              </button>
-                              <button onClick={()=>update(prod.productId,{vinculoTipo:'ficha'})}
-                                className={`flex-1 py-2 rounded-xl text-xs font-medium border ${prod.vinculoTipo==='ficha'?'bg-[#7D1F2C] text-white border-[#7D1F2C]':'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
-                                Ficha técnica
-                              </button>
-                            </div>
-                          )}
-                          {prod.itemEstoqueId&&(
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
-                                <Package size={13} className="text-gray-400"/>{nomeItem(prod.itemEstoqueId)}<span className="text-xs text-gray-400 ml-1">— item</span>
-                              </div>
-                              <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
-                            </div>
-                          )}
-                          {prod.fichaId&&(
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
-                                <RefreshCw size={13} className="text-gray-400"/>{nomeFicha(prod.fichaId)}<span className="text-xs text-gray-400 ml-1">— ficha técnica</span>
-                              </div>
-                              <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
-                            </div>
-                          )}
-                          {!prod.itemEstoqueId&&!prod.fichaId&&prod.vinculoTipo==='item'&&(
-                            <div>
-                              <div className="relative mb-1">
-                                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
-                                <input type="text" placeholder="Buscar item de estoque..." value={q}
-                                  onChange={e=>setBuscaVinculo(prev=>({...prev,[prod.productId]:e.target.value}))}
-                                  className="w-full border border-amber-300 bg-amber-50 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 focus:bg-white focus:border-gray-200"/>
-                              </div>
-                              {q&&(
-                                <div className="border border-gray-200 rounded-xl bg-white shadow-lg max-h-44 overflow-y-auto">
-                                  {filtrarVinculo(prod.productId,'item').slice(0,20).map(item=>(
-                                    <button key={item.id}
-                                      onClick={()=>{update(prod.productId,{itemEstoqueId:item.id,fichaId:'',vinculoTipo:'item'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
-                                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
-                                      <span className="font-medium text-gray-800">{item.nome}</span>
-                                      <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{item.unidade_medida}{item.custo_medio>0&&` · R$ ${Number(item.custo_medio).toFixed(2)}`}</span>
-                                    </button>
-                                  ))}
-                                  {filtrarVinculo(prod.productId,'item').length===0&&<p className="px-3 py-3 text-sm text-gray-400 italic text-center">Nenhum item encontrado</p>}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          {!prod.itemEstoqueId&&!prod.fichaId&&prod.vinculoTipo==='ficha'&&(
-                            <div>
-                              <div className="relative mb-1">
-                                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/>
-                                <input type="text" placeholder="Buscar ficha técnica..." value={q}
-                                  onChange={e=>setBuscaVinculo(prev=>({...prev,[prod.productId]:e.target.value}))}
-                                  className="w-full border border-amber-300 bg-amber-50 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#7D1F2C]/30 focus:bg-white focus:border-gray-200"/>
-                              </div>
-                              {q&&(
-                                <div className="border border-gray-200 rounded-xl bg-white shadow-lg max-h-44 overflow-y-auto">
-                                  {filtrarVinculo(prod.productId,'ficha').slice(0,20).map(f=>(
-                                    <button key={f.id}
-                                      onClick={()=>{update(prod.productId,{fichaId:f.id,itemEstoqueId:'',vinculoTipo:'ficha'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
-                                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
-                                      <span className="font-medium text-gray-800">{f.nome}</span>
-                                      <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{f.porcoes>0&&`${f.porcoes} porç.`}{f.custo_total>0&&` · R$ ${Number(f.custo_total).toFixed(2)}`}</span>
-                                    </button>
-                                  ))}
-                                  {filtrarVinculo(prod.productId,'ficha').length===0&&<p className="px-3 py-3 text-sm text-gray-400 italic text-center">Nenhuma ficha encontrada</p>}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          {!prod.itemEstoqueId&&!prod.fichaId&&!prod.vinculoTipo&&<p className="text-xs text-amber-600 italic">Escolha o tipo de vínculo acima</p>}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {ignoradosVisiveis.length>0&&(
-                <div className="mt-2">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1"><EyeOff size={11}/> Ignorados</p>
-                  <div className="space-y-2">
-                    {ignoradosVisiveis.map(prod=>(
-                      <div key={prod.productId} className="bg-gray-50 rounded-2xl border border-gray-200 px-4 py-3 flex items-center justify-between opacity-60 hover:opacity-80">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <EyeOff size={14} className="text-gray-400 flex-shrink-0"/>
-                          <div>
-                            <p className="text-sm font-medium text-gray-600 line-through">{prod.productName}</p>
-                            <p className="text-xs text-gray-400">{prod.productCategory||'—'} · {prod.count} unid.</p>
-                          </div>
-                        </div>
-                        <button onClick={()=>toggleIgnorar(prod)} disabled={prod.salvandoIgnore}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-500 hover:border-green-300 hover:text-green-600 hover:bg-green-50 transition-all disabled:opacity-50">
-                          <Eye size={12}/> Reativar
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="sticky bottom-4 pt-2">
-                <button onClick={handleProcessar} disabled={!todosProntos||processando}
-                  className={`w-full flex items-center justify-center gap-2 font-bold py-4 rounded-2xl transition-all shadow-lg text-white ${todosProntos?'bg-[#7D1F2C] hover:bg-[#6a1a25] shadow-[#7D1F2C]/30':'bg-gray-300 cursor-not-allowed'}`}>
-                  <Play size={18} className={processando?'animate-pulse':''}/>
-                  {processando?'Processando baixas...':todosProntos
-                    ?`Processar ${ativos.filter(p=>p.estoqueId).length} produto(s)${ignorados.length>0?` · ${ignorados.length} ignorado(s)`:''}`
-                    :`Aguardando ${qtdPendentes} mapeamento(s)`}
-                </button>
-              </div>
-            </div>
+            <AbaRevisao
+              dtinicio={dtinicio} dtfim={dtfim}
+              produtos={produtos} estoques={estoques} itens={itens} fichas={fichas}
+              update={update} toggleIgnorar={toggleIgnorar}
+              handleProcessar={handleProcessar} processando={processando}
+              onVoltar={()=>setEtapa('busca')} onMapeamento={()=>setAba('mapeamento')}
+            />
           )}
-
-          {etapa==='resultado' && (
+                    {etapa==='resultado' && (
             <div className="p-6 max-w-2xl mx-auto space-y-6">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${resultado?.ok?'bg-green-100':'bg-red-100'}`}>
