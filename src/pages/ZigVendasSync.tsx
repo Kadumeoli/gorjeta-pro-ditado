@@ -17,6 +17,9 @@ interface ProdutoZig {
   productId: string; productName: string; productSku: string|null;
   productCategory: string|null; count: number; eventDate: string;
   mapeado: boolean; ignorar_estoque: boolean;
+  eh_produto_composto?: boolean;
+  expandido_de?: string|null;
+  additions_expandidos?: string[]|null;
   mapeamento: { item_estoque_id:string|null; ficha_tecnica_id:string|null; estoque_id:string|null; tipo_mapeamento:string|null; ignorar_estoque:boolean; }|null;
 }
 interface ProdutoEditavel extends ProdutoZig {
@@ -554,8 +557,8 @@ export default function ZigVendasSync() {
   };
 
   const pronto = (p:ProdutoEditavel) => p.ignorado||!!(p.estoqueId&&(p.itemEstoqueId||p.fichaId));
-  const ativos       = produtos.filter(p=>!p.ignorado);
-  const ignorados    = produtos.filter(p=>p.ignorado);
+  const ativos       = produtos.filter(p=>!p.ignorado && !p.eh_produto_composto);
+  const ignorados    = produtos.filter(p=>p.ignorado || p.eh_produto_composto);
   const todosProntos = produtos.every(pronto);
   const qtdPendentes = ativos.filter(p=>!pronto(p)).length;
 
@@ -576,6 +579,8 @@ export default function ZigVendasSync() {
         count:p.count, eventDate:p.eventDate, estoqueId:p.estoqueId,
         itemEstoqueId:p.vinculoTipo==='item'?p.itemEstoqueId:null,
         fichaTecnicaId:p.vinculoTipo==='ficha'?p.fichaId:null,
+        // Contexto de produto expandido (para log detalhado)
+        expandido_de: p.expandido_de || null,
       }));
       const res = await fetch(`${SUPABASE_URL}/functions/v1/zig-processar-baixas`, {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -859,6 +864,7 @@ export default function ZigVendasSync() {
                   <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg border border-green-200 font-medium">✓ {produtos.filter(pronto).length} prontos</span>
                   {qtdPendentes>0&&<span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-lg border border-amber-200 font-medium">⚠ {qtdPendentes} pendentes</span>}
                   {ignorados.length>0&&<span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-lg border border-gray-200 font-medium">⊘ {ignorados.length} ignorados</span>}
+                  {ativos.filter(p=>p.expandido_de).length>0&&<span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-lg border border-purple-200 font-medium">🧩 {ativos.filter(p=>p.expandido_de).length} expandidos</span>}
                 </div>
               </div>
 
@@ -880,14 +886,27 @@ export default function ZigVendasSync() {
                   const q=buscaVinculo[prod.productId]||'';
                   return (
                     <div key={prod.productId}
-                      className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${ok?'border-green-200':'border-amber-300'}`}>
-                      <div className={`flex items-center justify-between px-4 py-3 ${ok?'bg-green-50':'bg-amber-50'}`}>
+                      className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
+                        prod.expandido_de ? 'border-purple-200 ml-4' : ok ? 'border-green-200' : 'border-amber-300'
+                      }`}>
+                      <div className={`flex items-center justify-between px-4 py-3 ${
+                        prod.expandido_de ? 'bg-purple-50' : ok ? 'bg-green-50' : 'bg-amber-50'
+                      }`}>
                         <div className="flex items-center gap-3 min-w-0">
-                          {ok?<Check size={15} className="text-green-600 flex-shrink-0"/>:<AlertTriangle size={15} className="text-amber-500 flex-shrink-0"/>}
+                          {prod.expandido_de
+                            ? <span className="text-purple-500 flex-shrink-0 text-base">↳</span>
+                            : ok
+                              ? <Check size={15} className="text-green-600 flex-shrink-0"/>
+                              : <AlertTriangle size={15} className="text-amber-500 flex-shrink-0"/>}
                           <div className="min-w-0">
                             <p className="font-semibold text-gray-900 text-sm">{prod.productName}</p>
-                            <p className="text-xs text-gray-400">
-                              {prod.productCategory&&<span className="italic mr-2">{prod.productCategory}</span>}
+                            <p className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+                              {prod.expandido_de && (
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-md text-[10px] font-semibold">
+                                  🧩 de: {prod.expandido_de}
+                                </span>
+                              )}
+                              {prod.productCategory&&<span className="italic">{prod.productCategory}</span>}
                               {prod.mapeado&&<span className="text-blue-500">mapeado</span>}
                             </p>
                           </div>
