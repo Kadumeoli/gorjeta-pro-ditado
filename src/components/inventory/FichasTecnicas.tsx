@@ -1,4 +1,135 @@
-Adicionar Ingrediente
+import React, { useState, useEffect } from 'react';
+import { Package, Trash2, Plus } from 'lucide-react';
+
+// Função de formatação (ajuste se a sua for diferente)
+const formatCurrency = (valor: number) => {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+};
+
+const FichasTecnicas = () => {
+  const [showForm, setShowForm] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [editingFicha, setEditingFicha] = useState<any>(null);
+  const [itensEstoque, setItensEstoque] = useState<any[]>([]);
+  const [fichasDisponiveis, setFichasDisponiveis] = useState<any[]>([]);
+
+  const [formData, setFormData] = useState({
+    nome: '',
+    porcoes: 1,
+    ingredientes: [] as any[]
+  });
+
+  // Função para adicionar novo ingrediente (já com baixa_estoque: true)
+  const adicionarIngrediente = () => {
+    setFormData({
+      ...formData,
+      ingredientes: [
+        ...formData.ingredientes,
+        {
+          tipo: 'item',
+          quantidade: 0,
+          item_estoque_id: '',
+          observacoes: '',
+          baixa_estoque: true // Adicionado para o Toggle funcionar
+        }
+      ]
+    });
+  };
+
+  const atualizarIngrediente = (index: number, campo: string, valor: any) => {
+    const novosIngredientes = [...formData.ingredientes];
+    novosIngredientes[index] = { ...novosIngredientes[index], [campo]: valor };
+    setFormData({ ...formData, ingredientes: novosIngredientes });
+  };
+
+  const removerIngrediente = (index: number) => {
+    const novosIngredientes = formData.ingredientes.filter((_, i) => i !== index);
+    setFormData({ ...formData, ingredientes: novosIngredientes });
+  };
+
+  const calcularCustoTotal = () => {
+    return formData.ingredientes.reduce((total, ing) => {
+      if (ing.tipo === 'item' && ing.item_estoque_id) {
+        const item = itensEstoque.find(i => i.id === ing.item_estoque_id);
+        return total + ((item?.custo_medio || 0) * (ing.quantidade || 0));
+      }
+      if (ing.tipo === 'ficha' && ing.ficha_tecnica_ingrediente_id) {
+        const ficha = fichasDisponiveis.find(f => f.id === ing.ficha_tecnica_ingrediente_id);
+        if (ficha && ficha.porcoes) {
+          return total + (((ficha.custo_total || 0) / ficha.porcoes) * (ing.quantidade || 0));
+        }
+      }
+      return total;
+    }, 0);
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    // Aqui vai a sua lógica de salvar no Supabase
+    console.log("Salvando dados...", formData);
+    setTimeout(() => setLoading(false), 1000);
+  };
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* Cabeçalho */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Fichas Técnicas</h1>
+        {!showForm && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 bg-[#7D1F2C] text-white px-4 py-2 rounded-lg hover:bg-[#6a1a25]"
+          >
+            <Plus className="w-5 h-5" />
+            Nova Ficha Técnica
+          </button>
+        )}
+      </div>
+
+      {showForm && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-800">
+              {editingFicha ? 'Editar Ficha Técnica' : 'Nova Ficha Técnica'}
+            </h2>
+          </div>
+
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Receita</label>
+                <input
+                  type="text"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                  placeholder="Ex: Bolo de Chocolate"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rendimento (Porções)</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.porcoes}
+                  onChange={(e) => setFormData({ ...formData, porcoes: parseInt(e.target.value) || 1 })}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Ingredientes</h3>
+                <button
+                  type="button"
+                  onClick={adicionarIngrediente}
+                  className="flex items-center gap-2 text-sm text-[#7D1F2C] font-medium hover:text-[#6a1a25]"
+                >
+                  <Plus className="w-4 h-4" />
+                  Adicionar Ingrediente
                 </button>
               </div>
 
@@ -106,7 +237,7 @@ Adicionar Ingrediente
                             )}
                           </div>
                           
-                          {/* Botões Toggle e Remover */}
+                          {/* Botões Toggle e Remover (Aqui está a sua alteração!) */}
                           <div className="flex items-center gap-2 mt-2">
                             <button
                               type="button"
