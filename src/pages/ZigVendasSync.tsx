@@ -562,6 +562,13 @@ export default function ZigVendasSync() {
   const ignorados    = produtos.filter(p=>p.ignorado || p.eh_produto_composto);
   const todosProntos = produtos.every(pronto);
   const qtdPendentes = ativos.filter(p=>!pronto(p)).length;
+  // Listas filtradas pelos badges — recalculadas sempre que filtroRevisao muda
+  const ativosVisiveis = filtroRevisao === 'ignorados'  ? [] :
+                         filtroRevisao === 'prontos'    ? ativos.filter(p => pronto(p)) :
+                         filtroRevisao === 'pendentes'  ? ativos.filter(p => !pronto(p)) :
+                         filtroRevisao === 'expandidos' ? ativos.filter(p => !!p.expandido_de) :
+                         ativos; // 'todos'
+  const ignoradosVisiveis = filtroRevisao === 'todos' || filtroRevisao === 'ignorados' ? ignorados : [];
 
   const filtrarVinculo = (prodId:string, tipo:'item'|'ficha') => {
     const q=(buscaVinculo[prodId]||'').toLowerCase();
@@ -893,13 +900,7 @@ export default function ZigVendasSync() {
               )}
 
               <div className="space-y-3">
-                {ativos.filter(prod => {
-                  if (filtroRevisao === 'todos')      return true;
-                  if (filtroRevisao === 'prontos')    return pronto(prod);
-                  if (filtroRevisao === 'pendentes')  return !pronto(prod);
-                  if (filtroRevisao === 'expandidos') return !!prod.expandido_de;
-                  return true;
-                }).map(prod=>{
+                {ativosVisiveis.map(prod=>{
                   const ok=pronto(prod);
                   const q=buscaVinculo[prod.productId]||'';
                   return (
@@ -1033,11 +1034,11 @@ export default function ZigVendasSync() {
                 })}
               </div>
 
-              {(filtroRevisao==='todos'||filtroRevisao==='ignorados')&&ignorados.length>0&&(
+              {ignoradosVisiveis.length>0&&(
                 <div className="mt-2">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1"><EyeOff size={11}/> Ignorados</p>
                   <div className="space-y-2">
-                    {ignorados.map(prod=>(
+                    {ignoradosVisiveis.map(prod=>(
                       <div key={prod.productId} className="bg-gray-50 rounded-2xl border border-gray-200 px-4 py-3 flex items-center justify-between opacity-60 hover:opacity-80">
                         <div className="flex items-center gap-3 min-w-0">
                           <EyeOff size={14} className="text-gray-400 flex-shrink-0"/>
