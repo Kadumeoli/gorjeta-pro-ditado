@@ -521,14 +521,6 @@ function AbaRevisao({
 
   const qtdExpandidos = ativos.filter(p => !!p.expandido_de).length;
 
-  const badges = [
-    {f:'todos',     label:`Todos (${produtos.length})`,        bg:'bg-gray-100',  text:'text-gray-600',   border:'border-gray-200'},
-    {f:'prontos',   label:`✓ ${produtos.filter(pronto).length} prontos`,bg:'bg-green-50',text:'text-green-700',border:'border-green-200'},
-    ...(qtdPendentes>0  ? [{f:'pendentes', label:`⚠ ${qtdPendentes} pendentes`, bg:'bg-amber-50',  text:'text-amber-700',  border:'border-amber-200'}] : []),
-    ...(ignorados.length>0 ? [{f:'ignorados', label:`⊘ ${ignorados.length} ignorados`,bg:'bg-gray-100',text:'text-gray-500',border:'border-gray-200'}] : []),
-    ...(qtdExpandidos>0 ? [{f:'expandidos',label:`🧩 ${qtdExpandidos} expandidos`,bg:'bg-purple-50',text:'text-purple-700',border:'border-purple-200'}] : []),
-  ] as {f:string;label:string;bg:string;text:string;border:string}[];
-
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
       {/* Cabeçalho + badges */}
@@ -541,14 +533,29 @@ function AbaRevisao({
           </div>
         </div>
         <div className="flex gap-2 text-xs flex-wrap">
-          {badges.map(b => (
-            <button
-              key={b.f}
-              onClick={() => setFiltro(b.f as any)}
-              className={`px-2 py-1 rounded-lg border font-medium transition-all ${b.bg} ${b.text} ${b.border} ${filtro === b.f ? 'ring-2 ring-offset-1 ring-current' : 'opacity-60 hover:opacity-100'}`}>
-              {b.label}
-            </button>
-          ))}
+          {(['todos','prontos','pendentes','ignorados','expandidos'] as const)
+            .filter(f =>
+              f === 'todos'      ? true :
+              f === 'prontos'    ? true :
+              f === 'pendentes'  ? qtdPendentes > 0 :
+              f === 'ignorados'  ? ignorados.length > 0 :
+              f === 'expandidos' ? qtdExpandidos > 0 : false
+            )
+            .map(f => {
+              const label =
+                f === 'todos'      ? `Todos (${produtos.length})` :
+                f === 'prontos'    ? `✓ ${produtos.filter(pronto).length} prontos` :
+                f === 'pendentes'  ? `⚠ ${qtdPendentes} pendentes` :
+                f === 'ignorados'  ? `⊘ ${ignorados.length} ignorados` :
+                `🧩 ${qtdExpandidos} expandidos`;
+              return (
+                <button key={f} onClick={() => setFiltro(f)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium border transition-colors ${filtro===f ? 'bg-[#7D1F2C] text-white border-[#7D1F2C]' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
+                  {label}
+                </button>
+              );
+            })
+          }
         </div>
       </div>
 
@@ -575,8 +582,7 @@ function AbaRevisao({
           const ok=pronto(prod);
           const q=buscaVinculo[prod.productId]||'';
           return (
-            <div key={prod.productId}
-              className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
+<div key={prod.productId + '_' + prod.eventDate}              className={`bg-white rounded-2xl border shadow-sm overflow-hidden ${
                 prod.expandido_de ? 'border-purple-200 ml-4' : ok ? 'border-green-200' : 'border-amber-300'
               }`}>
               <div className={`flex items-center justify-between px-4 py-3 ${
@@ -802,7 +808,7 @@ export default function ZigVendasSync() {
         ignorado:      p.mapeamento?.ignorar_estoque ?? p.ignorar_estoque ?? false,
         salvandoIgnore:false,
       }));
-      setProdutos(editaveis); setEtapa('revisao'); setFiltroRevisao('todos');
+      setProdutos(editaveis); setEtapa('revisao');
     } catch(e:any) { setErroBusca(e.message); }
     finally { setBuscando(false); }
   };
