@@ -672,9 +672,10 @@ export default function ZigVendasSync() {
                   <div className="divide-y divide-gray-50">
                     {logs.map(log => {
                       const isOpen = logAberto === log.id;
-                      const processados = log.itens_processados || [];
-                      const pendentes   = log.itens_pendentes   || [];
-                      const ignorados   = log.itens_ignorados   || [];
+                      const processados = log.itens_processados ?? [];
+                      const pendentes   = log.itens_pendentes   ?? [];
+                      const ignorados   = log.itens_ignorados   ?? [];
+                      const semDetalhe  = log.itens_processados === null && log.itens_pendentes === null;
                       const statusColor = log.status==='sucesso'||log.status==='sucesso_parcial' ? 'text-green-500'
                                         : log.status==='erro' ? 'text-red-500' : 'text-yellow-500';
                       const StatusIcon  = log.status==='sucesso'||log.status==='sucesso_parcial' ? CheckCircle
@@ -748,6 +749,12 @@ export default function ZigVendasSync() {
 
                               {/* Conteúdo */}
                               <div className="max-h-64 overflow-y-auto">
+                                {semDetalhe && log.total_duplicados > 0 && abaLog === 'processados' && (
+                                  <div className="px-4 py-5 text-center">
+                                    <p className="text-xs text-blue-600 font-medium">Todos os {log.total_duplicados} itens já haviam sido processados anteriormente</p>
+                                    <p className="text-xs text-gray-400 mt-1">Nenhuma baixa nova foi gerada neste sync</p>
+                                  </div>
+                                )}
                                 {abaLog==='processados' && (
                                   processados.length === 0
                                     ? <p className="text-center text-xs text-gray-400 py-6 italic">Nenhum item processado</p>
