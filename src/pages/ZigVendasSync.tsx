@@ -494,6 +494,7 @@ export default function ZigVendasSync() {
   const [logs, setLogs]           = useState<SyncLog[]>([]);
   const [logAberto, setLogAberto] = useState<string|null>(null);
   const [abaLog, setAbaLog]       = useState<'processados'|'pendentes'|'ignorados'>('processados');
+  const [filtroRevisao, setFiltroRevisao] = useState<'todos'|'prontos'|'pendentes'|'ignorados'|'expandidos'>('todos');
   const [buscaVinculo, setBuscaVinculo] = useState<Record<string,string>>({});
 
   useEffect(() => { carregarLogs(); }, []);
@@ -530,7 +531,7 @@ export default function ZigVendasSync() {
         ignorado:      p.mapeamento?.ignorar_estoque ?? p.ignorar_estoque ?? false,
         salvandoIgnore:false,
       }));
-      setProdutos(editaveis); setEtapa('revisao');
+      setProdutos(editaveis); setEtapa('revisao'); setFiltroRevisao('todos');
     } catch(e:any) { setErroBusca(e.message); }
     finally { setBuscando(false); }
   };
@@ -861,10 +862,21 @@ export default function ZigVendasSync() {
                   </div>
                 </div>
                 <div className="flex gap-2 text-xs flex-wrap">
-                  <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg border border-green-200 font-medium">✓ {produtos.filter(pronto).length} prontos</span>
-                  {qtdPendentes>0&&<span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-lg border border-amber-200 font-medium">⚠ {qtdPendentes} pendentes</span>}
-                  {ignorados.length>0&&<span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-lg border border-gray-200 font-medium">⊘ {ignorados.length} ignorados</span>}
-                  {ativos.filter(p=>p.expandido_de).length>0&&<span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-lg border border-purple-200 font-medium">🧩 {ativos.filter(p=>p.expandido_de).length} expandidos</span>}
+                  {([
+                    {f:'todos',   label:`Todos (${produtos.length})`,                          bg:'bg-gray-100',    text:'text-gray-600',   border:'border-gray-200'},
+                    {f:'prontos', label:`✓ ${produtos.filter(pronto).length} prontos`,         bg:'bg-green-50',   text:'text-green-700',  border:'border-green-200'},
+                    {f:'pendentes',label:`⚠ ${qtdPendentes} pendentes`,                       bg:'bg-amber-50',   text:'text-amber-700',  border:'border-amber-200', hide: qtdPendentes===0},
+                    {f:'ignorados',label:`⊘ ${ignorados.length} ignorados`,                   bg:'bg-gray-100',   text:'text-gray-500',   border:'border-gray-200',  hide: ignorados.length===0},
+                    {f:'expandidos',label:`🧩 ${ativos.filter(p=>p.expandido_de).length} expandidos`, bg:'bg-purple-50', text:'text-purple-700', border:'border-purple-200', hide: ativos.filter(p=>p.expandido_de).length===0},
+                  ] as {f:string;label:string;bg:string;text:string;border:string;hide?:boolean}[])
+                    .filter(b=>!b.hide)
+                    .map(b=>(
+                      <button key={b.f} onClick={()=>setFiltroRevisao(b.f as any)}
+                        className={`px-2 py-1 rounded-lg border font-medium transition-all ${b.bg} ${b.text} ${b.border} ${filtroRevisao===b.f?'ring-2 ring-offset-1 ring-current opacity-100':'opacity-70 hover:opacity-100'}`}>
+                        {b.label}
+                      </button>
+                    ))
+                  }
                 </div>
               </div>
 
@@ -881,7 +893,13 @@ export default function ZigVendasSync() {
               )}
 
               <div className="space-y-3">
-                {ativos.map(prod=>{
+                {ativos.filter(prod => {
+                  if (filtroRevisao === 'todos')      return true;
+                  if (filtroRevisao === 'prontos')    return pronto(prod);
+                  if (filtroRevisao === 'pendentes')  return !pronto(prod);
+                  if (filtroRevisao === 'expandidos') return !!prod.expandido_de;
+                  return true;
+                }).map(prod=>{
                   const ok=pronto(prod);
                   const q=buscaVinculo[prod.productId]||'';
                   return (
@@ -1015,7 +1033,7 @@ export default function ZigVendasSync() {
                 })}
               </div>
 
-              {ignorados.length>0&&(
+              {(filtroRevisao==='todos'||filtroRevisao==='ignorados')&&ignorados.length>0&&(
                 <div className="mt-2">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1"><EyeOff size={11}/> Ignorados</p>
                   <div className="space-y-2">
