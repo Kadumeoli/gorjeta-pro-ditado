@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  ShoppingCart, RefreshCw, Download, CheckCircle2, Circle,
+  ShoppingCart, RefreshCw, CheckCircle2, Circle,
   Package, Truck, Store, Filter, ChevronDown, ChevronRight,
-  AlertTriangle, Printer, ClipboardList, Search, X, Plus,
+  Printer, ClipboardList, Search, X,
   BarChart2, Check
 } from 'lucide-react';
 
@@ -13,57 +13,34 @@ type TipoCompra = 'todos' | 'rua' | 'fornecedor' | 'ambos';
 type StatusLista = 'aberta' | 'em_andamento' | 'concluida' | 'cancelada';
 
 interface ItemLista {
-  id: string;
-  lista_id: string;
-  item_id: string;
-  nome_item: string;
-  categoria: string;
-  unidade_medida: string;
+  id: string; lista_id: string; item_id: string;
+  nome_item: string; categoria: string; unidade_medida: string;
   tipo_compra: TipoCompra;
-  fornecedor_nome: string | null;
-  fornecedor_tel: string | null;
-  estoque_atual: number;
-  estoque_minimo: number;
-  ponto_reposicao: number;
-  quantidade_sugerida: number;
-  quantidade_comprar: number;
-  custo_unitario: number;
-  custo_estimado: number;
-  comprado: boolean;
-  comprado_em: string | null;
-  observacao: string | null;
-  ordem: number;
+  fornecedor_nome: string | null; fornecedor_tel: string | null;
+  estoque_atual: number; estoque_minimo: number; ponto_reposicao: number;
+  quantidade_sugerida: number; quantidade_comprar: number;
+  custo_unitario: number; custo_estimado: number;
+  comprado: boolean; comprado_em: string | null;
+  observacao: string | null; ordem: number;
 }
 
 interface Lista {
-  id: string;
-  numero: string;
-  titulo: string;
-  tipo_compra: TipoCompra;
-  status: StatusLista;
-  gerado_por: string;
-  observacoes: string | null;
-  total_itens: number;
-  itens_comprados: number;
-  valor_estimado: number;
-  criado_em: string;
-  concluido_em: string | null;
+  id: string; numero: string; titulo: string;
+  tipo_compra: TipoCompra; status: StatusLista;
+  gerado_por: string; observacoes: string | null;
+  total_itens: number; itens_comprados: number;
+  valor_estimado: number; criado_em: string; concluido_em: string | null;
 }
 
 const TIPO_LABEL: Record<string, string> = {
-  rua: 'Compra na Rua',
-  fornecedor: 'Pedido Fornecedor',
-  ambos: 'Ambos',
-  todos: 'Todos',
+  rua: 'Compra na Rua', fornecedor: 'Pedido Fornecedor', ambos: 'Ambos', todos: 'Todos',
 };
-
 const TIPO_COLOR: Record<string, string> = {
   rua: 'bg-orange-100 text-orange-700 border-orange-200',
   fornecedor: 'bg-blue-100 text-blue-700 border-blue-200',
   ambos: 'bg-purple-100 text-purple-700 border-purple-200',
   todos: 'bg-gray-100 text-gray-600 border-gray-200',
 };
-
 const STATUS_COLOR: Record<StatusLista, string> = {
   aberta: 'bg-yellow-50 text-yellow-700 border-yellow-200',
   em_andamento: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -74,18 +51,14 @@ const STATUS_COLOR: Record<StatusLista, string> = {
 function fmt(n: number, dec = 2) {
   return n.toLocaleString('pt-BR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
-function fmtMoeda(n: number) {
-  return 'R$ ' + fmt(n);
-}
+function fmtMoeda(n: number) { return 'R$ ' + fmt(n); }
 
 // ─── Componente de impressão ────────────────────────────────────────────────
 function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
   const categorias = [...new Set(itens.map(i => i.categoria))].sort();
   const total = itens.reduce((s, i) => s + i.custo_estimado, 0);
-
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '12px', color: '#111' }}>
-      {/* Cabeçalho */}
+    <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '12px', color: '#111', background: '#fff', padding: '20px' }}>
       <div style={{ borderBottom: '2px solid #333', paddingBottom: '12px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
@@ -94,23 +67,19 @@ function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
           </div>
           <div style={{ textAlign: 'right', fontSize: '11px', color: '#555' }}>
             <p style={{ margin: 0 }}>Data: {new Date(lista.criado_em).toLocaleDateString('pt-BR')}</p>
-            <p style={{ margin: 0 }}>Total de itens: {lista.total_itens}</p>
-            <p style={{ margin: 0 }}>Valor estimado: {fmtMoeda(lista.valor_estimado)}</p>
+            <p style={{ margin: 0 }}>Total: {lista.total_itens} itens</p>
+            <p style={{ margin: 0 }}>Valor est.: {fmtMoeda(lista.valor_estimado)}</p>
           </div>
         </div>
         {lista.observacoes && (
-          <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#666', fontStyle: 'italic' }}>
-            Obs: {lista.observacoes}
-          </p>
+          <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#666', fontStyle: 'italic' }}>Obs: {lista.observacoes}</p>
         )}
       </div>
-
-      {/* Itens por categoria */}
       {categorias.map(cat => {
         const itensCat = itens.filter(i => i.categoria === cat);
         return (
-          <div key={cat} style={{ marginBottom: '16px', breakInside: 'avoid' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 6px', padding: '4px 8px', background: '#f0f0f0', borderLeft: '3px solid #333' }}>
+          <div key={cat} style={{ marginBottom: '16px', pageBreakInside: 'avoid' }}>
+            <h3 style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 6px', padding: '4px 8px', background: '#f0f0f0', borderLeft: '3px solid #7D1F2C' }}>
               {cat} ({itensCat.length} {itensCat.length === 1 ? 'item' : 'itens'})
             </h3>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -120,10 +89,10 @@ function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
                   <th style={{ padding: '4px 8px', textAlign: 'left', border: '1px solid #ddd' }}>Item</th>
                   <th style={{ width: '60px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Tipo</th>
                   <th style={{ width: '70px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Em estoque</th>
-                  <th style={{ width: '60px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Mínimo</th>
+                  <th style={{ width: '55px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Mínimo</th>
                   <th style={{ width: '80px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Qtd comprar</th>
-                  <th style={{ width: '70px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Vlr. Unit.</th>
-                  <th style={{ width: '80px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Total Est.</th>
+                  <th style={{ width: '70px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Vlr Unit.</th>
+                  <th style={{ width: '75px', padding: '4px', textAlign: 'center', border: '1px solid #ddd' }}>Total Est.</th>
                   <th style={{ padding: '4px 8px', textAlign: 'left', border: '1px solid #ddd' }}>Fornecedor</th>
                 </tr>
               </thead>
@@ -133,15 +102,12 @@ function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
                     <td style={{ padding: '6px 4px', textAlign: 'center', border: '1px solid #ddd' }}>
                       <div style={{ width: '14px', height: '14px', border: '1.5px solid #999', borderRadius: '3px', margin: '0 auto' }} />
                     </td>
-                    <td style={{ padding: '6px 8px', border: '1px solid #ddd', fontWeight: '500' }}>
-                      {item.nome_item}
-                      {item.observacao && <span style={{ fontSize: '10px', color: '#888', display: 'block' }}>{item.observacao}</span>}
-                    </td>
+                    <td style={{ padding: '6px 8px', border: '1px solid #ddd', fontWeight: '500' }}>{item.nome_item}</td>
                     <td style={{ padding: '6px 4px', textAlign: 'center', border: '1px solid #ddd', fontSize: '10px' }}>
-                      {item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀 Ambos'}
+                      {item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀'}
                     </td>
                     <td style={{ padding: '6px 4px', textAlign: 'center', border: '1px solid #ddd', color: '#e55' }}>
-                      {fmt(item.estoque_atual, 3)} {item.unidade_medida}
+                      {fmt(item.estoque_atual, item.estoque_atual % 1 === 0 ? 0 : 2)} {item.unidade_medida}
                     </td>
                     <td style={{ padding: '6px 4px', textAlign: 'center', border: '1px solid #ddd', color: '#888' }}>
                       {fmt(item.estoque_minimo, 0)}
@@ -166,12 +132,10 @@ function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
           </div>
         );
       })}
-
-      {/* Rodapé */}
       <div style={{ borderTop: '2px solid #333', marginTop: '20px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
         <div>
-          <strong>Total de itens:</strong> {itens.length} &nbsp;|&nbsp;
-          <strong>Valor estimado total:</strong> {fmtMoeda(total)}
+          <strong>Total:</strong> {itens.length} itens &nbsp;|&nbsp;
+          <strong>Valor estimado:</strong> {fmtMoeda(total)}
         </div>
         <div style={{ color: '#888' }}>
           Gerado por: {lista.gerado_por} &nbsp;|&nbsp; {new Date(lista.criado_em).toLocaleString('pt-BR')}
@@ -184,28 +148,21 @@ function PrintView({ lista, itens }: { lista: Lista; itens: ItemLista[] }) {
 // ─── Componente principal ────────────────────────────────────────────────────
 export default function ListaCompras() {
   const [aba, setAba] = useState<'nova' | 'historico'>('nova');
-
-  // Geração
   const [tipoFiltro, setTipoFiltro] = useState<TipoCompra>('todos');
   const [titulo, setTitulo] = useState('');
   const [observacoes, setObservacoes] = useState('');
   const [gerando, setGerando] = useState(false);
   const [erroGerar, setErroGerar] = useState('');
-  const [resumoGerado, setResumoGerado] = useState<any>(null);
-
-  // Lista aberta
   const [listaAtiva, setListaAtiva] = useState<Lista | null>(null);
   const [itens, setItens] = useState<ItemLista[]>([]);
   const [carregandoItens, setCarregandoItens] = useState(false);
   const [busca, setBusca] = useState('');
   const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
   const [salvando, setSalvando] = useState<string | null>(null);
-  const [exibindoPrint, setExibindoPrint] = useState(false);
-  const printRef = useRef<HTMLDivElement>(null);
-
-  // Histórico
+  const [imprimindo, setImprimindo] = useState(false);
   const [listas, setListas] = useState<Lista[]>([]);
   const [carregandoListas, setCarregandoListas] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const headers = { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json' };
 
@@ -221,21 +178,17 @@ export default function ListaCompras() {
     setCarregandoItens(true);
     const r = await fetch(`${SUPABASE_URL}/rest/v1/listas_compra_itens?lista_id=eq.${listaId}&order=categoria,nome_item`, { headers });
     const d = await r.json();
-    if (Array.isArray(d)) setItens(d);
+    if (Array.isArray(d)) {
+      setItens(d);
+      setExpandidas(new Set(d.map((i: ItemLista) => i.categoria)));
+    }
     setCarregandoItens(false);
-    // Expande todas as categorias por padrão
-    const cats = new Set(d.map((i: ItemLista) => i.categoria));
-    setExpandidas(cats as Set<string>);
   };
 
-  useEffect(() => {
-    if (aba === 'historico') carregarListas();
-  }, [aba]);
+  useEffect(() => { if (aba === 'historico') carregarListas(); }, [aba]);
 
   const gerarLista = async () => {
-    setGerando(true);
-    setErroGerar('');
-    setResumoGerado(null);
+    setGerando(true); setErroGerar('');
     try {
       const r = await fetch(`${SUPABASE_URL}/functions/v1/gerar-lista-compra`, {
         method: 'POST',
@@ -244,16 +197,10 @@ export default function ListaCompras() {
       });
       const d = await r.json();
       if (!d.ok) { setErroGerar(d.error || d.message || 'Erro ao gerar'); return; }
-      if (d.total === 0) { setErroGerar('✅ Todos os itens estão acima do estoque mínimo. Nenhuma compra necessária!'); return; }
-      setResumoGerado(d);
-      // Abre lista gerada
+      if (d.total === 0) { setErroGerar('✅ Todos os itens estão acima do estoque mínimo!'); return; }
       await abrirLista(d.lista.id);
-      setAba('nova');
-    } catch (e: any) {
-      setErroGerar(e.message);
-    } finally {
-      setGerando(false);
-    }
+    } catch (e: any) { setErroGerar(e.message); }
+    finally { setGerando(false); }
   };
 
   const abrirLista = async (id: string) => {
@@ -265,14 +212,11 @@ export default function ListaCompras() {
   const toggleComprado = async (item: ItemLista) => {
     const novo = !item.comprado;
     setSalvando(item.id);
-    // Atualiza local imediatamente
     setItens(prev => prev.map(i => i.id === item.id ? { ...i, comprado: novo, comprado_em: novo ? new Date().toISOString() : null } : i));
     await fetch(`${SUPABASE_URL}/rest/v1/listas_compra_itens?id=eq.${item.id}`, {
-      method: 'PATCH',
-      headers: { ...headers, Prefer: 'return=minimal' },
+      method: 'PATCH', headers: { ...headers, Prefer: 'return=minimal' },
       body: JSON.stringify({ comprado: novo, comprado_em: novo ? new Date().toISOString() : null }),
     });
-    // Atualiza a lista com contadores
     if (listaAtiva) {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/listas_compra?id=eq.${listaAtiva.id}&select=*`, { headers });
       const d = await r.json();
@@ -286,8 +230,7 @@ export default function ListaCompras() {
     const novoCusto = Number((item.custo_unitario * novaQtd).toFixed(2));
     setItens(prev => prev.map(i => i.id === item.id ? { ...i, quantidade_comprar: novaQtd, custo_estimado: novoCusto } : i));
     await fetch(`${SUPABASE_URL}/rest/v1/listas_compra_itens?id=eq.${item.id}`, {
-      method: 'PATCH',
-      headers: { ...headers, Prefer: 'return=minimal' },
+      method: 'PATCH', headers: { ...headers, Prefer: 'return=minimal' },
       body: JSON.stringify({ quantidade_comprar: novaQtd, custo_estimado: novoCusto }),
     });
   };
@@ -295,24 +238,122 @@ export default function ListaCompras() {
   const concluirLista = async () => {
     if (!listaAtiva) return;
     await fetch(`${SUPABASE_URL}/rest/v1/listas_compra?id=eq.${listaAtiva.id}`, {
-      method: 'PATCH',
-      headers: { ...headers, Prefer: 'return=minimal' },
+      method: 'PATCH', headers: { ...headers, Prefer: 'return=minimal' },
       body: JSON.stringify({ status: 'concluida', concluido_em: new Date().toISOString() }),
     });
     setListaAtiva(prev => prev ? { ...prev, status: 'concluida' } : null);
   };
 
+  // ─── IMPRESSÃO: abre nova janela com HTML completo ───────────────────────
   const imprimir = () => {
-    setExibindoPrint(true);
-    setTimeout(() => {
-      window.print();
-      setExibindoPrint(false);
-    }, 300);
+    if (!listaAtiva || itens.length === 0) return;
+    setImprimindo(true);
+
+    // Monta o HTML da impressão diretamente (evita problema de CSS do SPA)
+    const categorias = [...new Set(itens.map(i => i.categoria))].sort();
+    const total = itens.reduce((s, i) => s + i.custo_estimado, 0);
+
+    const linhasTabela = (cat: string) => {
+      const itensCat = itens.filter(i => i.categoria === cat);
+      return itensCat.map((item, idx) => `
+        <tr style="background:${idx % 2 === 0 ? '#fff' : '#fafafa'}">
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd">
+            <div style="width:14px;height:14px;border:1.5px solid #999;border-radius:3px;margin:0 auto;${item.comprado ? 'background:#22c55e' : ''}">
+              ${item.comprado ? '✓' : ''}
+            </div>
+          </td>
+          <td style="padding:6px 8px;border:1px solid #ddd;font-weight:500">${item.nome_item}</td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;font-size:10px">
+            ${item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀'}
+          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#e55">
+            ${item.estoque_atual % 1 === 0 ? item.estoque_atual : item.estoque_atual.toFixed(2)} ${item.unidade_medida}
+          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#888">
+            ${item.estoque_minimo}
+          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;font-weight:bold;font-size:13px">
+            ${item.quantidade_comprar % 1 === 0 ? item.quantidade_comprar : item.quantidade_comprar.toFixed(2)} ${item.unidade_medida}
+          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#555;font-size:10px">
+            ${item.custo_unitario > 0 ? 'R$ ' + item.custo_unitario.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—'}
+          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd">
+            ${item.custo_estimado > 0 ? 'R$ ' + item.custo_estimado.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—'}
+          </td>
+          <td style="padding:6px 8px;border:1px solid #ddd;font-size:10px;color:#555">
+            ${item.fornecedor_nome || '—'}${item.fornecedor_tel ? `<br><span style="color:#888">${item.fornecedor_tel}</span>` : ''}
+          </td>
+        </tr>`).join('');
+    };
+
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Compras ${listaAtiva.numero}</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 20px; }
+    h1 { font-size: 18px; font-weight: bold; margin: 0; }
+    h3 { font-size: 13px; font-weight: bold; margin: 0 0 6px; padding: 4px 8px; background: #f0f0f0; border-left: 3px solid #7D1F2C; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    th { background: #fafafa; font-size: 10px; color: #666; }
+    @media print { @page { margin: 1cm; } }
+  </style>
+</head>
+<body>
+  <div style="border-bottom:2px solid #333;padding-bottom:12px;margin-bottom:16px;display:flex;justify-content:space-between">
+    <div>
+      <h1>📋 LISTA DE COMPRAS</h1>
+      <p style="margin:4px 0 0;color:#555">${listaAtiva.numero} — ${listaAtiva.titulo}</p>
+    </div>
+    <div style="text-align:right;font-size:11px;color:#555">
+      <p style="margin:0">Data: ${new Date(listaAtiva.criado_em).toLocaleDateString('pt-BR')}</p>
+      <p style="margin:0">Total: ${listaAtiva.total_itens} itens</p>
+      <p style="margin:0">Valor est.: R$ ${listaAtiva.valor_estimado.toLocaleString('pt-BR', {minimumFractionDigits:2})}</p>
+    </div>
+  </div>
+  ${categorias.map(cat => `
+    <div style="page-break-inside:avoid;margin-bottom:16px">
+      <h3>${cat} (${itens.filter(i => i.categoria === cat).length} ${itens.filter(i => i.categoria === cat).length === 1 ? 'item' : 'itens'})</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:20px;padding:4px;text-align:center;border:1px solid #ddd">✓</th>
+            <th style="padding:4px 8px;text-align:left;border:1px solid #ddd">Item</th>
+            <th style="width:60px;padding:4px;text-align:center;border:1px solid #ddd">Tipo</th>
+            <th style="width:70px;padding:4px;text-align:center;border:1px solid #ddd">Em estoque</th>
+            <th style="width:55px;padding:4px;text-align:center;border:1px solid #ddd">Mínimo</th>
+            <th style="width:80px;padding:4px;text-align:center;border:1px solid #ddd">Qtd comprar</th>
+            <th style="width:70px;padding:4px;text-align:center;border:1px solid #ddd">Vlr Unit.</th>
+            <th style="width:75px;padding:4px;text-align:center;border:1px solid #ddd">Total Est.</th>
+            <th style="padding:4px 8px;text-align:left;border:1px solid #ddd">Fornecedor</th>
+          </tr>
+        </thead>
+        <tbody>${linhasTabela(cat)}</tbody>
+      </table>
+    </div>`).join('')}
+  <div style="border-top:2px solid #333;margin-top:20px;padding-top:12px;display:flex;justify-content:space-between;font-size:11px">
+    <div><strong>Total:</strong> ${itens.length} itens &nbsp;|&nbsp; <strong>Valor estimado:</strong> R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+    <div style="color:#888">Gerado por: ${listaAtiva.gerado_por} &nbsp;|&nbsp; ${new Date(listaAtiva.criado_em).toLocaleString('pt-BR')}</div>
+  </div>
+  <script>window.onload = function(){ window.print(); window.onafterprint = function(){ window.close(); }; }</script>
+</body>
+</html>`;
+
+    const janela = window.open('', '_blank', 'width=1000,height=700');
+    if (janela) {
+      janela.document.write(html);
+      janela.document.close();
+    }
+    setImprimindo(false);
   };
 
-  // Itens filtrados por busca
   const itensFiltrados = busca
-    ? itens.filter(i => i.nome_item.toLowerCase().includes(busca.toLowerCase()) || i.categoria.toLowerCase().includes(busca.toLowerCase()) || (i.fornecedor_nome || '').toLowerCase().includes(busca.toLowerCase()))
+    ? itens.filter(i =>
+        i.nome_item.toLowerCase().includes(busca.toLowerCase()) ||
+        i.categoria.toLowerCase().includes(busca.toLowerCase()) ||
+        (i.fornecedor_nome || '').toLowerCase().includes(busca.toLowerCase()))
     : itens;
 
   const categorias = [...new Set(itensFiltrados.map(i => i.categoria))].sort();
@@ -323,13 +364,6 @@ export default function ListaCompras() {
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      {/* Print overlay */}
-      {exibindoPrint && listaAtiva && (
-        <div ref={printRef} className="fixed inset-0 bg-white z-50 p-8 overflow-auto print:block">
-          <PrintView lista={listaAtiva} itens={itens} />
-        </div>
-      )}
-
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
@@ -355,7 +389,7 @@ export default function ListaCompras() {
 
       <div className="flex-1 overflow-hidden flex">
 
-        {/* ─── ABA NOVA LISTA ─── */}
+        {/* ─── ABA NOVA LISTA (formulário) ─── */}
         {aba === 'nova' && !listaAtiva && (
           <div className="flex-1 p-6 max-w-2xl mx-auto w-full">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
@@ -396,8 +430,8 @@ export default function ListaCompras() {
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
-                <p className="font-semibold mb-1">ℹ️ Como funciona</p>
-                <p>O sistema analisa todos os itens ativos com estoque mínimo definido e gera uma lista com o que está abaixo do mínimo, sugerindo a quantidade para atingir o ponto de reposição.</p>
+                <p className="font-semibold mb-1">ℹ️ Critério de quantidade</p>
+                <p>A quantidade sugerida cobre até <strong>estoque mínimo + 20%</strong> menos o que já tem em estoque. Exemplo: mínimo 10, tem 3 → comprar <strong>10 × 1,2 − 3 = 9 unidades</strong>.</p>
               </div>
 
               {erroGerar && (
@@ -418,11 +452,11 @@ export default function ListaCompras() {
         {/* ─── LISTA ATIVA ─── */}
         {aba === 'nova' && listaAtiva && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Barra de progresso e ações */}
+            {/* Barra superior */}
             <div className="bg-white border-b border-gray-100 px-6 py-3 space-y-2">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-3">
-                  <button onClick={() => { setListaAtiva(null); setItens([]); setResumoGerado(null); setErroGerar(''); }}
+                  <button onClick={() => { setListaAtiva(null); setItens([]); setErroGerar(''); }}
                     className="text-gray-400 hover:text-gray-700 text-sm">← Nova lista</button>
                   <div>
                     <div className="flex items-center gap-2">
@@ -438,8 +472,8 @@ export default function ListaCompras() {
                     <p className="font-semibold text-gray-800">{totalComprados}/{totalItens} itens</p>
                     <p>{fmtMoeda(valorTotal)} est.</p>
                   </div>
-                  <button onClick={imprimir}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  <button onClick={imprimir} disabled={imprimindo}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50">
                     <Printer size={15}/> Imprimir
                   </button>
                   {listaAtiva.status !== 'concluida' && (
@@ -469,7 +503,7 @@ export default function ListaCompras() {
               </div>
             </div>
 
-            {/* Lista de itens */}
+            {/* Lista */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {carregandoItens ? (
                 <div className="text-center py-16 text-gray-400">
@@ -487,7 +521,6 @@ export default function ListaCompras() {
                 const isExp = expandidas.has(cat);
                 return (
                   <div key={cat} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    {/* Header categoria */}
                     <button onClick={() => setExpandidas(prev => { const s = new Set(prev); if (s.has(cat)) s.delete(cat); else s.add(cat); return s; })}
                       className="w-full flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
@@ -495,55 +528,33 @@ export default function ListaCompras() {
                         <span className="font-semibold text-gray-800">{cat}</span>
                         <span className="text-xs text-gray-400">{itensCat.length} {itensCat.length === 1 ? 'item' : 'itens'}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {comprados > 0 && (
-                          <span className="text-xs text-green-600 font-medium">{comprados}/{itensCat.length} ✓</span>
-                        )}
-                      </div>
+                      {comprados > 0 && <span className="text-xs text-green-600 font-medium">{comprados}/{itensCat.length} ✓</span>}
                     </button>
-
-                    {/* Itens */}
                     {isExp && (
                       <div className="divide-y divide-gray-50">
                         {itensCat.map(item => (
                           <div key={item.id} className={`flex items-start gap-3 px-5 py-3 transition-colors ${item.comprado ? 'bg-green-50/50' : ''} ${salvando === item.id ? 'opacity-60' : ''}`}>
-                            {/* Checkbox */}
                             <button onClick={() => toggleComprado(item)} className="mt-0.5 flex-shrink-0">
                               {item.comprado
                                 ? <CheckCircle2 size={22} className="text-green-500" />
                                 : <Circle size={22} className="text-gray-300 hover:text-[#7D1F2C]" />}
                             </button>
-
-                            {/* Info principal */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
-                                <p className={`text-sm font-medium ${item.comprado ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                                  {item.nome_item}
-                                </p>
+                                <p className={`text-sm font-medium ${item.comprado ? 'line-through text-gray-400' : 'text-gray-800'}`}>{item.nome_item}</p>
                                 <span className={`flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded-md border ${TIPO_COLOR[item.tipo_compra] || 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                  {item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀'}
+                                  {item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀 Ambos'}
                                 </span>
                               </div>
-
                               <div className="flex items-center gap-3 mt-1 flex-wrap">
-                                {/* Estoque atual */}
-                                <span className="text-xs text-red-500">
-                                  Estoque: <strong>{fmt(item.estoque_atual, item.estoque_atual % 1 === 0 ? 0 : 2)} {item.unidade_medida}</strong>
-                                </span>
-                                <span className="text-xs text-gray-400">
-                                  Mín: {fmt(item.estoque_minimo, 0)}
-                                </span>
-                                {/* Fornecedor */}
+                                <span className="text-xs text-red-500">Estoque: <strong>{fmt(item.estoque_atual, item.estoque_atual % 1 === 0 ? 0 : 2)} {item.unidade_medida}</strong></span>
+                                <span className="text-xs text-gray-400">Mín: {fmt(item.estoque_minimo, 0)}</span>
+                                <span className="text-xs text-amber-600">Meta: {fmt(item.estoque_minimo * 1.2, item.estoque_minimo % 1 === 0 ? 0 : 1)}</span>
                                 {item.fornecedor_nome && (
-                                  <span className="text-xs text-blue-600">
-                                    📦 {item.fornecedor_nome}
-                                    {item.fornecedor_tel && ` · ${item.fornecedor_tel}`}
-                                  </span>
+                                  <span className="text-xs text-blue-600">📦 {item.fornecedor_nome}{item.fornecedor_tel && ` · ${item.fornecedor_tel}`}</span>
                                 )}
                               </div>
                             </div>
-
-                            {/* Quantidade e custo */}
                             <div className="flex-shrink-0 flex flex-col items-end gap-1">
                               <div className="flex items-center gap-1">
                                 <button onClick={() => atualizarQtd(item, item.quantidade_comprar - 1)} className="w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">−</button>
@@ -553,9 +564,7 @@ export default function ListaCompras() {
                                 <button onClick={() => atualizarQtd(item, item.quantidade_comprar + 1)} className="w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">+</button>
                                 <span className="text-xs text-gray-400 ml-1">{item.unidade_medida}</span>
                               </div>
-                              {item.custo_estimado > 0 && (
-                                <span className="text-xs text-gray-500">{fmtMoeda(item.custo_estimado)}</span>
-                              )}
+                              {item.custo_estimado > 0 && <span className="text-xs text-gray-500">{fmtMoeda(item.custo_estimado)}</span>}
                             </div>
                           </div>
                         ))}
@@ -578,9 +587,7 @@ export default function ListaCompras() {
               </button>
             </div>
             {carregandoListas ? (
-              <div className="text-center py-16 text-gray-400">
-                <RefreshCw size={24} className="animate-spin mx-auto mb-3" />
-              </div>
+              <div className="text-center py-16 text-gray-400"><RefreshCw size={24} className="animate-spin mx-auto mb-3" /></div>
             ) : listas.length === 0 ? (
               <div className="text-center py-16 text-gray-400">
                 <ClipboardList size={32} className="mx-auto mb-3 opacity-40" />
@@ -628,13 +635,8 @@ export default function ListaCompras() {
         )}
       </div>
 
-      {/* CSS para print */}
-      <style>{`
-        @media print {
-          body > * { display: none !important; }
-          .fixed.inset-0 { display: block !important; position: static !important; }
-        }
-      `}</style>
+      {/* Ref para impressão (não usado mais, mantido por compatibilidade) */}
+      <div ref={printRef} style={{ display: 'none' }} />
     </div>
   );
 }
