@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SidebarModern from './components/layout/SidebarModern';
 import ProtectedRoute from './components/layout/ProtectedRoute';
