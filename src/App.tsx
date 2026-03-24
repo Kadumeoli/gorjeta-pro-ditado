@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SidebarModern from './components/layout/SidebarModern';
 import ProtectedRoute from './components/layout/ProtectedRoute';
@@ -28,6 +28,7 @@ const Entradas            = lazy(() => import('./pages/Entradas'));
 const DashboardFinanceiro = lazy(() => import('./pages/DashboardFinanceiro'));
 const ZigVendasSync       = lazy(() => import('./pages/ZigVendasSync'));
 const ZigRecebimentos     = lazy(() => import('./pages/ZigRecebimentos'));
+const ListaCompras        = lazy(() => import('./pages/ListaCompras'));
 const ContagemMobile      = lazy(() => import('./components/inventory/contagem/ContagemMobile'));
 
 const PageLoader = () => (
@@ -122,6 +123,7 @@ function AppContent() {
                 <Route path="/entradas"            element={<ProtectedRoute moduloSlug="financeiro">    <Entradas />            </ProtectedRoute>} />
                 <Route path="/zig-vendas"          element={<ProtectedRoute moduloSlug="estoque">       <ZigVendasSync />       </ProtectedRoute>} />
                 <Route path="/zig-recebimentos"    element={<ProtectedRoute moduloSlug="financeiro">    <ZigRecebimentos />     </ProtectedRoute>} />
+                <Route path="/lista-compras"       element={<ProtectedRoute moduloSlug="estoque">       <ListaCompras />        </ProtectedRoute>} />
                 <Route path="/manual"              element={<ManualUsuario />} />
                 <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"> <Settings />            </ProtectedRoute>} />
                 <Route path="*" element={
