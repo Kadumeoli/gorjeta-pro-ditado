@@ -159,7 +159,7 @@ export default function ListaCompras() {
   const [busca, setBusca] = useState('');
   const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
   const [salvando, setSalvando] = useState<string | null>(null);
-  const [imprimindo, setImprimindo] = useState(false);
+
   const [listas, setListas] = useState<Lista[]>([]);
   const [carregandoListas, setCarregandoListas] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
@@ -244,109 +244,110 @@ export default function ListaCompras() {
     setListaAtiva(prev => prev ? { ...prev, status: 'concluida' } : null);
   };
 
-  // ─── IMPRESSÃO: abre nova janela com HTML completo ───────────────────────
+  // ─── IMPRESSÃO via iframe oculto (não depende de popup) ─────────────────
   const imprimir = () => {
     if (!listaAtiva || itens.length === 0) return;
-    setImprimindo(true);
 
-    // Monta o HTML da impressão diretamente (evita problema de CSS do SPA)
     const categorias = [...new Set(itens.map(i => i.categoria))].sort();
     const total = itens.reduce((s, i) => s + i.custo_estimado, 0);
+    const loc = (n: number) => n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-    const linhasTabela = (cat: string) => {
-      const itensCat = itens.filter(i => i.categoria === cat);
-      return itensCat.map((item, idx) => `
+    const linhasTabela = (cat: string) =>
+      itens.filter(i => i.categoria === cat).map((item, idx) => `
         <tr style="background:${idx % 2 === 0 ? '#fff' : '#fafafa'}">
           <td style="padding:6px 4px;text-align:center;border:1px solid #ddd">
-            <div style="width:14px;height:14px;border:1.5px solid #999;border-radius:3px;margin:0 auto;${item.comprado ? 'background:#22c55e' : ''}">
-              ${item.comprado ? '✓' : ''}
-            </div>
+            <div style="width:14px;height:14px;border:1.5px solid #999;border-radius:3px;margin:0 auto"></div>
           </td>
           <td style="padding:6px 8px;border:1px solid #ddd;font-weight:500">${item.nome_item}</td>
           <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;font-size:10px">
-            ${item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀'}
+            ${item.tipo_compra === 'rua' ? 'Rua' : item.tipo_compra === 'fornecedor' ? 'Forn.' : 'Ambos'}
           </td>
-          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#e55">
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#cc3333">
             ${item.estoque_atual % 1 === 0 ? item.estoque_atual : item.estoque_atual.toFixed(2)} ${item.unidade_medida}
           </td>
-          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#888">
-            ${item.estoque_minimo}
-          </td>
+          <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#888">${item.estoque_minimo}</td>
           <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;font-weight:bold;font-size:13px">
             ${item.quantidade_comprar % 1 === 0 ? item.quantidade_comprar : item.quantidade_comprar.toFixed(2)} ${item.unidade_medida}
           </td>
           <td style="padding:6px 4px;text-align:center;border:1px solid #ddd;color:#555;font-size:10px">
-            ${item.custo_unitario > 0 ? 'R$ ' + item.custo_unitario.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—'}
+            ${item.custo_unitario > 0 ? 'R$ ' + loc(item.custo_unitario) : '-'}
           </td>
           <td style="padding:6px 4px;text-align:center;border:1px solid #ddd">
-            ${item.custo_estimado > 0 ? 'R$ ' + item.custo_estimado.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—'}
+            ${item.custo_estimado > 0 ? 'R$ ' + loc(item.custo_estimado) : '-'}
           </td>
           <td style="padding:6px 8px;border:1px solid #ddd;font-size:10px;color:#555">
-            ${item.fornecedor_nome || '—'}${item.fornecedor_tel ? `<br><span style="color:#888">${item.fornecedor_tel}</span>` : ''}
+            ${item.fornecedor_nome || '-'}${item.fornecedor_tel ? '<br>' + item.fornecedor_tel : ''}
           </td>
         </tr>`).join('');
+
+    const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Lista ${listaAtiva.numero}</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 20px; background: #fff; }
+h1 { font-size: 18px; font-weight: bold; margin: 0; }
+h3 { font-size: 13px; font-weight: bold; margin: 0 0 6px; padding: 4px 8px; background: #f0f0f0; border-left: 3px solid #7D1F2C; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+th { background: #fafafa; font-size: 10px; color: #666; padding: 4px; border: 1px solid #ddd; }
+td { border: 1px solid #ddd; }
+.header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 16px; }
+.footer { border-top: 2px solid #333; margin-top: 20px; padding-top: 12px; display: flex; justify-content: space-between; font-size: 11px; }
+@media print { @page { margin: 1cm; size: landscape; } body { margin: 0; } }
+</style></head><body>
+<div class="header">
+  <div>
+    <h1>LISTA DE COMPRAS</h1>
+    <p style="margin:4px 0 0;color:#555">${listaAtiva.numero} - ${listaAtiva.titulo}</p>
+  </div>
+  <div style="text-align:right;font-size:11px;color:#555">
+    <p style="margin:0">Data: ${new Date(listaAtiva.criado_em).toLocaleDateString('pt-BR')}</p>
+    <p style="margin:0">Total: ${listaAtiva.total_itens} itens</p>
+    <p style="margin:0">Valor est.: R$ ${loc(listaAtiva.valor_estimado)}</p>
+  </div>
+</div>
+${categorias.map(cat => `
+<div style="page-break-inside:avoid;margin-bottom:16px">
+  <h3>${cat} (${itens.filter(i => i.categoria === cat).length} itens)</h3>
+  <table>
+    <thead><tr>
+      <th style="width:20px">V</th>
+      <th style="text-align:left">Item</th>
+      <th style="width:55px">Tipo</th>
+      <th style="width:75px">Em estoque</th>
+      <th style="width:55px">Minimo</th>
+      <th style="width:80px">Qtd comprar</th>
+      <th style="width:70px">Vlr Unit.</th>
+      <th style="width:75px">Total Est.</th>
+      <th style="text-align:left">Fornecedor</th>
+    </tr></thead>
+    <tbody>${linhasTabela(cat)}</tbody>
+  </table>
+</div>`).join('')}
+<div class="footer">
+  <div><strong>Total:</strong> ${itens.length} itens &nbsp;|&nbsp; <strong>Valor estimado:</strong> R$ ${loc(total)}</div>
+  <div style="color:#888">Gerado por: ${listaAtiva.gerado_por} | ${new Date(listaAtiva.criado_em).toLocaleString('pt-BR')}</div>
+</div>
+</body></html>`;
+
+    // Cria iframe oculto, injeta o HTML e imprime via iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // Aguarda carregamento e imprime
+    iframe.onload = () => {
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        setTimeout(() => document.body.removeChild(iframe), 1000);
+      }, 300);
     };
-
-    const html = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Lista de Compras ${listaAtiva.numero}</title>
-  <style>
-    body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 20px; }
-    h1 { font-size: 18px; font-weight: bold; margin: 0; }
-    h3 { font-size: 13px; font-weight: bold; margin: 0 0 6px; padding: 4px 8px; background: #f0f0f0; border-left: 3px solid #7D1F2C; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    th { background: #fafafa; font-size: 10px; color: #666; }
-    @media print { @page { margin: 1cm; } }
-  </style>
-</head>
-<body>
-  <div style="border-bottom:2px solid #333;padding-bottom:12px;margin-bottom:16px;display:flex;justify-content:space-between">
-    <div>
-      <h1>📋 LISTA DE COMPRAS</h1>
-      <p style="margin:4px 0 0;color:#555">${listaAtiva.numero} — ${listaAtiva.titulo}</p>
-    </div>
-    <div style="text-align:right;font-size:11px;color:#555">
-      <p style="margin:0">Data: ${new Date(listaAtiva.criado_em).toLocaleDateString('pt-BR')}</p>
-      <p style="margin:0">Total: ${listaAtiva.total_itens} itens</p>
-      <p style="margin:0">Valor est.: R$ ${listaAtiva.valor_estimado.toLocaleString('pt-BR', {minimumFractionDigits:2})}</p>
-    </div>
-  </div>
-  ${categorias.map(cat => `
-    <div style="page-break-inside:avoid;margin-bottom:16px">
-      <h3>${cat} (${itens.filter(i => i.categoria === cat).length} ${itens.filter(i => i.categoria === cat).length === 1 ? 'item' : 'itens'})</h3>
-      <table>
-        <thead>
-          <tr>
-            <th style="width:20px;padding:4px;text-align:center;border:1px solid #ddd">✓</th>
-            <th style="padding:4px 8px;text-align:left;border:1px solid #ddd">Item</th>
-            <th style="width:60px;padding:4px;text-align:center;border:1px solid #ddd">Tipo</th>
-            <th style="width:70px;padding:4px;text-align:center;border:1px solid #ddd">Em estoque</th>
-            <th style="width:55px;padding:4px;text-align:center;border:1px solid #ddd">Mínimo</th>
-            <th style="width:80px;padding:4px;text-align:center;border:1px solid #ddd">Qtd comprar</th>
-            <th style="width:70px;padding:4px;text-align:center;border:1px solid #ddd">Vlr Unit.</th>
-            <th style="width:75px;padding:4px;text-align:center;border:1px solid #ddd">Total Est.</th>
-            <th style="padding:4px 8px;text-align:left;border:1px solid #ddd">Fornecedor</th>
-          </tr>
-        </thead>
-        <tbody>${linhasTabela(cat)}</tbody>
-      </table>
-    </div>`).join('')}
-  <div style="border-top:2px solid #333;margin-top:20px;padding-top:12px;display:flex;justify-content:space-between;font-size:11px">
-    <div><strong>Total:</strong> ${itens.length} itens &nbsp;|&nbsp; <strong>Valor estimado:</strong> R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
-    <div style="color:#888">Gerado por: ${listaAtiva.gerado_por} &nbsp;|&nbsp; ${new Date(listaAtiva.criado_em).toLocaleString('pt-BR')}</div>
-  </div>
-  <script>window.onload = function(){ window.print(); window.onafterprint = function(){ window.close(); }; }</script>
-</body>
-</html>`;
-
-    const janela = window.open('', '_blank', 'width=1000,height=700');
-    if (janela) {
-      janela.document.write(html);
-      janela.document.close();
-    }
-    setImprimindo(false);
   };
 
   const itensFiltrados = busca
@@ -472,7 +473,7 @@ export default function ListaCompras() {
                     <p className="font-semibold text-gray-800">{totalComprados}/{totalItens} itens</p>
                     <p>{fmtMoeda(valorTotal)} est.</p>
                   </div>
-                  <button onClick={imprimir} disabled={imprimindo}
+                  <button onClick={imprimir}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50">
                     <Printer size={15}/> Imprimir
                   </button>
