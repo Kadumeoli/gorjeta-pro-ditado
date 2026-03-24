@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   Home, DollarSign, Warehouse, Users, Music, CalendarDays,
   Settings, BookOpen, AlertTriangle, ClipboardCheck, Target,
-  TrendingUp, ChevronDown, LogOut,
+  TrendingUp, ChevronDown, LogOut, ShoppingCart,
 } from 'lucide-react';
 
 interface SubModule { name: string; path: string; }
@@ -49,6 +49,7 @@ const MODULES: Module[] = [
       { name: 'Kardex Produto',  path: '/advanced-inventory?tab=10' },
       { name: 'Contagem',        path: '/advanced-inventory?tab=11' },
       { name: 'ZIG → Estoque',   path: '/zig-vendas' },
+      { name: 'Lista de Compras', path: '/lista-compras' },
     ],
   },
   { name: 'RH',             path: '/staff',              icon: Users,         slug: 'rh',
