@@ -19,7 +19,8 @@ import {
   DollarSign,
   Activity,
   Zap,
-  MessageSquare
+  MessageSquare,
+  Eye
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import EstoquesGerenciamento from '../components/inventory/EstoquesGerenciamento';
@@ -34,6 +35,7 @@ import RequisicoesInternas from '../components/inventory/RequisicoesInternas';
 import ContagemEstoque from '../components/inventory/contagem/ContagemEstoque';
 import VendasDashboard from '../components/inventory/VendasDashboard';
 import ChatFinanceiroIA from '../components/financeiro/ChatFinanceiroIA';
+import InventarioConsolidado from '../components/inventory/InventarioConsolidado';
 
 interface IndicadoresEstoque {
   total_itens: number;
@@ -69,6 +71,7 @@ const AdvancedInventory: React.FC = () => {
 
   const tabTitles = [
     'Dashboard',
+    'Inventário',
     'Estoques',
     'Itens',
     'Fichas Técnicas',
@@ -84,6 +87,7 @@ const AdvancedInventory: React.FC = () => {
 
   const tabIcons = [
     BarChart3,
+    Eye,
     Warehouse,
     Package,
     ClipboardList,
@@ -443,26 +447,28 @@ const AdvancedInventory: React.FC = () => {
           </div>
         );
       case 1:
-        return <EstoquesGerenciamento />;
+        return <InventarioConsolidado />;
       case 2:
-        return <ItensEstoque />;
+        return <EstoquesGerenciamento />;
       case 3:
-        return <FichasTecnicas />;
+        return <ItensEstoque />;
       case 4:
-        return <ComprasEstoque />;
+        return <FichasTecnicas />;
       case 5:
-        return <ProducaoEstoque />;
+        return <ComprasEstoque />;
       case 6:
-        return <RequisicoesInternas />;
+        return <ProducaoEstoque />;
       case 7:
-        return <RelatoriosEstoque />;
+        return <RequisicoesInternas />;
       case 8:
-        return <MovimentacoesEstoque />;
+        return <RelatoriosEstoque />;
       case 9:
-        return <KardexProduto />;
+        return <MovimentacoesEstoque />;
       case 10:
-        return <ContagemEstoque />;
+        return <KardexProduto />;
       case 11:
+        return <ContagemEstoque />;
+      case 12:
         return <VendasDashboard />;
       default:
         return (
