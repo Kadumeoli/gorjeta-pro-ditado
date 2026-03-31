@@ -158,7 +158,18 @@ export default function RequisicoesInternas() {
         .select(`
           item_id,
           quantidade_atual,
-          itens_estoque(id, nome, unidade_medida)
+          itens_estoque!inner(
+            id,
+            codigo,
+            nome,
+            unidade_medida,
+            custo_medio,
+            status
+          ),
+          estoques!inner(
+            id,
+            nome
+          )
         `)
         .eq('estoque_id', estoqueOrigemId)
         .gt('quantidade_atual', 0);
@@ -551,16 +562,10 @@ export default function RequisicoesInternas() {
 
     setLoading(true);
     try {
-      // Buscar requisição com itens
+      // Buscar requisição
       const { data: requisicao, error: reqError } = await supabase
         .from('requisicoes_internas')
-        .select(`
-          *,
-          itens:requisicoes_internas_itens(
-            item_id,
-            quantidade_solicitada
-          )
-        `)
+        .select('id, status, numero_requisicao')
         .eq('id', id)
         .maybeSingle();
 
@@ -574,34 +579,8 @@ export default function RequisicoesInternas() {
         return;
       }
 
-      if (!requisicao.estoque_origem_id || !requisicao.estoque_destino_id) {
-        alert('Requisição sem estoques de origem ou destino');
-        return;
-      }
-
-      // Processar cada item - criar apenas uma movimentação de transferência
-      for (const item of requisicao.itens) {
-        const { error: transferenciaError } = await supabase
-          .from('movimentacoes_estoque')
-          .insert({
-            estoque_origem_id: requisicao.estoque_origem_id,
-            estoque_destino_id: requisicao.estoque_destino_id,
-            item_id: item.item_id,
-            tipo_movimentacao: 'transferencia',
-            quantidade: item.quantidade_solicitada,
-            custo_unitario: 0,
-            custo_total: 0,
-            motivo: `Requisição ${requisicao.numero_requisicao}`,
-            observacoes: null
-          });
-
-        if (transferenciaError) {
-          console.error('Erro na transferência:', transferenciaError);
-          throw new Error('Erro ao processar transferência');
-        }
-      }
-
-      // 3. Atualizar status da requisição
+      // Apenas atualizar o status para 'concluido'
+      // O trigger processar_requisicao_interna cria as movimentações automaticamente
       const { error: updateError } = await supabase
         .from('requisicoes_internas')
         .update({
