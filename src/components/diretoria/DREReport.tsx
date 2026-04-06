@@ -104,7 +104,9 @@ const DREReport: React.FC = () => {
         query = query.eq('centro_custo_id', selectedCostCenter);
       }
 
-      const { data, error } = await query.order('categoria_raiz_nome, categoria_nome');
+      const { data, error } = await query
+        .order('categoria_raiz_nome, categoria_nome')
+        .limit(10000); // Garantir que todas as categorias sejam retornadas
 
       if (error) throw error;
 
@@ -419,7 +421,9 @@ const DREReport: React.FC = () => {
         query = query.eq('centro_custo_id', selectedCostCenter);
       }
 
-      const { data: lancamentos, error } = await query.order('data', { ascending: true });
+      const { data: lancamentos, error } = await query
+        .order('data', { ascending: true })
+        .limit(50000); // Aumentar limite para garantir que todos os lançamentos sejam retornados
 
       if (error) {
         console.error('Error fetching transactions:', error);
