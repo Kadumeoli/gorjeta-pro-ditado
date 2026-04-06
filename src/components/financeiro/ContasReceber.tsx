@@ -119,7 +119,13 @@ const ContasReceber: React.FC = () => {
   const handleSaveConta = async () => {
     try {
       setLoading(true); setError(null);
-      const d = { ...formDataConta, valor_total: parseFloat(formDataConta.valor_total.toString()) };
+      const d = {
+        ...formDataConta,
+        valor_total: parseFloat(formDataConta.valor_total.toString()),
+        categoria_id: formDataConta.categoria_id || null,
+        centro_custo_id: formDataConta.centro_custo_id || null,
+        forma_recebimento_id: formDataConta.forma_recebimento_id || null
+      };
       if (editingConta) { const { error } = await supabase.from('contas_receber').update(d).eq('id', editingConta.id); if (error) throw error; }
       else { const { error } = await supabase.from('contas_receber').insert([d]); if (error) throw error; }
       setShowFormConta(false); setEditingConta(null); resetFormConta(); fetchData(); fetchIndicadores();

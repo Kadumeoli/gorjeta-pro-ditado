@@ -460,6 +460,18 @@ const DREReport: React.FC = () => {
       console.log('  - Com categoria:', lancamentosTransformados.filter(l => l.categoria_id).length);
       console.log('  - SEM categoria:', lancamentosTransformados.filter(l => !l.categoria_id).length);
 
+      // Log específico para Receita Venda de Salão
+      const vendasSalao = lancamentosTransformados.filter(l => l.categoria_nome === 'Receita Venda de Salão');
+      console.log('🔍 Receita Venda de Salão:', {
+        total: vendasSalao.length,
+        soma: vendasSalao.reduce((s, l) => s + Math.abs(l.valor), 0).toFixed(2),
+        maiores: vendasSalao.filter(l => Math.abs(l.valor) > 60000).map(l => ({
+          data: l.data,
+          valor: l.valor,
+          descricao: l.descricao?.substring(0, 30)
+        }))
+      });
+
       // Log de lançamentos grandes para debug
       const lancamentosGrandesTotal = lancamentosTransformados.filter(l => Math.abs(l.valor) > 60000);
       if (lancamentosGrandesTotal.length > 0) {
