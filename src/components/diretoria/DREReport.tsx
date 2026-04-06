@@ -16,6 +16,7 @@ import { supabase } from '../../lib/supabase';
 import dayjs from 'dayjs';
 import { ReportGenerator, exportToExcel } from '../../utils/reportGenerator';
 import CategorizarLancamentos from '../financeiro/CategorizarLancamentos';
+import RecategorizarLancamentos from '../financeiro/RecategorizarLancamentos';
 
 interface DREData {
   categoria_raiz_id: string;
@@ -49,6 +50,7 @@ const DREReport: React.FC = () => {
   const [selectedCostCenter, setSelectedCostCenter] = useState<string | 'all'>('all');
   const [costCenters, setCostCenters] = useState<any[]>([]);
   const [showCategorizarModal, setShowCategorizarModal] = useState(false);
+  const [showRecategorizarModal, setShowRecategorizarModal] = useState(false);
 
   useEffect(() => {
     fetchCostCenters();
@@ -969,6 +971,15 @@ const DREReport: React.FC = () => {
             Classificar
           </button>
 
+          <button
+            onClick={() => setShowRecategorizarModal(true)}
+            className="px-4 py-2 bg-orange-50 border border-orange-300 rounded-lg text-orange-700 hover:bg-orange-100 flex items-center transition-colors"
+            title="Corrigir lançamentos em categorias PAI"
+          >
+            <Tag className="w-4 h-4 mr-2" />
+            Corrigir Categorias
+          </button>
+
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25] flex items-center transition-all hover:shadow-md">
               <FileText className="w-4 h-4 mr-2" />
@@ -1332,6 +1343,34 @@ const DREReport: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto">
               <CategorizarLancamentos />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Recategorização */}
+      {showRecategorizarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+              <div>
+                <h3 className="text-xl font-bold text-white">Corrigir Categorias PAI</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Mova lançamentos de categorias PAI para subcategorias corretas
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowRecategorizarModal(false);
+                  fetchDREData();
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <RecategorizarLancamentos />
             </div>
           </div>
         </div>
