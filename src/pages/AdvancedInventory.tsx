@@ -282,55 +282,63 @@ const AdvancedInventory: React.FC = () => {
           <div className="space-y-6">
             {/* Indicadores */}
             {indicadores && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <Package className="w-8 h-8 text-blue-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Total de Itens</p>
-                      <p className="text-2xl font-bold text-blue-600">
+                    <div className="p-3 bg-gradient-to-br from-[#7D1F2C] to-[#601C28] rounded-lg">
+                      <Package className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Total de Itens</p>
+                      <p className="text-3xl font-bold text-[#7D1F2C]">
                         {indicadores.total_itens}
                       </p>
-                      <p className="text-sm text-gray-600">Cadastrados</p>
+                      <p className="text-xs text-gray-500 mt-1">Cadastrados</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <AlertTriangle className="w-8 h-8 text-red-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Nível Crítico</p>
-                      <p className="text-2xl font-bold text-red-600">
+                    <div className="p-3 bg-gradient-to-br from-rose-600 to-rose-700 rounded-lg">
+                      <AlertTriangle className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Nível Crítico</p>
+                      <p className="text-3xl font-bold text-rose-600">
                         {indicadores.itens_abaixo_minimo}
                       </p>
-                      <p className="text-sm text-gray-600">Reposição urgente</p>
+                      <p className="text-xs text-gray-500 mt-1">Reposição urgente</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <DollarSign className="w-8 h-8 text-green-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Valor Total</p>
-                      <p className="text-2xl font-bold text-green-600">
+                    <div className="p-3 bg-gradient-to-br from-[#D4AF37] to-[#C5A028] rounded-lg">
+                      <DollarSign className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Valor Total</p>
+                      <p className="text-3xl font-bold text-[#D4AF37]">
                         {formatCurrency(indicadores.valor_total_estoque)}
                       </p>
-                      <p className="text-sm text-gray-600">Em estoque</p>
+                      <p className="text-xs text-gray-500 mt-1">Em estoque</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <Activity className="w-8 h-8 text-purple-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Movimentações</p>
-                      <p className="text-2xl font-bold text-purple-600">
+                    <div className="p-3 bg-gradient-to-br from-violet-600 to-violet-700 rounded-lg">
+                      <Activity className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Movimentações</p>
+                      <p className="text-3xl font-bold text-violet-600">
                         {indicadores.movimentacoes_mes}
                       </p>
-                      <p className="text-sm text-gray-600">Este mês</p>
+                      <p className="text-xs text-gray-500 mt-1">Este mês</p>
                     </div>
                   </div>
                 </div>
@@ -339,55 +347,63 @@ const AdvancedInventory: React.FC = () => {
 
             {/* Atividades do Mês */}
             {indicadores && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <TrendingUp className="w-8 h-8 text-green-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Entradas</p>
-                      <p className="text-2xl font-bold text-green-600">
+                    <div className="p-3 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg">
+                      <TrendingUp className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Entradas</p>
+                      <p className="text-3xl font-bold text-emerald-600">
                         {indicadores.entradas_mes}
                       </p>
-                      <p className="text-sm text-gray-600">Este mês</p>
+                      <p className="text-xs text-gray-500 mt-1">Este mês</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <TrendingDown className="w-8 h-8 text-red-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Saídas</p>
-                      <p className="text-2xl font-bold text-red-600">
+                    <div className="p-3 bg-gradient-to-br from-rose-600 to-rose-700 rounded-lg">
+                      <TrendingDown className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Saídas</p>
+                      <p className="text-3xl font-bold text-rose-600">
                         {indicadores.saidas_mes}
                       </p>
-                      <p className="text-sm text-gray-600">Este mês</p>
+                      <p className="text-xs text-gray-500 mt-1">Este mês</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <Factory className="w-8 h-8 text-blue-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Produções</p>
-                      <p className="text-2xl font-bold text-blue-600">
+                    <div className="p-3 bg-gradient-to-br from-sky-600 to-sky-700 rounded-lg">
+                      <Factory className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Produções</p>
+                      <p className="text-3xl font-bold text-sky-600">
                         {indicadores.producoes_mes}
                       </p>
-                      <p className="text-sm text-gray-600">Este mês</p>
+                      <p className="text-xs text-gray-500 mt-1">Este mês</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
                   <div className="flex items-center">
-                    <ShoppingCart className="w-8 h-8 text-orange-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Compras</p>
-                      <p className="text-2xl font-bold text-orange-600">
+                    <div className="p-3 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg">
+                      <ShoppingCart className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Compras</p>
+                      <p className="text-3xl font-bold text-amber-600">
                         {indicadores.compras_mes}
                       </p>
-                      <p className="text-sm text-gray-600">Este mês</p>
+                      <p className="text-xs text-gray-500 mt-1">Este mês</p>
                     </div>
                   </div>
                 </div>
@@ -395,7 +411,7 @@ const AdvancedInventory: React.FC = () => {
             )}
 
             {/* Itens Críticos */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl shadow-md border border-gray-200">
               <div className="p-6 border-b border-gray-200">
                 <h4 className="text-lg font-medium text-gray-900 flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
@@ -481,10 +497,15 @@ const AdvancedInventory: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Gestão de Estoque</h2>
+          <div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] bg-clip-text text-transparent">
+              Gestão de Estoque
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">Controle completo do estoque e movimentações</p>
+          </div>
         </div>
 
         {error && (
@@ -494,7 +515,7 @@ const AdvancedInventory: React.FC = () => {
         )}
 
         <Tab.Group selectedIndex={selectedTab} onChange={handleTabChange}>
-          <Tab.List className="flex space-x-1 rounded-xl bg-white p-1 mb-6 shadow overflow-x-auto">
+          <Tab.List className="flex space-x-1 rounded-xl bg-white p-1 mb-6 shadow-md overflow-x-auto">
             {tabTitles.map((title, index) => {
               const Icon = tabIcons[index];
               return (
@@ -503,7 +524,7 @@ const AdvancedInventory: React.FC = () => {
                   className={({ selected }) =>
                     `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                     ${selected
-                      ? 'bg-[#7D1F2C] text-white shadow'
+                      ? 'bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white shadow-md'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     }`
                   }
@@ -517,7 +538,7 @@ const AdvancedInventory: React.FC = () => {
 
           <Tab.Panels>
             {tabTitles.map((title, index) => (
-              <Tab.Panel key={title} className="rounded-xl bg-white p-6 shadow">
+              <Tab.Panel key={title} className="rounded-xl bg-white p-6 shadow-md">
                 {renderTabContent()}
               </Tab.Panel>
             ))}
@@ -529,11 +550,11 @@ const AdvancedInventory: React.FC = () => {
       {!showChatIA && (
         <button
           onClick={() => setShowChatIA(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center z-40 group"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-[#7D1F2C] to-[#D4AF37] text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center z-40 group"
           title="Chat com Super Agente IA"
         >
           <MessageSquare className="w-7 h-7" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white animate-pulse"></span>
           <div className="absolute right-full mr-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             Super Agente IA - Estoque
           </div>

@@ -783,14 +783,14 @@ const Musicians: React.FC = () => {
             </div>
             <button
               onClick={goToToday}
-              className="px-3 py-1 bg-[#7D1F2C] text-white text-sm rounded-md hover:bg-[#6a1a25]"
+              className="px-3 py-1 bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white text-sm rounded-md hover:from-[#8B2332] hover:to-[#7D1F2C] transition-all shadow-sm"
             >
               Hoje
             </button>
           </div>
           <button
             onClick={generateCalendarPDF}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-md"
           >
             <FileText className="w-4 h-4 inline mr-2" />
             Imprimir PDF
@@ -906,10 +906,15 @@ const Musicians: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Cadastro de Músicos</h2>
+          <div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] bg-clip-text text-transparent">
+              Cadastro de Músicos
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">Gerencie apresentações e pagamentos de músicos</p>
+          </div>
           <div className="flex gap-2">
             {/* View Mode Toggle */}
             <div className="flex bg-gray-100 rounded-lg p-1">
@@ -939,7 +944,7 @@ const Musicians: React.FC = () => {
 
             <button
               onClick={exportData}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-md"
             >
               <Download className="w-4 h-4 inline mr-2" />
               Excel
@@ -947,7 +952,7 @@ const Musicians: React.FC = () => {
 
             <button
               onClick={exportToPDF}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="px-4 py-2 bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-lg hover:from-rose-700 hover:to-rose-800 transition-all shadow-md"
             >
               <FileText className="w-4 h-4 inline mr-2" />
               PDF
@@ -955,7 +960,7 @@ const Musicians: React.FC = () => {
 
             <button
               onClick={() => openForm()}
-              className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
+              className="px-4 py-2 bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white rounded-lg hover:from-[#8B2332] hover:to-[#7D1F2C] transition-all shadow-md"
             >
               <Plus className="w-4 h-4 inline mr-2" />
               Nova Apresentação
@@ -971,46 +976,52 @@ const Musicians: React.FC = () => {
 
         {/* Indicadores */}
         {indicadores && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
               <div className="flex items-center">
-                <Music className="w-8 h-8 text-blue-600 mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Apresentações Este Mês</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                <div className="p-3 bg-gradient-to-br from-[#7D1F2C] to-[#601C28] rounded-lg">
+                  <Music className="w-8 h-8 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Apresentações Este Mês</p>
+                  <p className="text-3xl font-bold text-[#7D1F2C]">
                     {indicadores.apresentacoes_mes}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-500 mt-1">
                     Total: {indicadores.total_apresentacoes}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
               <div className="flex items-center">
-                <DollarSign className="w-8 h-8 text-green-600 mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Valor Total Mês</p>
-                  <p className="text-2xl font-bold text-green-600">
+                <div className="p-3 bg-gradient-to-br from-[#D4AF37] to-[#C5A028] rounded-lg">
+                  <DollarSign className="w-8 h-8 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Valor Total Mês</p>
+                  <p className="text-3xl font-bold text-[#D4AF37]">
                     {formatCurrency(indicadores.valor_total_mes)}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-500 mt-1">
                     Pago: {formatCurrency(indicadores.valor_pago_mes)}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
               <div className="flex items-center">
-                <Clock className="w-8 h-8 text-orange-600 mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Pendentes</p>
-                  <p className="text-2xl font-bold text-orange-600">
+                <div className="p-3 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg">
+                  <Clock className="w-8 h-8 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Pendentes</p>
+                  <p className="text-3xl font-bold text-amber-600">
                     {formatCurrency(indicadores.valor_pendente_mes)}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-500 mt-1">
                     {indicadores.musicos_ativos} músicos ativos
                   </p>
                 </div>
@@ -1020,7 +1031,7 @@ const Musicians: React.FC = () => {
         )}
 
         {/* Filtros */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Buscar</label>
@@ -1080,7 +1091,7 @@ const Musicians: React.FC = () => {
         ) : (
           <>
             {viewMode === 'table' ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -1481,14 +1492,14 @@ const Musicians: React.FC = () => {
                     setEditingMusico(null);
                     resetForm();
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={loading || !formData.nome || !formData.data_evento || formData.valor <= 0}
-                  className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50"
+                  className="px-6 py-2 bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white rounded-lg hover:from-[#8B2332] hover:to-[#7D1F2C] transition-all shadow-md disabled:opacity-50"
                 >
                   {loading ? 'Salvando...' : 'Salvar'}
                 </button>
