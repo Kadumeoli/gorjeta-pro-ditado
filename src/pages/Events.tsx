@@ -389,7 +389,7 @@ const Events: React.FC = () => {
       case 'cancelado':
         return 'text-red-700 bg-red-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -431,7 +431,7 @@ const Events: React.FC = () => {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Nome do Evento *
             </label>
             <input
@@ -445,7 +445,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Cliente Responsável *
             </label>
             <input
@@ -458,7 +458,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Telefone do Cliente *
             </label>
             <input
@@ -471,7 +471,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data do Evento *
             </label>
             <input
@@ -484,7 +484,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Tipo de Evento
             </label>
             <select
@@ -503,7 +503,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Horário de Início
             </label>
             <input
@@ -515,7 +515,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Horário de Fim
             </label>
             <input
@@ -527,7 +527,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Quantidade de Pessoas
             </label>
             <input
@@ -540,7 +540,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Valor Total
             </label>
             <div className="relative">
@@ -560,7 +560,7 @@ const Events: React.FC = () => {
 
           {/* Checklist do Evento (Opcional) */}
           <div className="md:col-span-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-1 flex items-center">
+            <h4 className="font-medium text-white mb-1 flex items-center">
               <CheckSquare className="w-5 h-5 mr-2 text-[#7D1F2C]" />
               Checklist do Evento (Opcional)
             </h4>
@@ -592,7 +592,7 @@ const Events: React.FC = () => {
                     }}
                     className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C] mr-2"
                   />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-white/80">
                     📄 Contrato Assinado
                   </span>
                 </label>
@@ -628,7 +628,7 @@ const Events: React.FC = () => {
                     })}
                     className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C] mr-2"
                   />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-white/80">
                     🎟️ Ingressos Entregues
                   </span>
                 </label>
@@ -653,7 +653,7 @@ const Events: React.FC = () => {
 
               {/* Status do Pagamento como parte do checklist */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   💰 Status do Pagamento
                 </label>
                 <select
@@ -675,7 +675,7 @@ const Events: React.FC = () => {
             {/* Status do Evento */}
             {(formEventoFechado.contrato_assinado || formEventoFechado.convite_impresso || formEventoFechado.status_pagamento !== 'pendente') && (
               <div className="mt-4 p-3 bg-white rounded-lg border border-gray-200">
-                <div className="text-sm font-medium text-gray-700 mb-2">Status do Evento:</div>
+                <div className="text-sm font-medium text-white/80 mb-2">Status do Evento:</div>
                 <div className="flex items-center space-x-4">
                   <div className={`flex items-center ${
                     formEventoFechado.contrato_assinado ? 'text-green-600' : 'text-gray-400'
@@ -706,7 +706,7 @@ const Events: React.FC = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Observações
             </label>
             <textarea
@@ -723,7 +723,7 @@ const Events: React.FC = () => {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Nome do Cliente *
             </label>
             <input
@@ -736,7 +736,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Telefone do Cliente *
             </label>
             <input
@@ -749,7 +749,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data da Reserva *
             </label>
             <input
@@ -762,7 +762,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Local Reservado
             </label>
             <select
@@ -780,7 +780,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Horário de Início
             </label>
             <input
@@ -792,7 +792,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Horário de Fim
             </label>
             <input
@@ -804,7 +804,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Quantidade de Pessoas
             </label>
             <input
@@ -817,7 +817,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Valor Cobrado
             </label>
             <div className="relative">
@@ -836,7 +836,7 @@ const Events: React.FC = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               O que está incluso
             </label>
             <textarea
@@ -849,7 +849,7 @@ const Events: React.FC = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Detalhes do Evento
             </label>
             <textarea
@@ -866,7 +866,7 @@ const Events: React.FC = () => {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Nome do Cliente *
             </label>
             <input
@@ -879,7 +879,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Telefone do Cliente *
             </label>
             <input
@@ -892,7 +892,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data da Reserva *
             </label>
             <input
@@ -905,7 +905,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Horário
             </label>
             <input
@@ -917,7 +917,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Número de Pessoas
             </label>
             <input
@@ -930,7 +930,7 @@ const Events: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Local no Bar
             </label>
             <select
@@ -947,7 +947,7 @@ const Events: React.FC = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Observações
             </label>
             <textarea
@@ -1026,13 +1026,13 @@ const Events: React.FC = () => {
               <tr key={evento.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-medium text-gray-900">{evento.nome_evento}</div>
+                    <div className="font-medium text-white">{evento.nome_evento}</div>
                     <div className="text-sm text-gray-500">{evento.tipo_evento}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-medium text-gray-900">{evento.cliente_responsavel}</div>
+                    <div className="font-medium text-white">{evento.cliente_responsavel}</div>
                     {evento.telefone_cliente && (
                       <div className="text-sm text-gray-500">{evento.telefone_cliente}</div>
                     )}
@@ -1040,7 +1040,7 @@ const Events: React.FC = () => {
                 </td>
                 <td className="px-6 py-4">
                   <div>
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-white">
                       {dayjs(evento.data_evento).format('DD/MM/YYYY')}
                     </div>
                     <div className="text-sm text-gray-500">
@@ -1049,10 +1049,10 @@ const Events: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{evento.quantidade_pessoas}</span>
+                  <span className="text-sm text-white">{evento.quantidade_pessoas}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-white">
                     {formatCurrency(evento.valor_total)}
                   </span>
                 </td>
@@ -1144,13 +1144,13 @@ const Events: React.FC = () => {
               <tr key={reserva.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-medium text-gray-900">{reserva.nome_cliente}</div>
+                    <div className="font-medium text-white">{reserva.nome_cliente}</div>
                     <div className="text-sm text-gray-500">{reserva.telefone_cliente}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div>
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-white">
                       {dayjs(reserva.data_reserva).format('DD/MM/YYYY')}
                     </div>
                     <div className="text-sm text-gray-500">
@@ -1159,13 +1159,13 @@ const Events: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{reserva.local_reservado}</span>
+                  <span className="text-sm text-white">{reserva.local_reservado}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{reserva.quantidade_pessoas}</span>
+                  <span className="text-sm text-white">{reserva.quantidade_pessoas}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-white">
                     {formatCurrency(reserva.valor_cobrado)}
                   </span>
                 </td>
@@ -1228,23 +1228,23 @@ const Events: React.FC = () => {
               <tr key={reserva.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-medium text-gray-900">{reserva.nome_cliente}</div>
+                    <div className="font-medium text-white">{reserva.nome_cliente}</div>
                     <div className="text-sm text-gray-500">{reserva.telefone_cliente}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div>
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-white">
                       {dayjs(reserva.data_reserva).format('DD/MM/YYYY')}
                     </div>
                     <div className="text-sm text-gray-500">{reserva.horario}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{reserva.numero_pessoas}</span>
+                  <span className="text-sm text-white">{reserva.numero_pessoas}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{reserva.local_bar}</span>
+                  <span className="text-sm text-white">{reserva.local_bar}</span>
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-500">{reserva.observacoes || '-'}</span>
@@ -1279,7 +1279,7 @@ const Events: React.FC = () => {
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Sistema de Reservas</h2>
+          <h2 className="text-2xl font-semibold text-white/90">Sistema de Reservas</h2>
           <button
             onClick={() => openForm()}
             className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
@@ -1368,7 +1368,7 @@ const Events: React.FC = () => {
                     `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                     ${selected
                       ? 'bg-[#7D1F2C] text-white shadow'
-                      : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                      : 'text-white/80 hover:bg-white hover:text-white'
                     }`
                   }
                 >
@@ -1391,7 +1391,7 @@ const Events: React.FC = () => {
                       ) : (
                         <div className="text-center py-12">
                           <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
+                          <h3 className="text-lg font-medium text-white mb-2">
                             Nenhum {title.toLowerCase().slice(0, -1)} encontrado
                           </h3>
                           <p className="text-gray-500">
@@ -1413,7 +1413,7 @@ const Events: React.FC = () => {
         {showForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-medium text-white mb-4">
                 {editingItem ? 'Editar' : 'Novo'} {tabTitles[selectedTab].slice(0, -1)}
               </h3>
               
@@ -1426,7 +1426,7 @@ const Events: React.FC = () => {
                     setEditingItem(null);
                     resetForm();
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>
@@ -1446,7 +1446,7 @@ const Events: React.FC = () => {
         {showGerarContaModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-medium text-white mb-4">
                 Gerar Conta a Receber
               </h3>
 
@@ -1455,16 +1455,16 @@ const Events: React.FC = () => {
               </p>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Evento: <span className="font-bold">{eventoParaGerarConta?.nome_evento}</span>
                 </label>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Valor: <span className="font-bold">R$ {eventoParaGerarConta?.valor_total?.toFixed(2)}</span>
                 </label>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data de Vencimento
                 </label>
                 <input
@@ -1491,7 +1491,7 @@ const Events: React.FC = () => {
                     setEventoParaGerarConta(null);
                     setError(null);
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Não, agora não
                 </button>

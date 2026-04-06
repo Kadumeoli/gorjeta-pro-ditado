@@ -210,7 +210,7 @@ const Sidebar: React.FC = () => {
               {usuario.nome_completo.split(' ').map(n => n[0]).join('').substring(0, 2)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {usuario.nome_completo}
               </p>
               <p className="text-xs text-gray-500 truncate">
@@ -233,7 +233,7 @@ const Sidebar: React.FC = () => {
                 className={`flex items-center justify-between w-full px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-300 transform hover:scale-[1.02] ${
                   isActive
                     ? 'bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] text-white shadow-lg shadow-[#7D1F2C]/25'
-                    : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-gray-900'
+                    : 'text-white/80 hover:bg-white/60 hover:shadow-md hover:text-white'
                 }`}
                 onClick={() => handleModuleClick(item)}
               >
@@ -253,7 +253,7 @@ const Sidebar: React.FC = () => {
                       className={`h-5 w-5 transition-all duration-300 ${
                         isActive 
                           ? 'text-white' 
-                          : 'text-gray-600 group-hover:text-gray-800'
+                          : 'text-gray-600 group-hover:text-white/90'
                       }`}
                       aria-hidden="true"
                     />
@@ -355,7 +355,7 @@ const Sidebar: React.FC = () => {
               usuario.nivel === 'master' ? 'bg-red-100 text-red-700' :
               usuario.nivel === 'admin' ? 'bg-purple-100 text-purple-700' :
               usuario.nivel === 'usuario' ? 'bg-blue-100 text-blue-700' :
-              'bg-gray-100 text-gray-700'
+              'bg-gray-100 text-white/80'
             }`}>
               {usuario.nivel === 'master' ? 'Master' :
                usuario.nivel === 'admin' ? 'Admin' :

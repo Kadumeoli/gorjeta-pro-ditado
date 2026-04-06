@@ -45,7 +45,7 @@ const COR_ABA_ATIVA: Record<string, string> = {
   green:  'border-green-500 text-green-700 bg-green-50',
   yellow: 'border-yellow-500 text-yellow-700 bg-yellow-50',
   purple: 'border-purple-500 text-purple-700 bg-purple-50',
-  gray:   'border-gray-500 text-gray-700 bg-gray-50',
+  gray:   'border-gray-500 text-white/80 bg-gray-50',
 };
 
 export default function ContagemContador({ contagemId, estoqueName, onVoltar, onFinalizar }: Props) {
@@ -283,7 +283,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div className="min-w-0">
-              <h2 className="text-base font-bold text-gray-900 truncate">{estoqueName}</h2>
+              <h2 className="text-base font-bold text-white truncate">{estoqueName}</h2>
               <p className="text-xs text-gray-500">
                 {statsGeral.contados}/{statsGeral.total} contados
                 {statsGeral.ignorados > 0 && (
@@ -351,7 +351,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
             <p className="text-xs font-semibold text-blue-800">🔗 Link para celular (válido 7 dias)</p>
             <div className="flex gap-2">
               <input readOnly value={linkPublico}
-                className="flex-1 text-xs bg-white border border-blue-200 rounded-lg px-2 py-1.5 text-gray-700"
+                className="flex-1 text-xs bg-white border border-blue-200 rounded-lg px-2 py-1.5 text-white/80"
                 onClick={e => (e.target as HTMLInputElement).select()} />
               <button onClick={copiarLink}
                 className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700">
@@ -423,7 +423,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                   disabled={adicionando === item.id}
                   className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-blue-50 border-b border-blue-50 last:border-0 transition-colors disabled:opacity-50 text-left">
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">{item.nome}</p>
+                    <p className="font-semibold text-white text-sm truncate">{item.nome}</p>
                     <p className="text-[11px] text-gray-400 mt-0.5">
                       {item.codigo && <span className="mr-2">{item.codigo}</span>}
                       <span>{item.unidade_medida}</span>
@@ -608,7 +608,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                 : ''
               }`}>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm leading-tight">{item.item_nome}</p>
+                  <p className="font-semibold text-white text-sm leading-tight">{item.item_nome}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     {item.item_codigo && <span className="text-[11px] text-gray-400">{item.item_codigo}</span>}
                     {grupo && (
@@ -652,7 +652,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                 <div className="flex items-center gap-3">
                   <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2 text-center">
                     <p className="text-[10px] text-gray-500 uppercase font-medium">Sistema</p>
-                    <p className={`text-lg font-bold tabular-nums leading-tight ${item.quantidade_sistema === 0 ? 'text-orange-500' : 'text-gray-700'}`}>
+                    <p className={`text-lg font-bold tabular-nums leading-tight ${item.quantidade_sistema === 0 ? 'text-orange-500' : 'text-white/80'}`}>
                       {item.quantidade_sistema}
                     </p>
                     <p className="text-[10px] text-gray-400">{item.unidade_medida}</p>
@@ -668,7 +668,7 @@ export default function ContagemContador({ contagemId, estoqueName, onVoltar, on
                         hasError               ? 'border-red-300 bg-red-50 text-red-700 focus:ring-red-200'
                         : isContado && dif === 0 ? 'border-green-300 bg-green-50/70 text-green-800 focus:ring-green-200'
                         : isContado && dif !== 0 ? 'border-orange-300 bg-orange-50/70 text-orange-800 focus:ring-orange-200'
-                        : 'border-gray-200 bg-white text-gray-900 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]'
+                        : 'border-gray-200 bg-white text-white focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]'
                       }`}
                     />
                   </div>

@@ -796,11 +796,11 @@ const FichasTecnicas: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Fichas Técnicas</h3>
+        <h3 className="text-lg font-medium text-white">Fichas Técnicas</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -994,19 +994,19 @@ const FichasTecnicas: React.FC = () => {
                 {filteredFichas.map((ficha) => (
                   <tr key={ficha.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{ficha.nome}</div>
+                      <div className="font-medium text-white">{ficha.nome}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Users className="w-4 h-4 text-gray-400 mr-2" />
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm text-white">
                           {ficha.porcoes || 1}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className={`font-medium ${
-                        (ficha.custo_total || 0) > 0 ? 'text-gray-900' : 'text-orange-600'
+                        (ficha.custo_total || 0) > 0 ? 'text-white' : 'text-orange-600'
                       }`}>
                         {formatCurrency(ficha.custo_total || 0)}
                       </div>
@@ -1018,7 +1018,7 @@ const FichasTecnicas: React.FC = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
+                      <span className="text-sm text-white">
                         {ficha.porcoes && ficha.porcoes > 0 
                           ? formatCurrency((ficha.custo_total || 0) / ficha.porcoes)
                           : formatCurrency(0)
@@ -1042,7 +1042,7 @@ const FichasTecnicas: React.FC = () => {
                         <div className="relative">
                           <button
                             onClick={() => setPrintMenuOpen(printMenuOpen === ficha.id ? null : ficha.id)}
-                            className="text-gray-600 hover:text-gray-800"
+                            className="text-gray-600 hover:text-white/90"
                             title="Opções de Impressão"
                           >
                             <Printer className="w-4 h-4" />
@@ -1060,7 +1060,7 @@ const FichasTecnicas: React.FC = () => {
                                     imprimirFichaTecnicaCompleta(ficha);
                                     setPrintMenuOpen(null);
                                   }}
-                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center text-sm text-gray-700"
+                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center text-sm text-white/80"
                                 >
                                   <FileText className="w-4 h-4 mr-3 text-gray-500" />
                                   <div>
@@ -1073,7 +1073,7 @@ const FichasTecnicas: React.FC = () => {
                                     imprimirFichaTecnicaSimplificada(ficha);
                                     setPrintMenuOpen(null);
                                   }}
-                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center text-sm text-gray-700"
+                                  className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center text-sm text-white/80"
                                 >
                                   <ChefHat className="w-4 h-4 mr-3 text-[#7D1F2C]" />
                                   <div>
@@ -1117,7 +1117,7 @@ const FichasTecnicas: React.FC = () => {
           {filteredFichas.length === 0 && (
             <div className="text-center py-12">
               <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma ficha encontrada</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma ficha encontrada</h3>
               <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' || custoFilter !== 'all'
                   ? 'Nenhuma ficha corresponde aos filtros aplicados.'
@@ -1132,13 +1132,13 @@ const FichasTecnicas: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingFicha ? 'Editar Ficha Técnica' : 'Nova Ficha Técnica'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome da Ficha *
                 </label>
                 <input
@@ -1152,7 +1152,7 @@ const FichasTecnicas: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Porções *
                 </label>
                 <input
@@ -1173,14 +1173,14 @@ const FichasTecnicas: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, ativo: e.target.checked })}
                   className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                 />
-                <label htmlFor="ativo" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="ativo" className="ml-2 text-sm text-white/80">
                   Ficha ativa
                 </label>
               </div>
             </div>
 
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <label className="block text-sm font-medium text-gray-900 mb-3">
+              <label className="block text-sm font-medium text-white mb-3">
                 Tipo de Consumo *
               </label>
               <div className="space-y-3">
@@ -1194,7 +1194,7 @@ const FichasTecnicas: React.FC = () => {
                     className="mt-1 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                   />
                   <div className="ml-3">
-                    <span className="font-medium text-gray-900">Produção Prévia</span>
+                    <span className="font-medium text-white">Produção Prévia</span>
                     <p className="text-sm text-gray-600">
                       Requer ordem de produção. Insumos são baixados na produção, produto final baixado na venda.
                       <br />
@@ -1212,7 +1212,7 @@ const FichasTecnicas: React.FC = () => {
                     className="mt-1 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                   />
                   <div className="ml-3">
-                    <span className="font-medium text-gray-900">Venda Direta</span>
+                    <span className="font-medium text-white">Venda Direta</span>
                     <p className="text-sm text-gray-600">
                       Sem ordem de produção. Insumos são baixados automaticamente a cada venda.
                       <br />
@@ -1225,10 +1225,10 @@ const FichasTecnicas: React.FC = () => {
 
             {/* Modo de Preparo */}
             <div className="mb-6 border-t border-gray-200 pt-6">
-              <h4 className="text-md font-medium text-gray-900 mb-4">Modo de Preparo (Opcional)</h4>
+              <h4 className="text-md font-medium text-white mb-4">Modo de Preparo (Opcional)</h4>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Passo a Passo da Receita
                 </label>
                 <textarea
@@ -1244,7 +1244,7 @@ const FichasTecnicas: React.FC = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações de Preparo
                 </label>
                 <textarea
@@ -1260,7 +1260,7 @@ const FichasTecnicas: React.FC = () => {
             {/* Ingredientes */}
             <div className="border-t border-gray-200 pt-6">
               <div className="flex justify-between items-center mb-4">
-                <h4 className="text-md font-medium text-gray-900">Ingredientes</h4>
+                <h4 className="text-md font-medium text-white">Ingredientes</h4>
                 <button
                   onClick={adicionarIngrediente}
                   className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
@@ -1276,7 +1276,7 @@ const FichasTecnicas: React.FC = () => {
                     <div key={index} className="grid grid-cols-1 gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
                         <div className="md:col-span-1">
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Tipo</label>
+                          <label className="block text-xs font-medium text-white/80 mb-1">Tipo</label>
                           <select
                             value={ingrediente.tipo}
                             onChange={(e) => atualizarIngrediente(index, 'tipo', e.target.value)}
@@ -1288,7 +1288,7 @@ const FichasTecnicas: React.FC = () => {
                         </div>
 
                         <div className="md:col-span-2">
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                          <label className="block text-xs font-medium text-white/80 mb-1">
                             {ingrediente.tipo === 'item' ? 'Item' : 'Ficha Técnica'}
                           </label>
                           {ingrediente.tipo === 'item' ? (
@@ -1325,7 +1325,7 @@ const FichasTecnicas: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Quantidade</label>
+                          <label className="block text-xs font-medium text-white/80 mb-1">Quantidade</label>
                           <input
                             type="number"
                             step={ingrediente.tipo === 'ficha' ? "1" : "0.001"}
@@ -1397,7 +1397,7 @@ const FichasTecnicas: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Observações (opcional)</label>
+                        <label className="block text-xs font-medium text-white/80 mb-1">Observações (opcional)</label>
                         <input
                           type="text"
                           value={ingrediente.observacoes || ''}
@@ -1440,7 +1440,7 @@ const FichasTecnicas: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

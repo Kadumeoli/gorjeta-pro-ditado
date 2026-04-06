@@ -112,7 +112,7 @@ const Settings: React.FC = () => {
         <div className="md:w-64 flex-shrink-0">
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="p-4 border-b">
-              <h3 className="text-lg font-medium text-gray-800">Configurações</h3>
+              <h3 className="text-lg font-medium text-white/90">Configurações</h3>
             </div>
             <nav className="p-2">
               <button
@@ -205,7 +205,7 @@ const Settings: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm">
             {activeTab === 'profile' && (
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Perfil</h3>
+                <h3 className="text-lg font-medium text-white/90 mb-4">Perfil</h3>
                 
                 <div className="mb-6 flex items-center">
                   <div className="w-24 h-24 rounded-full bg-[#7D1F2C] flex items-center justify-center text-white text-2xl mr-6">
@@ -224,7 +224,7 @@ const Settings: React.FC = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white/80 mb-1">
                         Nome
                       </label>
                       <input
@@ -234,7 +234,7 @@ const Settings: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white/80 mb-1">
                         Sobrenome
                       </label>
                       <input
@@ -246,7 +246,7 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Email
                     </label>
                     <input
@@ -257,7 +257,7 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Telefone
                     </label>
                     <input
@@ -268,7 +268,7 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Cargo
                     </label>
                     <input
@@ -290,17 +290,17 @@ const Settings: React.FC = () => {
             
             {activeTab === 'security' && (
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Segurança</h3>
+                <h3 className="text-lg font-medium text-white/90 mb-4">Segurança</h3>
                 
                 <div className="space-y-6">
                   <div>
-                    <h4 className="text-md font-medium text-gray-700 mb-3 flex items-center">
+                    <h4 className="text-md font-medium text-white/80 mb-3 flex items-center">
                       <ShieldCheck className="w-5 h-5 mr-2 text-[#7D1F2C]" />
                       Alterar senha
                     </h4>
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-white/80 mb-1">
                           Senha atual
                         </label>
                         <input
@@ -310,7 +310,7 @@ const Settings: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-white/80 mb-1">
                           Nova senha
                         </label>
                         <input
@@ -320,7 +320,7 @@ const Settings: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-white/80 mb-1">
                           Confirmar nova senha
                         </label>
                         <input
@@ -338,7 +338,7 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div className="pt-4 border-t border-gray-200">
-                    <h4 className="text-md font-medium text-gray-700 mb-3">Verificação em duas etapas</h4>
+                    <h4 className="text-md font-medium text-white/80 mb-3">Verificação em duas etapas</h4>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-600">
@@ -353,11 +353,11 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div className="pt-4 border-t border-gray-200">
-                    <h4 className="text-md font-medium text-gray-700 mb-3">Dispositivos conectados</h4>
+                    <h4 className="text-md font-medium text-white/80 mb-3">Dispositivos conectados</h4>
                     <div className="space-y-3">
                       <div className="p-3 bg-gray-50 rounded-md border border-gray-100 flex justify-between items-center">
                         <div>
-                          <p className="font-medium text-gray-800">MacBook Pro - São Paulo</p>
+                          <p className="font-medium text-white/90">MacBook Pro - São Paulo</p>
                           <p className="text-xs text-gray-500">Último acesso: Hoje, 15:45</p>
                         </div>
                         <button className="text-sm text-red-500 hover:text-red-700">
@@ -366,7 +366,7 @@ const Settings: React.FC = () => {
                       </div>
                       <div className="p-3 bg-gray-50 rounded-md border border-gray-100 flex justify-between items-center">
                         <div>
-                          <p className="font-medium text-gray-800">iPhone 14 - São Paulo</p>
+                          <p className="font-medium text-white/90">iPhone 14 - São Paulo</p>
                           <p className="text-xs text-gray-500">Último acesso: Ontem, 19:30</p>
                         </div>
                         <button className="text-sm text-red-500 hover:text-red-700">
@@ -381,15 +381,15 @@ const Settings: React.FC = () => {
             
             {activeTab === 'notifications' && (
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Notificações</h3>
+                <h3 className="text-lg font-medium text-white/90 mb-4">Notificações</h3>
                 
                 <div className="space-y-6">
                   <div>
-                    <h4 className="text-md font-medium text-gray-700 mb-3">Email</h4>
+                    <h4 className="text-md font-medium text-white/80 mb-3">Email</h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between py-2 border-b border-gray-100">
                         <div>
-                          <p className="font-medium text-gray-800">Notificações financeiras</p>
+                          <p className="font-medium text-white/90">Notificações financeiras</p>
                           <p className="text-xs text-gray-500">Receba alertas sobre pagamentos e relatórios financeiros</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -399,7 +399,7 @@ const Settings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between py-2 border-b border-gray-100">
                         <div>
-                          <p className="font-medium text-gray-800">Alertas de estoque</p>
+                          <p className="font-medium text-white/90">Alertas de estoque</p>
                           <p className="text-xs text-gray-500">Receba alertas quando produtos estiverem abaixo do estoque mínimo</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -409,7 +409,7 @@ const Settings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between py-2 border-b border-gray-100">
                         <div>
-                          <p className="font-medium text-gray-800">Escalas de funcionários</p>
+                          <p className="font-medium text-white/90">Escalas de funcionários</p>
                           <p className="text-xs text-gray-500">Receba notificações sobre mudanças nas escalas</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -421,11 +421,11 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div>
-                    <h4 className="text-md font-medium text-gray-700 mb-3">Push</h4>
+                    <h4 className="text-md font-medium text-white/80 mb-3">Push</h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between py-2 border-b border-gray-100">
                         <div>
-                          <p className="font-medium text-gray-800">Eventos próximos</p>
+                          <p className="font-medium text-white/90">Eventos próximos</p>
                           <p className="text-xs text-gray-500">Receba lembretes de eventos que acontecerão em breve</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -435,7 +435,7 @@ const Settings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between py-2 border-b border-gray-100">
                         <div>
-                          <p className="font-medium text-gray-800">Novas reservas</p>
+                          <p className="font-medium text-white/90">Novas reservas</p>
                           <p className="text-xs text-gray-500">Receba notificações quando houver novas reservas</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -466,7 +466,7 @@ const Settings: React.FC = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="text-lg font-medium text-gray-800 flex items-center">
+                    <h3 className="text-lg font-medium text-white/90 flex items-center">
                       <Bot className="w-6 h-6 mr-2 text-blue-600" />
                       Configurações de Inteligência Artificial
                     </h3>
@@ -493,7 +493,7 @@ const Settings: React.FC = () => {
                         className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <div className="ml-3">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-white">
                           Habilitar funcionalidades de IA
                         </span>
                         <p className="text-xs text-gray-600 mt-1">
@@ -505,7 +505,7 @@ const Settings: React.FC = () => {
 
                   {/* API Key da OpenAI */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Chave de API da OpenAI
                       <span className="text-red-500 ml-1">*</span>
                     </label>
@@ -520,7 +520,7 @@ const Settings: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowApiKey(!showApiKey)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white/80"
                       >
                         {showApiKey ? (
                           <EyeOff className="w-5 h-5" />
@@ -544,7 +544,7 @@ const Settings: React.FC = () => {
 
                   {/* Modelo */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Modelo da OpenAI
                     </label>
                     <select
@@ -563,7 +563,7 @@ const Settings: React.FC = () => {
 
                   {/* Info Box */}
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    <h4 className="text-sm font-medium text-white mb-2">
                       💡 Como funciona o Super Agente IA
                     </h4>
                     <ul className="text-xs text-gray-600 space-y-1">
@@ -592,7 +592,7 @@ const Settings: React.FC = () => {
             {/* Show placeholder for other tabs */}
             {!['profile', 'security', 'notifications', 'users', 'ia'].includes(activeTab) && (
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
+                <h3 className="text-lg font-medium text-white/90 mb-4">
                   {activeTab === 'payment' && 'Configurações de Pagamento'}
                   {activeTab === 'global' && 'Configurações Gerais'}
                 </h3>

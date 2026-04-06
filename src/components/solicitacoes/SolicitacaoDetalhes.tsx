@@ -273,7 +273,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'rascunho':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       case 'enviado':
         return 'text-blue-700 bg-blue-100';
       case 'em_analise':
@@ -291,9 +291,9 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
       case 'rejeitado':
         return 'text-red-700 bg-red-100';
       case 'cancelado':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -410,7 +410,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
       <div className="bg-white rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden">
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <div>
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-white">
               {solicitacao.numero_solicitacao} - {solicitacao.titulo}
             </h3>
             <div className="flex items-center space-x-2 mt-1">
@@ -445,7 +445,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                 className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'detalhes'
                     ? 'bg-[#7D1F2C] text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-white/80 hover:bg-gray-100'
                 }`}
               >
                 <FileText className="w-4 h-4 mr-2" />
@@ -456,7 +456,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                 className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'comentarios'
                     ? 'bg-[#7D1F2C] text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-white/80 hover:bg-gray-100'
                 }`}
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
@@ -467,7 +467,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                 className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'anexos'
                     ? 'bg-[#7D1F2C] text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-white/80 hover:bg-gray-100'
                 }`}
               >
                 <FileText className="w-4 h-4 mr-2" />
@@ -478,7 +478,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                 className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'historico'
                     ? 'bg-[#7D1F2C] text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-white/80 hover:bg-gray-100'
                 }`}
               >
                 <Clock className="w-4 h-4 mr-2" />
@@ -537,7 +537,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-3">Informações da Solicitação</h4>
+                    <h4 className="text-md font-medium text-white mb-3">Informações da Solicitação</h4>
                     <div className="space-y-3">
                       <div>
                         <span className="text-sm text-gray-600">Número:</span>
@@ -577,7 +577,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                   </div>
 
                   <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-3">Dados do Solicitante</h4>
+                    <h4 className="text-md font-medium text-white mb-3">Dados do Solicitante</h4>
                     <div className="space-y-3">
                       <div>
                         <span className="text-sm text-gray-600">Nome:</span>
@@ -610,29 +610,29 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                 </div>
 
                 <div>
-                  <h4 className="text-md font-medium text-gray-900 mb-3">Descrição</h4>
+                  <h4 className="text-md font-medium text-white mb-3">Descrição</h4>
                   <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-gray-700">{solicitacao.descricao}</p>
+                    <p className="text-white/80">{solicitacao.descricao}</p>
                   </div>
                 </div>
 
                 {solicitacao.detalhes_tecnicos && (
                   <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-3">Detalhes Técnicos</h4>
+                    <h4 className="text-md font-medium text-white mb-3">Detalhes Técnicos</h4>
                     <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                      <p className="text-gray-700">{solicitacao.detalhes_tecnicos}</p>
+                      <p className="text-white/80">{solicitacao.detalhes_tecnicos}</p>
                     </div>
                   </div>
                 )}
 
                 {(solicitacao.valor_estimado > 0 || solicitacao.valor_total_orcado > 0) && (
                   <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-3">Informações Financeiras</h4>
+                    <h4 className="text-md font-medium text-white mb-3">Informações Financeiras</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {solicitacao.valor_estimado > 0 && (
                         <div className="p-4 bg-gray-50 rounded-lg">
                           <div className="text-sm text-gray-600">Valor Estimado</div>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-lg font-bold text-white">
                             {formatCurrency(solicitacao.valor_estimado)}
                           </div>
                         </div>
@@ -662,7 +662,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
             {activeTab === 'comentarios' && (
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-md font-medium text-gray-900 mb-4">Comentários</h4>
+                  <h4 className="text-md font-medium text-white mb-4">Comentários</h4>
                   
                   {/* Adicionar novo comentário */}
                   <div className="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -705,7 +705,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                       <div key={comentario.id} className={`p-4 rounded-lg border-l-4 ${getTipoComentarioColor(comentario.tipo_comentario)}`}>
                         <div className="flex justify-between items-start mb-2">
                           <div>
-                            <span className="font-medium text-gray-900">{comentario.autor_nome}</span>
+                            <span className="font-medium text-white">{comentario.autor_nome}</span>
                             <span className="ml-2 text-xs text-gray-500 capitalize">
                               ({comentario.tipo_comentario})
                             </span>
@@ -714,7 +714,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                             {dayjs(comentario.criado_em).format('DD/MM/YYYY HH:mm')}
                           </span>
                         </div>
-                        <p className="text-gray-700">{comentario.comentario}</p>
+                        <p className="text-white/80">{comentario.comentario}</p>
                       </div>
                     ))}
 
@@ -732,7 +732,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
             {activeTab === 'anexos' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-md font-medium text-gray-900">Anexos</h4>
+                  <h4 className="text-md font-medium text-white">Anexos</h4>
                   <label className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 cursor-pointer">
                     <Upload className="w-4 h-4 inline mr-1" />
                     {uploadingFile ? 'Enviando...' : 'Adicionar Anexo'}
@@ -758,7 +758,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                       <div className="flex items-center flex-1">
                         <FileText className="w-5 h-5 text-gray-400 mr-3" />
                         <div className="flex-1">
-                          <div className="font-medium text-gray-900">{anexo.nome_arquivo}</div>
+                          <div className="font-medium text-white">{anexo.nome_arquivo}</div>
                           <div className="text-sm text-gray-500">
                             {anexo.tipo_arquivo || 'Arquivo'}
                             {anexo.tamanho_bytes && ` • ${(anexo.tamanho_bytes / 1024 / 1024).toFixed(2)} MB`}
@@ -805,7 +805,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
             {activeTab === 'historico' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h4 className="text-md font-medium text-gray-900">Histórico Completo</h4>
+                  <h4 className="text-md font-medium text-white">Histórico Completo</h4>
                   <span className="text-sm text-gray-500">
                     {historico.length} {historico.length === 1 ? 'registro' : 'registros'}
                   </span>
@@ -829,7 +829,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                             <div className="flex justify-between items-start mb-2">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2 mb-1">
-                                  <span className="text-sm font-semibold text-gray-900">
+                                  <span className="text-sm font-semibold text-white">
                                     {getTipoHistoricoTexto(item.tipo_alteracao)}
                                   </span>
                                   {item.campo_alterado && (
@@ -838,7 +838,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-sm text-gray-700">{item.descricao}</p>
+                                <p className="text-sm text-white/80">{item.descricao}</p>
 
                                 {/* Mostrar valores anterior e novo se existirem */}
                                 {(item.valor_anterior || item.valor_novo) && item.tipo_alteracao !== 'status' && item.tipo_alteracao !== 'comentario' && (
@@ -846,7 +846,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                                     {item.valor_anterior && (
                                       <div className="bg-white bg-opacity-50 p-2 rounded">
                                         <div className="text-gray-500 mb-1">Valor Anterior</div>
-                                        <div className="font-medium text-gray-700 truncate">
+                                        <div className="font-medium text-white/80 truncate">
                                           {item.valor_anterior}
                                         </div>
                                       </div>
@@ -854,7 +854,7 @@ const SolicitacaoDetalhes: React.FC<SolicitacaoDetalhesProps> = ({
                                     {item.valor_novo && (
                                       <div className="bg-white bg-opacity-50 p-2 rounded">
                                         <div className="text-gray-500 mb-1">Novo Valor</div>
-                                        <div className="font-medium text-gray-700 truncate">
+                                        <div className="font-medium text-white/80 truncate">
                                           {item.valor_novo}
                                         </div>
                                       </div>

@@ -197,10 +197,10 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
                 onChange={(e) => setPeriodo(e.target.value as any)}
                 className="px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50"
               >
-                <option value="week" className="text-gray-900">Última semana</option>
-                <option value="month" className="text-gray-900">Último mês</option>
-                <option value="quarter" className="text-gray-900">Último trimestre</option>
-                <option value="year" className="text-gray-900">Último ano</option>
+                <option value="week" className="text-white">Última semana</option>
+                <option value="month" className="text-white">Último mês</option>
+                <option value="quarter" className="text-white">Último trimestre</option>
+                <option value="year" className="text-white">Último ano</option>
               </select>
               <button
                 onClick={fetchRelatorios}
@@ -285,7 +285,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Importações por dia */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                     <Calendar className="w-5 h-5 mr-2 text-blue-600" />
                     Importações por Dia
                   </h3>
@@ -304,7 +304,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
 
                 {/* Taxa de sucesso */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                     <TrendingUp className="w-5 h-5 mr-2 text-green-600" />
                     Taxa de Sucesso por Importação
                   </h3>
@@ -322,7 +322,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
 
                 {/* Mapeamentos por origem */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                     <Target className="w-5 h-5 mr-2 text-purple-600" />
                     Mapeamentos por Origem
                   </h3>
@@ -349,7 +349,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
 
                 {/* Top produtos mais importados */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                     <Package className="w-5 h-5 mr-2 text-orange-600" />
                     Top 10 Produtos Mais Importados
                   </h3>
@@ -357,7 +357,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
                     {topProdutosMaisImportados.map((produto, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 truncate">{produto.nome}</p>
+                          <p className="text-sm font-medium text-white truncate">{produto.nome}</p>
                           <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
                             <div
                               className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full"
@@ -367,7 +367,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
                             />
                           </div>
                         </div>
-                        <span className="ml-4 text-sm font-bold text-gray-900">{produto.total}</span>
+                        <span className="ml-4 text-sm font-bold text-white">{produto.total}</span>
                       </div>
                     ))}
                   </div>
@@ -377,7 +377,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
               {/* Distribuição de Mapeamentos */}
               {estatisticas && (
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Distribuição de Mapeamentos</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">Distribuição de Mapeamentos</h3>
                   <div className="grid grid-cols-2 gap-6">
                     <div>
                       <div className="flex items-center justify-between mb-2">
@@ -418,7 +418,7 @@ const RelatoriosVendas: React.FC<RelatoriosVendasProps> = ({ onClose }) => {
         <div className="p-6 bg-white border-t border-gray-200">
           <button
             onClick={onClose}
-            className="w-full px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            className="w-full px-6 py-2.5 bg-gray-200 text-white/80 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
             Fechar
           </button>

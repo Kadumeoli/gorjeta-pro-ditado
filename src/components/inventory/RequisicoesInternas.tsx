@@ -645,7 +645,7 @@ export default function RequisicoesInternas() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Requisições Internas</h2>
+          <h2 className="text-2xl font-bold text-white">Requisições Internas</h2>
           <p className="text-sm text-gray-600 mt-1">Gerencie requisições de transferência entre estoques</p>
         </div>
         <button
@@ -713,13 +713,13 @@ export default function RequisicoesInternas() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {requisicoesFiltradas.map((req) => (
                   <tr key={req.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {req.numero_requisicao}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(req.data_requisicao).toLocaleDateString('pt-BR')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {req.funcionario_nome}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -742,7 +742,7 @@ export default function RequisicoesInternas() {
                         <button
                           onClick={() => visualizarDetalhes(req.id)}
                           disabled={loading}
-                          className="text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-gray-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Ver Detalhes"
                         >
                           <Eye className="h-5 w-5" />
@@ -780,7 +780,7 @@ export default function RequisicoesInternas() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-white">
                 Detalhes da Requisição {requisicaoDetalhes.numero_requisicao}
               </h3>
               <button
@@ -799,7 +799,7 @@ export default function RequisicoesInternas() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Data da Requisição</label>
-                  <p className="text-gray-900">
+                  <p className="text-white">
                     {new Date(requisicaoDetalhes.data_requisicao).toLocaleDateString('pt-BR')}
                   </p>
                 </div>
@@ -809,19 +809,19 @@ export default function RequisicoesInternas() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Funcionário</label>
-                  <p className="text-gray-900">{requisicaoDetalhes.funcionario_nome}</p>
+                  <p className="text-white">{requisicaoDetalhes.funcionario_nome}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Setor</label>
-                  <p className="text-gray-900">{requisicaoDetalhes.setor}</p>
+                  <p className="text-white">{requisicaoDetalhes.setor}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Estoque de Origem</label>
-                  <p className="text-gray-900">{requisicaoDetalhes.estoque_origem?.nome || '-'}</p>
+                  <p className="text-white">{requisicaoDetalhes.estoque_origem?.nome || '-'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Estoque de Destino</label>
-                  <p className="text-gray-900">{requisicaoDetalhes.estoque_destino?.nome || '-'}</p>
+                  <p className="text-white">{requisicaoDetalhes.estoque_destino?.nome || '-'}</p>
                 </div>
               </div>
 
@@ -829,13 +829,13 @@ export default function RequisicoesInternas() {
               {requisicaoDetalhes.observacoes && (
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Observações</label>
-                  <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">{requisicaoDetalhes.observacoes}</p>
+                  <p className="text-white/80 bg-gray-50 p-3 rounded-lg">{requisicaoDetalhes.observacoes}</p>
                 </div>
               )}
 
               {/* Itens Requisitados */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                <h4 className="text-lg font-semibold text-white mb-3">
                   Itens Requisitados ({requisicaoDetalhes.itens?.length || 0})
                 </h4>
                 {requisicaoDetalhes.itens && requisicaoDetalhes.itens.length > 0 ? (
@@ -852,13 +852,13 @@ export default function RequisicoesInternas() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {requisicaoDetalhes.itens.map((item, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            <td className="px-4 py-3 text-sm text-white">
                               {item.itens_estoque?.nome || 'Item não identificado'}
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-500">
                               {item.itens_estoque?.unidade_medida || '-'}
                             </td>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                            <td className="px-4 py-3 text-sm font-medium text-white">
                               {item.quantidade_solicitada}
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-500">
@@ -882,7 +882,7 @@ export default function RequisicoesInternas() {
                   setMostrarDetalhes(false);
                   setRequisicaoDetalhes(null);
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 text-white/80 rounded-lg hover:bg-gray-50"
               >
                 Fechar
               </button>
@@ -913,7 +913,7 @@ export default function RequisicoesInternas() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
-              <h3 className="text-xl font-bold text-gray-900">Nova Requisição Interna</h3>
+              <h3 className="text-xl font-bold text-white">Nova Requisição Interna</h3>
               <button
                 onClick={() => {
                   setMostrarFormulario(false);
@@ -929,7 +929,7 @@ export default function RequisicoesInternas() {
               {/* Dados do Solicitante */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Nome do Funcionário *
                   </label>
                   <input
@@ -941,7 +941,7 @@ export default function RequisicoesInternas() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Setor *
                   </label>
                   <input
@@ -982,7 +982,7 @@ export default function RequisicoesInternas() {
 
               {/* Adicionar Item */}
               <div className="border-t border-gray-200 pt-4">
-                <h4 className="font-medium text-gray-900 mb-3">Adicionar Itens</h4>
+                <h4 className="font-medium text-white mb-3">Adicionar Itens</h4>
                 {!estoqueOrigemId && (
                   <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
                     Selecione o estoque de origem para ver os itens disponíveis
@@ -1061,9 +1061,9 @@ export default function RequisicoesInternas() {
                     <tbody className="divide-y divide-gray-200">
                       {itens.map((item, index) => (
                         <tr key={index}>
-                          <td className="px-4 py-2 text-sm text-gray-900">{item.itens_estoque?.nome}</td>
+                          <td className="px-4 py-2 text-sm text-white">{item.itens_estoque?.nome}</td>
                           <td className="px-4 py-2 text-sm text-gray-500">{item.itens_estoque?.unidade_medida}</td>
-                          <td className="px-4 py-2 text-sm text-gray-900">{item.quantidade_solicitada}</td>
+                          <td className="px-4 py-2 text-sm text-white">{item.quantidade_solicitada}</td>
                           <td className="px-4 py-2 text-sm text-gray-500">{item.observacao || '-'}</td>
                           <td className="px-4 py-2">
                             <button
@@ -1082,7 +1082,7 @@ export default function RequisicoesInternas() {
 
               {/* Observações */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações Gerais
                 </label>
                 <textarea
@@ -1102,7 +1102,7 @@ export default function RequisicoesInternas() {
                   setMostrarFormulario(false);
                   limparFormulario();
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 text-white/80 rounded-lg hover:bg-gray-50"
                 disabled={loading}
               >
                 Cancelar

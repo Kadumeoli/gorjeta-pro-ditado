@@ -939,13 +939,13 @@ const DREReport: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">
+        <h3 className="text-lg font-medium text-white">
           Demonstrativo de Resultado do Exercício (DRE)
         </h3>
         <div className="flex space-x-2">
           <button
             onClick={exportDRE}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center transition-colors"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50 flex items-center transition-colors"
           >
             <Download className="w-4 h-4 mr-2" />
             Excel Completo
@@ -991,7 +991,7 @@ const DREReport: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-gray-900">DRE Sintético</div>
+                      <div className="font-semibold text-white">DRE Sintético</div>
                       <div className="text-xs text-gray-500 mt-0.5">
                         Visão resumida com apenas categorias principais
                       </div>
@@ -1014,7 +1014,7 @@ const DREReport: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-gray-900">DRE Analítico</div>
+                      <div className="font-semibold text-white">DRE Analítico</div>
                       <div className="text-xs text-gray-500 mt-0.5">
                         Categorias com subcategorias e totalizações
                       </div>
@@ -1037,7 +1037,7 @@ const DREReport: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-gray-900">DRE Detalhado</div>
+                      <div className="font-semibold text-white">DRE Detalhado</div>
                       <div className="text-xs text-gray-500 mt-0.5">
                         Relatório completo com todos os lançamentos por categoria
                       </div>
@@ -1060,7 +1060,7 @@ const DREReport: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Ano
             </label>
             <select
@@ -1075,7 +1075,7 @@ const DREReport: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Mês
             </label>
             <select
@@ -1093,7 +1093,7 @@ const DREReport: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Centro de Custo
             </label>
             <select
@@ -1181,7 +1181,7 @@ const DREReport: React.FC = () => {
       ) : (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6">
-            <h4 className="text-lg font-medium text-gray-900 mb-4">
+            <h4 className="text-lg font-medium text-white mb-4">
               Demonstrativo Detalhado
             </h4>
             
@@ -1200,7 +1200,7 @@ const DREReport: React.FC = () => {
                       return (
                         <div key={group.categoria_raiz_id} className="mb-4">
                           <div className="flex justify-between items-center py-2 px-4 bg-green-50 border-l-4 border-green-500">
-                            <span className="font-bold text-gray-900 uppercase text-sm">
+                            <span className="font-bold text-white uppercase text-sm">
                               {group.categoria_raiz_nome}
                             </span>
                             <span className="font-bold text-green-700 text-lg">
@@ -1211,7 +1211,7 @@ const DREReport: React.FC = () => {
                             <div className="ml-4 mt-1">
                               {subcategoriasConsolidadas.map(sub => (
                                 <div key={sub.categoria_id} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
-                                  <span className="text-gray-700 text-sm">
+                                  <span className="text-white/80 text-sm">
                                     ↳ {sub.categoria_nome}
                                   </span>
                                   <div className="flex items-center gap-4">
@@ -1248,7 +1248,7 @@ const DREReport: React.FC = () => {
                       return (
                         <div key={group.categoria_raiz_id} className="mb-4">
                           <div className="flex justify-between items-center py-2 px-4 bg-red-50 border-l-4 border-red-500">
-                            <span className="font-bold text-gray-900 uppercase text-sm">
+                            <span className="font-bold text-white uppercase text-sm">
                               {group.categoria_raiz_nome}
                             </span>
                             <span className="font-bold text-red-700 text-lg">
@@ -1259,7 +1259,7 @@ const DREReport: React.FC = () => {
                             <div className="ml-4 mt-1">
                               {subcategoriasConsolidadas.map(sub => (
                                 <div key={sub.categoria_id} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
-                                  <span className="text-gray-700 text-sm">
+                                  <span className="text-white/80 text-sm">
                                     ↳ {sub.categoria_nome}
                                   </span>
                                   <div className="flex items-center gap-4">
@@ -1299,7 +1299,7 @@ const DREReport: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum dado encontrado</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhum dado encontrado</h3>
                 <p className="text-gray-500">
                   Não há dados financeiros para o período selecionado.
                 </p>
@@ -1315,7 +1315,7 @@ const DREReport: React.FC = () => {
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="flex justify-between items-center p-6 border-b border-gray-200">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Classificar Lançamentos</h3>
+                <h3 className="text-xl font-bold text-white">Classificar Lançamentos</h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Classifique os lançamentos sem categoria para corrigir o DRE
                 </p>

@@ -437,7 +437,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
           {etapa === 'upload' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Arquivo de Vendas (XLS ou PDF)</label>
+                <label className="block text-sm font-medium text-white/80 mb-2">Arquivo de Vendas (XLS ou PDF)</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
                   <input
                     type="file"
@@ -478,7 +478,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
           {etapa === 'processando' && (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-lg font-medium text-gray-900">Processando com IA...</p>
+              <p className="text-lg font-medium text-white">Processando com IA...</p>
               <p className="text-sm text-gray-600 mt-2">Mapeando produtos e sugerindo estoques</p>
             </div>
           )}
@@ -489,7 +489,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{itens.length}</p>
+                    <p className="text-2xl font-bold text-white">{itens.length}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Mapeados</p>
@@ -510,7 +510,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
                   onChange={(e) => setSalvarMapeamentos(e.target.checked)}
                   className="w-4 h-4 text-blue-600 rounded"
                 />
-                <label htmlFor="salvar-map" className="text-sm text-gray-700">
+                <label htmlFor="salvar-map" className="text-sm text-white/80">
                   Salvar aprendizado (IA lembrará qual estoque usar)
                 </label>
               </div>
@@ -531,7 +531,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
                     <div key={item.id} className={`border rounded-lg p-4 ${ok ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
                       <div className="flex justify-between gap-4">
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900">{item.nome_produto_externo}</p>
+                          <p className="font-medium text-white">{item.nome_produto_externo}</p>
                           <p className="text-sm text-gray-600">Qtd: {item.quantidade}</p>
 
                           {editandoId === item.id ? (
@@ -543,7 +543,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
                                   className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
                                     tipoEdicao === 'item'
                                       ? 'bg-blue-600 text-white'
-                                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                                      : 'bg-white text-white/80 hover:bg-gray-50'
                                   }`}
                                 >
                                   Item Simples
@@ -553,7 +553,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
                                   className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
                                     tipoEdicao === 'ficha_tecnica'
                                       ? 'bg-blue-600 text-white'
-                                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                                      : 'bg-white text-white/80 hover:bg-gray-50'
                                   }`}
                                 >
                                   Ficha Técnica
@@ -660,7 +660,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
           {etapa === 'finalizando' && (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-lg font-medium text-gray-900">Criando saídas...</p>
+              <p className="text-lg font-medium text-white">Criando saídas...</p>
             </div>
           )}
 
@@ -669,7 +669,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
-              <p className="text-xl font-semibold text-gray-900">Concluído!</p>
+              <p className="text-xl font-semibold text-white">Concluído!</p>
               <p className="text-sm text-gray-600 mt-2">{resultado.total_sucesso} saídas criadas</p>
             </div>
           )}
@@ -679,7 +679,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
           <div className="flex justify-end gap-3">
             {etapa === 'upload' && (
               <>
-                <button onClick={handleFechar} className="px-6 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">Cancelar</button>
+                <button onClick={handleFechar} className="px-6 py-2 border rounded-lg text-white/80 hover:bg-gray-100">Cancelar</button>
                 <button onClick={handleUpload} disabled={!arquivo || loading} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
                   <Upload className="w-5 h-5" />
                   Processar
@@ -689,7 +689,7 @@ Verifique as movimentações de estoque para confirmar as baixas.
 
             {etapa === 'revisao' && (
               <>
-                <button onClick={handleFechar} className="px-6 py-2 border rounded-lg text-gray-700 hover:bg-gray-100">Cancelar</button>
+                <button onClick={handleFechar} className="px-6 py-2 border rounded-lg text-white/80 hover:bg-gray-100">Cancelar</button>
                 <button onClick={handleConfirmar} disabled={itensMapeados === 0 || loading} className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
                   Confirmar ({itensMapeados})
                 </button>

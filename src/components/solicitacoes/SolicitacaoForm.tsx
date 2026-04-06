@@ -306,7 +306,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[95vh] overflow-hidden">
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             {solicitacao ? 'Editar Solicitação' : 'Nova Solicitação'}
           </h3>
           <button
@@ -350,13 +350,13 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
           {/* Step 1: Informações Básicas */}
           {step === 1 && (
             <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">
+              <h4 className="text-lg font-medium text-white mb-4">
                 Informações Básicas da Solicitação
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Tipo de Solicitação *
                   </label>
                   <select
@@ -375,7 +375,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Título *
                   </label>
                   <input
@@ -389,7 +389,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Prioridade *
                   </label>
                   <select
@@ -407,7 +407,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Setor Solicitante *
                   </label>
                   <select
@@ -425,7 +425,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Descrição Detalhada *
                   </label>
                   <textarea
@@ -439,7 +439,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Local do Serviço
                   </label>
                   <input
@@ -452,7 +452,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Equipamento Afetado
                   </label>
                   <input
@@ -465,7 +465,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data Limite
                   </label>
                   <input
@@ -482,7 +482,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Valor Estimado
                   </label>
                   <div className="relative">
@@ -505,7 +505,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>
@@ -523,13 +523,13 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
           {/* Step 2: Detalhes Técnicos */}
           {step === 2 && (
             <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">
+              <h4 className="text-lg font-medium text-white mb-4">
                 Detalhes Técnicos e Fornecedor
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Detalhes Técnicos
                   </label>
                   <textarea
@@ -542,7 +542,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Fornecedor Sugerido
                   </label>
                   <input
@@ -555,7 +555,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Contato do Fornecedor
                   </label>
                   <input
@@ -568,7 +568,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Solicitante
                   </label>
                   <input
@@ -581,7 +581,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Email do Solicitante
                   </label>
                   <input
@@ -596,7 +596,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
               <div className="flex justify-between">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Voltar
                 </button>
@@ -614,7 +614,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
           {step === 3 && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <h4 className="text-lg font-medium text-gray-900">
+                <h4 className="text-lg font-medium text-white">
                   {isAquisicao() ? 'Itens a Serem Adquiridos' : 'Finalizar Solicitação'}
                 </h4>
                 {isAquisicao() && (
@@ -635,7 +635,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                       {formData.itens.map((item, index) => (
                         <div key={index} className="p-4 border border-gray-200 rounded-lg">
                           <div className="flex justify-between items-start mb-3">
-                            <h5 className="font-medium text-gray-900">Item {index + 1}</h5>
+                            <h5 className="font-medium text-white">Item {index + 1}</h5>
                             <button
                               onClick={() => removerItem(index)}
                               className="text-red-600 hover:text-red-800"
@@ -784,7 +784,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
               ) : (
                 <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Solicitação Pronta!</h3>
+                  <h3 className="text-lg font-medium text-white mb-2">Solicitação Pronta!</h3>
                   <p className="text-gray-500 mb-4">
                     Sua solicitação está pronta para ser enviada.
                   </p>
@@ -794,7 +794,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
               <div className="flex justify-between">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Voltar
                 </button>
@@ -802,7 +802,7 @@ const SolicitacaoForm: React.FC<SolicitacaoFormProps> = ({
                   <button
                     onClick={() => handleSave(true)}
                     disabled={loading}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50 disabled:opacity-50"
                   >
                     {loading ? 'Salvando...' : 'Salvar Rascunho'}
                   </button>

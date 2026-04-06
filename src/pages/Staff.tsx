@@ -244,7 +244,7 @@ const Staff: React.FC = () => {
                       `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                       ${selected
                         ? 'bg-[#7D1F2C] text-white shadow'
-                        : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                        : 'text-white/80 hover:bg-white hover:text-white'
                       }`
                     }
                   >

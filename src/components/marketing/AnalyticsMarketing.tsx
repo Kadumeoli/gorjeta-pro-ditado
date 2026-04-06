@@ -153,7 +153,7 @@ const AnalyticsMarketing: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-900">Analytics de Marketing</h2>
+        <h2 className="text-lg font-bold text-white">Analytics de Marketing</h2>
         <div className="flex items-center gap-3">
           {canaisUnicos.length > 0 && (
             <select
@@ -178,8 +178,8 @@ const AnalyticsMarketing: React.FC = () => {
                 onClick={() => setPeriodo(p.value)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   periodo === p.value
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-white shadow-sm'
+                    : 'text-gray-600 hover:text-white'
                 }`}
               >
                 {p.label}
@@ -206,7 +206,7 @@ const AnalyticsMarketing: React.FC = () => {
               </div>
               <span className="text-xs text-gray-500">{kpi.label}</span>
             </div>
-            <p className="text-lg font-bold text-gray-900">{kpi.value}</p>
+            <p className="text-lg font-bold text-white">{kpi.value}</p>
           </div>
         ))}
       </div>
@@ -218,7 +218,7 @@ const AnalyticsMarketing: React.FC = () => {
       ) : metricas.length === 0 ? (
         <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
           <BarChart3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Nenhuma métrica registrada</h3>
+          <h3 className="text-lg font-semibold text-white/80 mb-2">Nenhuma métrica registrada</h3>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             As métricas serão exibidas aqui quando campanhas estiverem ativas e dados forem sincronizados
             das plataformas de anúncios.
@@ -227,7 +227,7 @@ const AnalyticsMarketing: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Impressões e Cliques por Dia</h3>
+            <h3 className="text-sm font-semibold text-white/80 mb-4">Impressões e Cliques por Dia</h3>
             <ResponsiveContainer width="100%" height={280}>
               <AreaChart data={dadosPorDia}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -263,7 +263,7 @@ const AnalyticsMarketing: React.FC = () => {
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Gasto vs Receita por Dia</h3>
+            <h3 className="text-sm font-semibold text-white/80 mb-4">Gasto vs Receita por Dia</h3>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={dadosPorDia}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -286,7 +286,7 @@ const AnalyticsMarketing: React.FC = () => {
 
           {dadosPorCanal.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-4">Distribuição por Canal</h3>
+              <h3 className="text-sm font-semibold text-white/80 mb-4">Distribuição por Canal</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
@@ -309,7 +309,7 @@ const AnalyticsMarketing: React.FC = () => {
           )}
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Performance por Campanha</h3>
+            <h3 className="text-sm font-semibold text-white/80 mb-4">Performance por Campanha</h3>
             <div className="space-y-3 max-h-[280px] overflow-y-auto">
               {campanhas
                 .filter(c => c.total_impressoes > 0 || c.total_gasto > 0)
@@ -323,7 +323,7 @@ const AnalyticsMarketing: React.FC = () => {
                         {idx + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{c.nome}</p>
+                        <p className="text-sm font-medium text-white truncate">{c.nome}</p>
                         <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
                           <span>{formatNumber(c.total_impressoes)} imp.</span>
                           <span>{formatNumber(c.total_cliques)} cliques</span>
@@ -331,7 +331,7 @@ const AnalyticsMarketing: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-white">
                           R$ {Number(c.total_gasto).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </p>
                       </div>

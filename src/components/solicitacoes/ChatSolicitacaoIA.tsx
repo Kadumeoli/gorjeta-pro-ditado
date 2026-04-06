@@ -135,7 +135,7 @@ export const ChatSolicitacaoIA: React.FC<ChatSolicitacaoIAProps> = ({
                 className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-800 shadow-sm border border-gray-200'
+                    : 'bg-white text-white/90 shadow-sm border border-gray-200'
                 }`}
               >
                 {message.role === 'assistant' && (

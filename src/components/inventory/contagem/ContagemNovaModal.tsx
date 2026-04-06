@@ -60,7 +60,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
               <ClipboardCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Nova Contagem</h3>
+              <h3 className="text-lg font-bold text-white">Nova Contagem</h3>
               <p className="text-xs text-gray-500">Preencha os dados para iniciar</p>
             </div>
           </div>
@@ -74,7 +74,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Estoque</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Estoque</label>
             {loadingEstoques ? (
               <div className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-400">
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -103,7 +103,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Responsavel</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Responsavel</label>
             <input
               type="text"
               value={responsavel}
@@ -115,7 +115,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Observacoes</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Observacoes</label>
             <textarea
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
@@ -133,7 +133,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
               className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
             />
             <div>
-              <p className="text-sm font-medium text-gray-700">Incluir itens sem saldo</p>
+              <p className="text-sm font-medium text-white/80">Incluir itens sem saldo</p>
               <p className="text-xs text-gray-500">
                 Carrega todos os itens do estoque, inclusive os com saldo zero
               </p>
@@ -150,7 +150,7 @@ const ContagemNovaModal: React.FC<Props> = ({ onClose, onCreated }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2.5 border border-gray-200 text-white/80 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
             >
               Cancelar
             </button>

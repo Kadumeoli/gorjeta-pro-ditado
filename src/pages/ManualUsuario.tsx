@@ -224,7 +224,7 @@ const ManualUsuario: React.FC = () => {
               <BookOpen className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Manual do Usuário</h1>
+              <h1 className="text-3xl font-bold text-white">Manual do Usuário</h1>
               <p className="text-gray-600">Guia completo de uso do Sistema Ditado Popular</p>
             </div>
           </div>
@@ -247,7 +247,7 @@ const ManualUsuario: React.FC = () => {
           {/* Sidebar - Table of Contents */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-4 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
                 Conteúdo
               </h3>
@@ -272,7 +272,7 @@ const ManualUsuario: React.FC = () => {
                       >
                         <div className="flex items-center gap-2">
                           <Icon className="h-5 w-5 text-[#7D1F2C]" />
-                          <span className="text-sm font-medium text-gray-700">
+                          <span className="text-sm font-medium text-white/80">
                             {categoria.nome}
                           </span>
                         </div>
@@ -322,7 +322,7 @@ const ManualUsuario: React.FC = () => {
                 <div>
                   {/* Header do Tópico */}
                   <div className="mb-6 pb-4 border-b border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-2xl font-bold text-white mb-2">
                       {topicoSelecionado.titulo}
                     </h2>
                     {topicoSelecionado.tags.length > 0 && (
@@ -359,7 +359,7 @@ const ManualUsuario: React.FC = () => {
               ) : (
                 <div className="text-center py-12">
                   <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-white mb-2">
                     Selecione um tópico
                   </h3>
                   <p className="text-gray-500">
@@ -385,7 +385,7 @@ const ManualUsuario: React.FC = () => {
                             <div className={`inline-flex p-2 rounded-lg bg-gradient-to-r ${gradient} mb-2`}>
                               <Icon className="h-5 w-5 text-white" />
                             </div>
-                            <h4 className="font-semibold text-gray-900 mb-1">{cat.nome}</h4>
+                            <h4 className="font-semibold text-white mb-1">{cat.nome}</h4>
                             <p className="text-sm text-gray-600">{cat.descricao}</p>
                           </div>
                         );

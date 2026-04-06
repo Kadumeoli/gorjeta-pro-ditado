@@ -142,7 +142,7 @@ export default function ContagemMobile() {
       <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center">
         <AlertCircle className="w-8 h-8 text-red-500" />
       </div>
-      <h1 className="text-lg font-bold text-gray-900">Link inválido</h1>
+      <h1 className="text-lg font-bold text-white">Link inválido</h1>
       <p className="text-sm text-gray-500">{erro}</p>
     </div>
   );
@@ -222,7 +222,7 @@ export default function ContagemMobile() {
         {visiveis.length === 0 && (
           <div className="py-20 text-center space-y-2">
             <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
-            <p className="text-base font-semibold text-gray-700">
+            <p className="text-base font-semibold text-white/80">
               {apenasPendentes ? 'Todos contados neste grupo! 🎉' : 'Nenhum item aqui'}
             </p>
           </div>
@@ -251,7 +251,7 @@ export default function ContagemMobile() {
                 isOk ? 'bg-green-50/60' : isDif ? 'bg-orange-50/60' : ''
               }`}>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-gray-900 text-sm leading-snug">{item.item_nome}</p>
+                  <p className="font-bold text-white text-sm leading-snug">{item.item_nome}</p>
                   {item.item_codigo && (
                     <p className="text-[11px] text-gray-400 mt-0.5">{item.item_codigo}</p>
                   )}
@@ -293,7 +293,7 @@ export default function ContagemMobile() {
                         hasErr ? 'border-red-300 bg-red-50 text-red-700 focus:ring-red-200' :
                         isOk   ? 'border-green-300 bg-green-50 text-green-800 focus:ring-green-200' :
                         isDif  ? 'border-orange-300 bg-orange-50 text-orange-800 focus:ring-orange-200' :
-                                 'border-gray-200 bg-gray-50 text-gray-900 focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]'
+                                 'border-gray-200 bg-gray-50 text-white focus:ring-[#7D1F2C]/20 focus:border-[#7D1F2C]'
                       }`}
                     />
                   </div>

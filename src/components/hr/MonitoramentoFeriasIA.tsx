@@ -180,7 +180,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
             <Calendar className="w-8 h-8 text-blue-600" />
             Monitoramento de Férias com IA
           </h2>
@@ -191,7 +191,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={fetchAlertas}
-            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-slate-100 text-white/80 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             Atualizar
@@ -222,7 +222,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-600 text-sm">Total de Alertas</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">{estatisticas.total}</p>
+              <p className="text-3xl font-bold text-white/90 mt-1">{estatisticas.total}</p>
             </div>
             <Users className="w-8 h-8 text-blue-600" />
           </div>
@@ -262,14 +262,14 @@ const MonitoramentoFeriasIA: React.FC = () => {
       {/* Análise da IA */}
       {analiseIA && (
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200">
-          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-bold text-white/90 flex items-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-purple-600" />
             Análise da IA
           </h3>
 
           {analiseIA.resumo_geral && (
             <div className="mb-4">
-              <p className="text-slate-700 whitespace-pre-wrap">{analiseIA.resumo_geral}</p>
+              <p className="text-white/80 whitespace-pre-wrap">{analiseIA.resumo_geral}</p>
             </div>
           )}
 
@@ -277,7 +277,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
             <div className="grid grid-cols-3 gap-4 mt-4">
               <div className="bg-white p-4 rounded-lg">
                 <p className="text-sm text-slate-600">Total Analisado</p>
-                <p className="text-2xl font-bold text-slate-800">{analiseIA.estatisticas.total_alertas}</p>
+                <p className="text-2xl font-bold text-white/90">{analiseIA.estatisticas.total_alertas}</p>
               </div>
               <div className="bg-white p-4 rounded-lg">
                 <p className="text-sm text-slate-600">Casos Urgentes</p>
@@ -299,7 +299,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
           className={`px-4 py-2 rounded-lg transition-colors ${
             filtroprioridade === 'all'
               ? 'bg-blue-600 text-white'
-              : 'bg-white text-slate-700 hover:bg-slate-100'
+              : 'bg-white text-white/80 hover:bg-slate-100'
           }`}
         >
           Todos
@@ -309,7 +309,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
           className={`px-4 py-2 rounded-lg transition-colors ${
             filtroprioridade === 'urgente'
               ? 'bg-red-600 text-white'
-              : 'bg-white text-slate-700 hover:bg-slate-100'
+              : 'bg-white text-white/80 hover:bg-slate-100'
           }`}
         >
           Urgentes ({estatisticas.urgentes})
@@ -319,7 +319,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
           className={`px-4 py-2 rounded-lg transition-colors ${
             filtroprioridade === 'alta'
               ? 'bg-orange-600 text-white'
-              : 'bg-white text-slate-700 hover:bg-slate-100'
+              : 'bg-white text-white/80 hover:bg-slate-100'
           }`}
         >
           Alta ({estatisticas.altas})
@@ -329,7 +329,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
           className={`px-4 py-2 rounded-lg transition-colors ${
             filtroprioridade === 'media'
               ? 'bg-yellow-600 text-white'
-              : 'bg-white text-slate-700 hover:bg-slate-100'
+              : 'bg-white text-white/80 hover:bg-slate-100'
           }`}
         >
           Média ({estatisticas.medias})
@@ -341,7 +341,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
         {alertasFiltrados.length === 0 ? (
           <div className="bg-white p-12 rounded-lg text-center">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-slate-800 mb-2">
+            <h3 className="text-xl font-bold text-white/90 mb-2">
               Nenhum alerta pendente!
             </h3>
             <p className="text-slate-600">
@@ -366,34 +366,34 @@ const MonitoramentoFeriasIA: React.FC = () => {
                       {getPrioridadeIcon(alerta.prioridade)}
                       {alerta.prioridade.toUpperCase()}
                     </span>
-                    <h3 className="text-lg font-bold text-slate-800">{alerta.nome_completo}</h3>
+                    <h3 className="text-lg font-bold text-white/90">{alerta.nome_completo}</h3>
                     <span className="text-sm text-slate-600">({alerta.funcao_personalizada})</span>
                   </div>
-                  <p className="text-slate-700 mb-3">{alerta.mensagem}</p>
+                  <p className="text-white/80 mb-3">{alerta.mensagem}</p>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
                     <div>
                       <p className="text-slate-500">Período Aquisitivo</p>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-white/90">
                         {dayjs(alerta.periodo_aquisitivo_inicio).format('DD/MM/YY')} - {dayjs(alerta.periodo_aquisitivo_fim).format('DD/MM/YY')}
                       </p>
                     </div>
                     <div>
                       <p className="text-slate-500">Vencimento Gozo</p>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-white/90">
                         {dayjs(alerta.periodo_concessivo_fim).format('DD/MM/YYYY')}
                       </p>
                     </div>
                     <div>
                       <p className="text-slate-500">Dias Restantes</p>
-                      <p className="font-semibold text-slate-800">{alerta.dias_restantes} dias</p>
+                      <p className="font-semibold text-white/90">{alerta.dias_restantes} dias</p>
                     </div>
                     <div>
                       <p className="text-slate-500">Dias até Vencimento</p>
                       <p className={`font-semibold ${
                         alerta.dias_ate_vencimento < 0 ? 'text-red-600' :
                         alerta.dias_ate_vencimento <= 30 ? 'text-orange-600' :
-                        'text-slate-800'
+                        'text-white/90'
                       }`}>
                         {alerta.dias_ate_vencimento < 0
                           ? `Vencido há ${Math.abs(alerta.dias_ate_vencimento)} dias`
@@ -409,7 +409,7 @@ const MonitoramentoFeriasIA: React.FC = () => {
                         <Sparkles className="w-4 h-4" />
                         Análise da IA
                       </p>
-                      <div className="text-sm text-slate-700 space-y-2">
+                      <div className="text-sm text-white/80 space-y-2">
                         {alerta.analise_ia.analise_completa?.situacao && (
                           <p><strong>Situação:</strong> {alerta.analise_ia.analise_completa.situacao}</p>
                         )}

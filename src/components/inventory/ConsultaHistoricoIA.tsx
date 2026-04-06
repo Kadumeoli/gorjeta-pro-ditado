@@ -107,7 +107,7 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Input de Pergunta */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-white/80">
               Faça sua pergunta
             </label>
             <div className="flex gap-2">
@@ -143,13 +143,13 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
           {/* Exemplos */}
           {!resposta && !loading && (
             <div className="space-y-3">
-              <p className="text-sm font-medium text-gray-700">Exemplos de perguntas:</p>
+              <p className="text-sm font-medium text-white/80">Exemplos de perguntas:</p>
               <div className="grid grid-cols-1 gap-2">
                 {exemplos.map((exemplo, index) => (
                   <button
                     key={index}
                     onClick={() => handleExemploClick(exemplo)}
-                    className="text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition-colors flex items-center gap-2"
+                    className="text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-white/80 transition-colors flex items-center gap-2"
                   >
                     <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     {exemplo}
@@ -177,7 +177,7 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-indigo-900 mb-2">Resposta da IA</h4>
-                    <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-line">
+                    <div className="prose prose-sm max-w-none text-white/80 whitespace-pre-line">
                       {resposta.resposta}
                     </div>
                   </div>
@@ -220,7 +220,7 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
               {/* Itens Encontrados */}
               {resposta.itens_encontrados && resposta.itens_encontrados.length > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <h5 className="font-semibold text-gray-900 mb-3">Itens Identificados:</h5>
+                  <h5 className="font-semibold text-white mb-3">Itens Identificados:</h5>
                   <div className="space-y-2">
                     {resposta.itens_encontrados.map((item: any, index: number) => (
                       <div
@@ -228,7 +228,7 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
                         className="flex items-center justify-between bg-white rounded-lg p-3"
                       >
                         <div>
-                          <p className="font-medium text-gray-900">{item.nome}</p>
+                          <p className="font-medium text-white">{item.nome}</p>
                           {item.codigo && (
                             <p className="text-xs text-gray-500">Código: {item.codigo}</p>
                           )}
@@ -253,7 +253,7 @@ const ConsultaHistoricoIA: React.FC<ConsultaHistoricoIAProps> = ({ isOpen, onClo
           <div className="flex justify-end">
             <button
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100 transition-colors"
             >
               Fechar
             </button>

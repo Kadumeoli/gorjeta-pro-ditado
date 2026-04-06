@@ -120,7 +120,7 @@ const ModalRevisaoFornecedores: React.FC<ModalRevisaoFornecedoresProps> = ({
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 text-lg">
+                        <h4 className="font-semibold text-white text-lg">
                           {pendente.lancamento.descricao}
                         </h4>
                         {pendente.nome_buscado && (
@@ -151,7 +151,7 @@ const ModalRevisaoFornecedores: React.FC<ModalRevisaoFornecedoresProps> = ({
                   {/* Sugestões */}
                   {pendente.sugestoes.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-white/80">
                         Selecione um fornecedor existente:
                       </p>
                       <div className="grid grid-cols-1 gap-2">
@@ -170,7 +170,7 @@ const ModalRevisaoFornecedores: React.FC<ModalRevisaoFornecedoresProps> = ({
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <User className="w-4 h-4 text-gray-600" />
-                                <span className="font-medium text-gray-900">{sugestao.nome}</span>
+                                <span className="font-medium text-white">{sugestao.nome}</span>
                                 {sugestao.tipo && (
                                   <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded">
                                     {sugestao.tipo}
@@ -191,7 +191,7 @@ const ModalRevisaoFornecedores: React.FC<ModalRevisaoFornecedoresProps> = ({
 
                   {/* Criar Novo Fornecedor */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">
+                    <p className="text-sm font-medium text-white/80">
                       Ou criar novo fornecedor:
                     </p>
                     <div className="flex gap-2">
@@ -258,7 +258,7 @@ const ModalRevisaoFornecedores: React.FC<ModalRevisaoFornecedoresProps> = ({
             <div className="flex gap-3">
               <button
                 onClick={onCancelar}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100 transition-colors"
               >
                 Cancelar
               </button>

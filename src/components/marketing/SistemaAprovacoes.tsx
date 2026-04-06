@@ -272,7 +272,7 @@ const SistemaAprovacoes: React.FC = () => {
                     >
                       {aprovacao.status}
                     </span>
-                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-white/80">
                       {tipoLabels[aprovacao.tipo]}
                     </span>
                     {aprovacao.campanha?.prioridade && (
@@ -282,7 +282,7 @@ const SistemaAprovacoes: React.FC = () => {
                     )}
                   </div>
 
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-white mb-2">
                     {aprovacao.tipo === 'campanha' && aprovacao.campanha?.nome}
                     {aprovacao.tipo === 'ativo' && aprovacao.ativo?.nome}
                     {aprovacao.tipo === 'brief' && 'Brief de Campanha'}
@@ -299,7 +299,7 @@ const SistemaAprovacoes: React.FC = () => {
                   {aprovacao.comentario && (
                     <div className="flex items-start gap-2 mt-3 p-3 bg-gray-50 rounded-lg">
                       <MessageSquare className="w-4 h-4 text-gray-500 mt-0.5" />
-                      <p className="text-sm text-gray-700">{aprovacao.comentario}</p>
+                      <p className="text-sm text-white/80">{aprovacao.comentario}</p>
                     </div>
                   )}
 
@@ -340,15 +340,15 @@ const SistemaAprovacoes: React.FC = () => {
       {selectedAprovacao && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
+            <h3 className="text-xl font-bold text-white mb-4">
               {selectedAprovacao.status === 'pendente' ? 'Aprovar/Rejeitar' : 'Detalhes da Aprovação'}
             </h3>
 
             <div className="mb-4">
-              <p className="text-sm text-gray-700 mb-2">
+              <p className="text-sm text-white/80 mb-2">
                 <strong>Tipo:</strong> {tipoLabels[selectedAprovacao.tipo]}
               </p>
-              <p className="text-sm text-gray-700 mb-2">
+              <p className="text-sm text-white/80 mb-2">
                 <strong>Item:</strong>{' '}
                 {selectedAprovacao.tipo === 'campanha' && selectedAprovacao.campanha?.nome}
                 {selectedAprovacao.tipo === 'ativo' && selectedAprovacao.ativo?.nome}
@@ -357,7 +357,7 @@ const SistemaAprovacoes: React.FC = () => {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Comentário {selectedAprovacao.status === 'pendente' && '(opcional para aprovar, obrigatório para rejeitar)'}
               </label>
               <textarea

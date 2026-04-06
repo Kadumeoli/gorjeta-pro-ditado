@@ -270,14 +270,14 @@ const HistoricoImportacoes: React.FC<HistoricoImportacoesProps> = ({ onClose, on
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
                           <FileText className="w-5 h-5 text-gray-400" />
-                          <h4 className="font-semibold text-gray-900">{imp.arquivo_nome}</h4>
+                          <h4 className="font-semibold text-white">{imp.arquivo_nome}</h4>
                           {getStatusBadge(imp.status || 'pendente')}
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-3">
                           <div>
                             <p className="text-xs text-gray-500 mb-1">Data de Importação</p>
-                            <p className="text-sm font-medium text-gray-900 flex items-center">
+                            <p className="text-sm font-medium text-white flex items-center">
                               <Calendar className="w-4 h-4 mr-1 text-gray-400" />
                               {dayjs(imp.criado_em).format('DD/MM/YYYY HH:mm')}
                             </p>
@@ -285,7 +285,7 @@ const HistoricoImportacoes: React.FC<HistoricoImportacoesProps> = ({ onClose, on
 
                           <div>
                             <p className="text-xs text-gray-500 mb-1">Total de Itens</p>
-                            <p className="text-sm font-medium text-gray-900 flex items-center">
+                            <p className="text-sm font-medium text-white flex items-center">
                               <Package className="w-4 h-4 mr-1 text-gray-400" />
                               {imp.total_linhas || 0}
                             </p>
@@ -303,7 +303,7 @@ const HistoricoImportacoes: React.FC<HistoricoImportacoesProps> = ({ onClose, on
 
                           <div>
                             <p className="text-xs text-gray-500 mb-1">Tamanho</p>
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-white">
                               {formatBytes(imp.arquivo_tamanho)}
                             </p>
                           </div>
@@ -401,14 +401,14 @@ const HistoricoImportacoes: React.FC<HistoricoImportacoesProps> = ({ onClose, on
                 <button
                   onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
                   disabled={paginaAtual === 1}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-white/80 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Anterior
                 </button>
                 <button
                   onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
                   disabled={paginaAtual === totalPaginas}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-white/80 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Próxima
                 </button>
@@ -421,7 +421,7 @@ const HistoricoImportacoes: React.FC<HistoricoImportacoesProps> = ({ onClose, on
         <div className="p-6 bg-white border-t border-gray-200">
           <button
             onClick={onClose}
-            className="w-full px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            className="w-full px-6 py-2.5 bg-gray-200 text-white/80 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
             Fechar
           </button>

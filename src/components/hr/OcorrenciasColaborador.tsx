@@ -487,9 +487,9 @@ const OcorrenciasColaborador: React.FC = () => {
       vale: 'bg-green-100 text-green-800',
       advertencia: 'bg-orange-100 text-orange-800',
       atraso: 'bg-yellow-100 text-yellow-800',
-      observacao: 'bg-gray-100 text-gray-800'
+      observacao: 'bg-gray-100 text-white/90'
     };
-    return colors[tipo as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[tipo as keyof typeof colors] || 'bg-gray-100 text-white/90';
   };
 
   const getStatusColor = (status: string) => {
@@ -499,7 +499,7 @@ const OcorrenciasColaborador: React.FC = () => {
       rejeitado: 'bg-red-100 text-red-800',
       processado: 'bg-blue-100 text-blue-800'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-white/90';
   };
 
   const filteredOcorrencias = ocorrencias.filter(ocorrencia => {
@@ -518,11 +518,11 @@ const OcorrenciasColaborador: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Ocorrências dos Colaboradores</h3>
+        <h3 className="text-lg font-medium text-white">Ocorrências dos Colaboradores</h3>
         <div className="flex gap-2">
           <button
             onClick={exportarOcorrencias}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -731,7 +731,7 @@ const OcorrenciasColaborador: React.FC = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <User className="w-5 h-5 text-gray-400 mr-2" />
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-white">
                           {ocorrencia.colaborador_nome}
                         </div>
                       </div>
@@ -745,12 +745,12 @@ const OcorrenciasColaborador: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
+                      <div className="text-sm text-white max-w-xs truncate">
                         {ocorrencia.descricao}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {ocorrencia.valor_vale > 0 && (
                           <div>{formatCurrency(ocorrencia.valor_vale)}</div>
                         )}
@@ -829,7 +829,7 @@ const OcorrenciasColaborador: React.FC = () => {
         ) : (
           <div className="text-center py-12">
             <AlertTriangle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma ocorrência encontrada</h3>
+            <h3 className="text-lg font-medium text-white mb-2">Nenhuma ocorrência encontrada</h3>
             <p className="text-gray-500">
               Não há ocorrências registradas para os filtros selecionados.
             </p>
@@ -841,13 +841,13 @@ const OcorrenciasColaborador: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingOcorrencia ? 'Editar Ocorrência' : 'Nova Ocorrência'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Colaborador *
                 </label>
                 <select
@@ -866,7 +866,7 @@ const OcorrenciasColaborador: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data da Ocorrência *
                 </label>
                 <input
@@ -879,7 +879,7 @@ const OcorrenciasColaborador: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo de Ocorrência *
                 </label>
                 <select
@@ -898,7 +898,7 @@ const OcorrenciasColaborador: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Descrição *
                 </label>
                 <textarea
@@ -913,7 +913,7 @@ const OcorrenciasColaborador: React.FC = () => {
 
               {formData.tipo_ocorrencia === 'vale' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Valor do Vale
                   </label>
                   <div className="relative">
@@ -934,7 +934,7 @@ const OcorrenciasColaborador: React.FC = () => {
 
               {(formData.tipo_ocorrencia === 'falta' || formData.tipo_ocorrencia === 'atestado') && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Dias de Afastamento
                   </label>
                   <input
@@ -948,7 +948,7 @@ const OcorrenciasColaborador: React.FC = () => {
               )}
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Documento Anexo (URL)
                 </label>
                 <input
@@ -968,7 +968,7 @@ const OcorrenciasColaborador: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, impacta_folha: e.target.checked })}
                     className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                   />
-                  <span className="ml-2 text-sm text-gray-700">
+                  <span className="ml-2 text-sm text-white/80">
                     Esta ocorrência impacta a folha de pagamento
                   </span>
                 </label>
@@ -982,7 +982,7 @@ const OcorrenciasColaborador: React.FC = () => {
                   setEditingOcorrencia(null);
                   resetForm();
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -1002,7 +1002,7 @@ const OcorrenciasColaborador: React.FC = () => {
       {showDeleteConfirm && itemToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               Confirmar Exclusão
             </h3>
             
@@ -1016,7 +1016,7 @@ const OcorrenciasColaborador: React.FC = () => {
                   setShowDeleteConfirm(false);
                   setItemToDelete(null);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

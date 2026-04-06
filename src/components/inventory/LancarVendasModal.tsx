@@ -364,7 +364,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <ShoppingCart className="w-6 h-6 text-green-600" />
-            <h3 className="text-xl font-semibold text-gray-900">Lançar Vendas Manualmente</h3>
+            <h3 className="text-xl font-semibold text-white">Lançar Vendas Manualmente</h3>
           </div>
           <button
             onClick={onClose}
@@ -383,7 +383,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Estoque de Origem *
             </label>
             <SearchableSelect
@@ -396,7 +396,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data da Venda *
             </label>
             <input
@@ -408,7 +408,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Observações
             </label>
             <input
@@ -423,7 +423,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
 
         <div className="mb-4">
           <div className="flex justify-between items-center mb-3">
-            <h4 className="text-lg font-medium text-gray-900">Itens da Venda</h4>
+            <h4 className="text-lg font-medium text-white">Itens da Venda</h4>
             <button
               onClick={adicionarItem}
               disabled={!estoqueOrigem}
@@ -458,7 +458,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
                   </div>
 
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Tipo *
                     </label>
                     <select
@@ -472,7 +472,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
                   </div>
 
                   <div className="col-span-5">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       {item.tipo === 'item_direto' ? 'Produto *' : 'Ficha Técnica *'}
                     </label>
                     {item.tipo === 'item_direto' ? (
@@ -503,7 +503,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
                   </div>
 
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-white/80 mb-1">
                       Quantidade *
                     </label>
                     <input
@@ -525,7 +525,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
                     {item.custo_unitario > 0 && (
                       <div className="text-right mb-2">
                         <p className="text-xs text-gray-500">CMV</p>
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-white">
                           {formatCurrency(item.custo_total)}
                         </p>
                       </div>
@@ -573,7 +573,7 @@ const LancarVendasModal: React.FC<LancarVendasModalProps> = ({ isOpen, onClose, 
               onClose();
             }}
             disabled={loading}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50 disabled:opacity-50"
           >
             Cancelar
           </button>

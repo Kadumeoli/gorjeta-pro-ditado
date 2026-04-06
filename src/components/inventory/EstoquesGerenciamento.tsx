@@ -336,9 +336,9 @@ const EstoquesGerenciamento: React.FC = () => {
       case 'secundario':
         return 'text-purple-700 bg-purple-100';
       case 'geral':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -617,11 +617,11 @@ const EstoquesGerenciamento: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Gerenciamento de Estoques</h3>
+        <h3 className="text-lg font-medium text-white">Gerenciamento de Estoques</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -815,7 +815,7 @@ const EstoquesGerenciamento: React.FC = () => {
                   <tr key={estoque.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{estoque.nome}</div>
+                        <div className="font-medium text-white">{estoque.nome}</div>
                         {estoque.descricao && (
                           <div className="text-sm text-gray-500">{estoque.descricao}</div>
                         )}
@@ -827,7 +827,7 @@ const EstoquesGerenciamento: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center text-sm text-gray-900">
+                      <div className="flex items-center text-sm text-white">
                         {estoque.localizacao && (
                           <>
                             <MapPin className="w-4 h-4 mr-1 text-gray-400" />
@@ -899,7 +899,7 @@ const EstoquesGerenciamento: React.FC = () => {
           {filteredEstoques.length === 0 && (
             <div className="text-center py-12">
               <Warehouse className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum estoque encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum estoque encontrado</h3>
               <p className="text-gray-500">
                 {searchTerm || tipoFilter !== 'all' || statusFilter !== 'all'
                   ? 'Nenhum estoque corresponde aos filtros aplicados.'
@@ -914,13 +914,13 @@ const EstoquesGerenciamento: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingEstoque ? 'Editar Estoque' : 'Novo Estoque'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome *
                 </label>
                 <input
@@ -934,7 +934,7 @@ const EstoquesGerenciamento: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo *
                 </label>
                 <select
@@ -951,7 +951,7 @@ const EstoquesGerenciamento: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Localização
                 </label>
                 <input
@@ -964,7 +964,7 @@ const EstoquesGerenciamento: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Descrição
                 </label>
                 <textarea
@@ -984,7 +984,7 @@ const EstoquesGerenciamento: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, status: e.target.checked })}
                   className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                 />
-                <label htmlFor="status" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="status" className="ml-2 text-sm text-white/80">
                   Estoque ativo
                 </label>
               </div>
@@ -993,7 +993,7 @@ const EstoquesGerenciamento: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -1014,13 +1014,13 @@ const EstoquesGerenciamento: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 Itens em Estoque - {estoqueSelecionado.nome}
               </h3>
               <div className="flex gap-2">
                 <button
                   onClick={exportSaldos}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
                 >
                   <Download className="w-4 h-4 inline mr-2" />
                   Exportar
@@ -1074,16 +1074,16 @@ const EstoquesGerenciamento: React.FC = () => {
                             saldo.abaixo_minimo ? 'bg-red-50 border-l-4 border-red-500' : ''
                           }`}>
                             <td className="px-6 py-4">
-                              <div className="font-medium text-gray-900">{saldo.item_nome}</div>
+                              <div className="font-medium text-white">{saldo.item_nome}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-sm text-gray-900">
+                              <span className="text-sm text-white">
                                 {saldo.item_codigo || '-'}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className={`font-medium ${
-                                saldo.abaixo_minimo ? 'text-red-600' : 'text-gray-900'
+                                saldo.abaixo_minimo ? 'text-red-600' : 'text-white'
                               }`}>
                                 {saldo.quantidade_atual.toFixed(3)}
                               </div>
@@ -1094,17 +1094,17 @@ const EstoquesGerenciamento: React.FC = () => {
                               )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-sm text-gray-900">
+                              <span className="text-sm text-white">
                                 {saldo.unidade_medida}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium text-gray-900">
+                              <div className="font-medium text-white">
                                 {formatCurrency(saldo.valor_total)}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">
+                              <div className="text-sm text-white">
                                 {formatCurrency(saldo.custo_medio)}
                               </div>
                             </td>
@@ -1129,7 +1129,7 @@ const EstoquesGerenciamento: React.FC = () => {
                 ) : (
                   <div className="text-center py-12">
                     <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Estoque vazio</h3>
+                    <h3 className="text-lg font-medium text-white mb-2">Estoque vazio</h3>
                     <p className="text-gray-500">
                       Este estoque não possui itens cadastrados.
                     </p>
@@ -1146,7 +1146,7 @@ const EstoquesGerenciamento: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 Lista de Compras - {estoqueSelecionado.nome}
               </h3>
               <div className="flex gap-2">
@@ -1256,7 +1256,7 @@ const EstoquesGerenciamento: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-white">
                               {item.item_nome}
                             </div>
                             <div className="text-sm text-gray-500">
@@ -1264,16 +1264,16 @@ const EstoquesGerenciamento: React.FC = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {item.categoria || 'Sem Categoria'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {item.fornecedor || 'Não definido'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {(item.quantidade_atual || 0).toFixed(3)} {item.unidade_medida}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {item.estoque_minimo || 0} {item.unidade_medida}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -1281,7 +1281,7 @@ const EstoquesGerenciamento: React.FC = () => {
                             {item.quantidade_sugerida} {item.unidade_medida}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {formatCurrency((item.custo_medio || 0) * item.quantidade_sugerida)}
                         </td>
                       </tr>

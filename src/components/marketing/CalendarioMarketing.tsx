@@ -157,7 +157,7 @@ const CalendarioMarketing: React.FC = () => {
         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(dia => (
           <div
             key={dia}
-            className="bg-gray-50 p-3 text-center font-semibold text-sm text-gray-700"
+            className="bg-gray-50 p-3 text-center font-semibold text-sm text-white/80"
           >
             {dia}
           </div>
@@ -180,7 +180,7 @@ const CalendarioMarketing: React.FC = () => {
                   className={`text-sm font-medium ${
                     isToday
                       ? 'bg-amber-600 text-white w-6 h-6 rounded-full flex items-center justify-center'
-                      : 'text-gray-700'
+                      : 'text-white/80'
                   }`}
                 >
                   {dia.date()}
@@ -237,7 +237,7 @@ const CalendarioMarketing: React.FC = () => {
                   className={`text-lg font-semibold ${
                     isToday
                       ? 'bg-amber-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto'
-                      : 'text-gray-900'
+                      : 'text-white'
                   }`}
                 >
                   {dia.date()}
@@ -271,7 +271,7 @@ const CalendarioMarketing: React.FC = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-white">
             {view === 'month' && currentDate.format('MMMM YYYY')}
             {view === 'week' && `Semana de ${currentDate.startOf('week').format('DD/MM')} - ${currentDate.endOf('week').format('DD/MM')}`}
             {view === 'day' && currentDate.format('DD [de] MMMM [de] YYYY')}
@@ -285,7 +285,7 @@ const CalendarioMarketing: React.FC = () => {
             </button>
             <button
               onClick={handleToday}
-              className="px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="px-3 py-1 text-sm font-medium text-white/80 hover:bg-gray-100 rounded-lg transition-colors"
             >
               Hoje
             </button>
@@ -304,8 +304,8 @@ const CalendarioMarketing: React.FC = () => {
               onClick={() => setView('month')}
               className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                 view === 'month'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-white shadow-sm'
+                  : 'text-gray-600 hover:text-white'
               }`}
             >
               Mês
@@ -314,8 +314,8 @@ const CalendarioMarketing: React.FC = () => {
               onClick={() => setView('week')}
               className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                 view === 'week'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-white shadow-sm'
+                  : 'text-gray-600 hover:text-white'
               }`}
             >
               Semana
@@ -324,8 +324,8 @@ const CalendarioMarketing: React.FC = () => {
               onClick={() => setView('day')}
               className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                 view === 'day'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-white shadow-sm'
+                  : 'text-gray-600 hover:text-white'
               }`}
             >
               Dia
@@ -346,7 +346,7 @@ const CalendarioMarketing: React.FC = () => {
         {Object.entries(tipoLabels).map(([tipo, label]) => (
           <div key={tipo} className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded ${tipoColors[tipo as keyof typeof tipoColors]}`} />
-            <span className="text-gray-700">{label}</span>
+            <span className="text-white/80">{label}</span>
           </div>
         ))}
       </div>
@@ -371,7 +371,7 @@ const CalendarioMarketing: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-white">
                 {selectedDate.format('DD [de] MMMM [de] YYYY')}
               </h3>
               <button
@@ -420,7 +420,7 @@ const CalendarioMarketing: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">
+                        <h4 className="font-semibold text-white mb-1">
                           {evento.titulo}
                         </h4>
                         {evento.descricao && (

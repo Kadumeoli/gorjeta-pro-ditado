@@ -109,7 +109,7 @@ function KPICard({
       <p className={`text-2xl font-extrabold tracking-tight ${
         alerta === 'danger'  ? 'text-red-700'     :
         alerta === 'warning' ? 'text-amber-700'   :
-        alerta === 'ok'      ? 'text-emerald-700' : 'text-gray-900'
+        alerta === 'ok'      ? 'text-emerald-700' : 'text-white'
       }`}>{display}</p>
 
       <div className="flex items-center justify-between mt-2 gap-2">
@@ -303,7 +303,7 @@ export default function DashboardFinanceiro() {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">
             Dashboard <span className="bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] bg-clip-text text-transparent">Financeiro</span>
           </h1>
           <p className="text-sm text-gray-400 mt-0.5">
@@ -334,7 +334,7 @@ export default function DashboardFinanceiro() {
 
       {/* ── Contas a pagar — blocos de urgência ────────────────────────── */}
       <div>
-        <h2 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-bold text-white/80 mb-3 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-500" />
           Contas a Pagar em Aberto
           <span className="text-xs font-normal text-gray-400 ml-1">
@@ -397,11 +397,11 @@ export default function DashboardFinanceiro() {
                     <div key={i} className={`flex items-center gap-3 px-5 py-3 transition-colors ${uc.row}`}>
                       <div className={`w-2 h-2 rounded-full shrink-0 ${uc.dot}`} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{c.descricao}</p>
+                        <p className="text-xs font-semibold text-white/90 truncate">{c.descricao}</p>
                         <p className="text-[10px] text-gray-400">{c.categoria}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-gray-900">{Rfull(c.saldo_restante)}</p>
+                        <p className="text-sm font-bold text-white">{Rfull(c.saldo_restante)}</p>
                         <p className="text-[10px] text-gray-400">
                           {new Date(c.data_vencimento + 'T12:00:00').toLocaleDateString('pt-BR')}
                         </p>
@@ -418,7 +418,7 @@ export default function DashboardFinanceiro() {
           {contasFiltradas.length > 15 && (
             <button
               onClick={() => setExpandContas(v => !v)}
-              className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-100"
+              className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-white/80 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-100"
             >
               {expandContas
                 ? <><ChevronUp className="w-3.5 h-3.5" /> Ver menos</>
@@ -432,7 +432,7 @@ export default function DashboardFinanceiro() {
       {/* ── Gráfico 6 meses ────────────────────────────────────────────── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-sm font-bold text-gray-900">Receita vs Despesa — 6 meses</p>
+          <p className="text-sm font-bold text-white">Receita vs Despesa — 6 meses</p>
           <BarChart3 className="w-4 h-4 text-gray-300" />
         </div>
         <p className="text-xs text-gray-400 mb-5">Fonte: fluxo_caixa</p>
@@ -470,7 +470,7 @@ export default function DashboardFinanceiro() {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div>
-            <p className="text-sm font-bold text-gray-900">Gastos por Categoria</p>
+            <p className="text-sm font-bold text-white">Gastos por Categoria</p>
             <p className="text-xs text-gray-400 mt-0.5">Mês atual vs mês anterior · {categorias.length} categorias</p>
           </div>
           <div className="flex items-center gap-2">
@@ -511,7 +511,7 @@ export default function DashboardFinanceiro() {
                 return (
                   <div key={i} className="px-5 py-3 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-gray-700">{c.categoria}</span>
+                      <span className="text-xs font-semibold text-white/80">{c.categoria}</span>
                       <div className="flex items-center gap-3 shrink-0 ml-4">
                         {varPct !== null && (
                           <span className={`text-[10px] font-bold flex items-center gap-0.5 ${
@@ -521,7 +521,7 @@ export default function DashboardFinanceiro() {
                             {Math.abs(varPct).toFixed(0)}%
                           </span>
                         )}
-                        <span className="text-xs font-bold text-gray-900 w-20 text-right font-mono">
+                        <span className="text-xs font-bold text-white w-20 text-right font-mono">
                           {c.mes_atual > 0 ? R(c.mes_atual) : <span className="text-gray-300">—</span>}
                         </span>
                       </div>
@@ -553,7 +553,7 @@ export default function DashboardFinanceiro() {
         {categorias.length > 10 && (
           <button
             onClick={() => setExpandCats(v => !v)}
-            className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-100"
+            className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-white/80 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-100"
           >
             {expandCats
               ? <><ChevronUp className="w-3.5 h-3.5" /> Mostrar menos</>

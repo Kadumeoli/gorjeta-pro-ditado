@@ -351,7 +351,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-white/90 flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-purple-600" />
               Processar Consumo via Excel (IA)
             </h2>
@@ -439,12 +439,12 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                   <FileSpreadsheet className="w-16 h-16 text-slate-400 mb-4" />
                   {arquivo ? (
                     <>
-                      <p className="text-lg font-semibold text-slate-700">{arquivo.name}</p>
+                      <p className="text-lg font-semibold text-white/80">{arquivo.name}</p>
                       <p className="text-sm text-slate-500 mt-2">Clique para escolher outro arquivo</p>
                     </>
                   ) : (
                     <>
-                      <p className="text-lg font-semibold text-slate-700">
+                      <p className="text-lg font-semibold text-white/80">
                         Clique para selecionar o arquivo Excel
                       </p>
                       <p className="text-sm text-slate-500 mt-2">Arquivos .xlsx ou .xls</p>
@@ -498,7 +498,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                   <div key={i} className="border-2 border-yellow-300 rounded-lg p-4 bg-yellow-50">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="font-bold text-slate-900 text-lg">{item.funcionario}</p>
+                        <p className="font-bold text-white text-lg">{item.funcionario}</p>
                         <p className="text-sm text-slate-600 mt-1">
                           Data: {new Date(item.data).toLocaleDateString('pt-BR')} | Valor: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor)}
                         </p>
@@ -512,7 +512,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                     </div>
 
                     <div className="mb-3">
-                      <label className="block text-xs font-semibold text-slate-700 mb-2 uppercase">
+                      <label className="block text-xs font-semibold text-white/80 mb-2 uppercase">
                         Selecione o colaborador correspondente:
                       </label>
                       <input
@@ -558,7 +558,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                               >
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <p className="font-semibold text-sm text-slate-900">{colaborador.nome}</p>
+                                    <p className="font-semibold text-sm text-white">{colaborador.nome}</p>
                                     <p className="text-xs text-slate-600">{colaborador.funcao}</p>
                                   </div>
                                   {mapeamentos[item.funcionario] === colaborador.id && (
@@ -596,7 +596,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
               <div className="flex gap-2">
                 <button
                   onClick={pularNaoEncontrados}
-                  className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium"
+                  className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-white/80 hover:bg-slate-50 font-medium"
                 >
                   Pular Não Encontrados
                 </button>
@@ -641,10 +641,10 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
               {resultado.detalhes.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-slate-800">Registros Processados</h3>
+                    <h3 className="font-semibold text-white/90">Registros Processados</h3>
                     <button
                       onClick={exportarResultado}
-                      className="text-sm px-3 py-1 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 flex items-center gap-2"
+                      className="text-sm px-3 py-1 bg-slate-100 text-white/80 rounded hover:bg-slate-200 flex items-center gap-2"
                     >
                       <Download className="w-4 h-4" />
                       Exportar Resultado
@@ -671,7 +671,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                               case 'substring': return { label: 'Parcial', color: 'bg-blue-100 text-blue-800', icon: '≈' };
                               case 'trigram': return { label: 'Trigrama', color: 'bg-indigo-100 text-indigo-800', icon: '◆' };
                               case 'fuzzy': return { label: 'Fuzzy', color: 'bg-purple-100 text-purple-800', icon: '≋' };
-                              default: return { label: metodo, color: 'bg-slate-100 text-slate-800', icon: '?' };
+                              default: return { label: metodo, color: 'bg-slate-100 text-white/90', icon: '?' };
                             }
                           };
 
@@ -698,7 +698,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                               </td>
                               <td className="p-2 text-center">
                                 <span className={`px-2 py-1 rounded-full text-xs ${
-                                  d.tipo === 'garcom' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-800'
+                                  d.tipo === 'garcom' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-white/90'
                                 }`}>
                                   {d.tipo === 'garcom' ? 'Garçom' : 'Funcionário'}
                                 </span>
@@ -744,7 +744,7 @@ const ProcessarConsumoExcel: React.FC<ProcessarConsumoExcelProps> = ({ onClose }
                       setBuscaNome({});
                       setEtapaMapeamento(false);
                     }}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50"
+                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-white/80 hover:bg-slate-50"
                   >
                     Processar Outro Arquivo
                   </button>

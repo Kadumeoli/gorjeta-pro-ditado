@@ -139,7 +139,7 @@ const Entradas: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Entradas: Previsto x Realizado</h1>
+          <h1 className="text-3xl font-bold text-white">Entradas: Previsto x Realizado</h1>
           <p className="text-gray-600 mt-1">Controle o que deve entrar na semana e alimente suas caixinhas</p>
         </div>
         <button
@@ -167,7 +167,7 @@ const Entradas: React.FC = () => {
             <Target className="w-5 h-5 text-gray-500" />
             <h3 className="text-sm text-gray-600 font-medium uppercase">Total Previsto</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900">
+          <p className="text-3xl font-bold text-white">
             {formatCurrency(entradas.totalPrevisto)}
           </p>
         </div>
@@ -202,7 +202,7 @@ const Entradas: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <Target className="w-5 h-5" /> Provisões da Semana
           </h2>
           <form onSubmit={handleAddPrevisto} className="flex gap-2 mb-6">
@@ -231,9 +231,9 @@ const Entradas: React.FC = () => {
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {entradas.previstos.map((item) => (
               <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-gray-900 font-medium">{item.descricao}</span>
+                <span className="text-white font-medium">{item.descricao}</span>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-700">{formatCurrency(item.valor)}</span>
+                  <span className="text-white/80">{formatCurrency(item.valor)}</span>
                   <button
                     onClick={() => removeInflow(item.id)}
                     className="text-red-600 hover:text-red-700 transition-colors"
@@ -250,7 +250,7 @@ const Entradas: React.FC = () => {
         </div>
 
         <div className="bg-white border-t-4 border-t-green-600 border border-gray-200 rounded-lg p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-green-600" /> Entradas Reais
           </h2>
           <form onSubmit={handleAddRealizado} className="flex gap-2 mb-6">
@@ -279,7 +279,7 @@ const Entradas: React.FC = () => {
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {entradas.realizados.map((item) => (
               <div key={item.id} className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                <span className="text-gray-900 font-medium">{item.descricao}</span>
+                <span className="text-white font-medium">{item.descricao}</span>
                 <div className="flex items-center gap-4">
                   <span className="text-green-700 font-bold">{formatCurrency(item.valor)}</span>
                   <button

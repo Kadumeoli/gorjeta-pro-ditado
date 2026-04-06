@@ -35,7 +35,7 @@ const GestaoCargos: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestão de Cargos (Scorecards)</h2>
+          <h2 className="text-2xl font-bold text-white">Gestão de Cargos (Scorecards)</h2>
           <p className="text-gray-600">{cargos.length} cargos cadastrados</p>
         </div>
       </div>
@@ -55,7 +55,7 @@ const GestaoCargos: React.FC = () => {
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 mb-1">{cargo.nome}</h3>
+                  <h3 className="font-bold text-white mb-1">{cargo.nome}</h3>
                   <p className="text-sm text-gray-600 line-clamp-2">{cargo.descricao}</p>
                   <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
@@ -72,7 +72,7 @@ const GestaoCargos: React.FC = () => {
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
                     cargo.status === 'ativo'
                       ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
+                      : 'bg-gray-100 text-white/80'
                   }`}
                 >
                   {cargo.status}
@@ -87,29 +87,29 @@ const GestaoCargos: React.FC = () => {
           {selectedCargo ? (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedCargo.nome}</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">{selectedCargo.nome}</h3>
                 <p className="text-gray-600">{selectedCargo.descricao}</p>
               </div>
 
               <div>
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
                   <Target className="w-5 h-5 text-[#7D1F2C]" />
                   Missão
                 </h4>
-                <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">
+                <p className="text-white/80 text-sm bg-gray-50 p-3 rounded-lg">
                   {selectedCargo.missao}
                 </p>
               </div>
 
               {selectedCargo.competencias?.obrigatorias && selectedCargo.competencias.obrigatorias.length > 0 && (
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-600" />
                     Competências Obrigatórias
                   </h4>
                   <ul className="space-y-2">
                     {selectedCargo.competencias.obrigatorias.map((comp, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-white/80 flex items-start gap-2">
                         <span className="text-green-600 mt-1">•</span>
                         <span>{comp}</span>
                       </li>
@@ -120,13 +120,13 @@ const GestaoCargos: React.FC = () => {
 
               {selectedCargo.competencias?.desejaveis && selectedCargo.competencias.desejaveis.length > 0 && (
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-2">
                     <Award className="w-5 h-5 text-blue-600" />
                     Competências Desejáveis
                   </h4>
                   <ul className="space-y-2">
                     {selectedCargo.competencias.desejaveis.map((comp, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-white/80 flex items-start gap-2">
                         <span className="text-blue-600 mt-1">•</span>
                         <span>{comp}</span>
                       </li>
@@ -137,13 +137,13 @@ const GestaoCargos: React.FC = () => {
 
               {selectedCargo.competencias?.comportamentais && selectedCargo.competencias.comportamentais.length > 0 && (
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-2">
                     <Award className="w-5 h-5 text-purple-600" />
                     Competências Comportamentais
                   </h4>
                   <ul className="space-y-2">
                     {selectedCargo.competencias.comportamentais.map((comp, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                      <li key={idx} className="text-sm text-white/80 flex items-start gap-2">
                         <span className="text-purple-600 mt-1">•</span>
                         <span>{comp}</span>
                       </li>
@@ -154,7 +154,7 @@ const GestaoCargos: React.FC = () => {
 
               {selectedCargo.indicadores && selectedCargo.indicadores.length > 0 && (
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-[#D4AF37]" />
                     Indicadores de Performance
                   </h4>
@@ -162,7 +162,7 @@ const GestaoCargos: React.FC = () => {
                     {selectedCargo.indicadores.map((ind: any, idx) => (
                       <div key={idx} className="bg-gray-50 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-sm text-gray-900">{ind.nome}</span>
+                          <span className="font-semibold text-sm text-white">{ind.nome}</span>
                           <span className="text-xs text-[#7D1F2C] font-medium">Meta: {ind.meta}</span>
                         </div>
                         <p className="text-xs text-gray-600">{ind.descricao}</p>
@@ -174,8 +174,8 @@ const GestaoCargos: React.FC = () => {
 
               {selectedCargo.remuneracao && (
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Remuneração</h4>
-                  <p className="text-sm text-gray-700 bg-green-50 p-3 rounded-lg">
+                  <h4 className="font-bold text-white mb-2">Remuneração</h4>
+                  <p className="text-sm text-white/80 bg-green-50 p-3 rounded-lg">
                     {selectedCargo.remuneracao}
                   </p>
                 </div>

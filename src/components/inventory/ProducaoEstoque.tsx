@@ -504,7 +504,7 @@ const ProducaoEstoque: React.FC = () => {
       case 'em_andamento': return 'text-yellow-700 bg-yellow-100';
       case 'concluido': return 'text-green-700 bg-green-100';
       case 'cancelado': return 'text-red-700 bg-red-100';
-      default: return 'text-gray-700 bg-gray-100';
+      default: return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -561,11 +561,11 @@ const ProducaoEstoque: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Controle de Produção Avançado</h3>
+        <h3 className="text-lg font-medium text-white">Controle de Produção Avançado</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar
@@ -658,7 +658,7 @@ const ProducaoEstoque: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{producao.ficha_nome}</div>
+                      <div className="font-medium text-white">{producao.ficha_nome}</div>
                       {producao.estoque_destino_nome && (
                         <div className="text-xs text-gray-500">→ {producao.estoque_destino_nome}</div>
                       )}
@@ -705,7 +705,7 @@ const ProducaoEstoque: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleVerDetalhes(producao)}
-                          className="text-gray-600 hover:text-gray-800"
+                          className="text-gray-600 hover:text-white/90"
                           title="Detalhes"
                         >
                           <Eye className="w-4 h-4" />
@@ -728,7 +728,7 @@ const ProducaoEstoque: React.FC = () => {
           {filteredProducoes.length === 0 && (
             <div className="text-center py-12">
               <Factory className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma produção encontrada</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma produção encontrada</h3>
             </div>
           )}
         </div>
@@ -738,7 +738,7 @@ const ProducaoEstoque: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Nova Produção</h3>
+            <h3 className="text-lg font-medium text-white mb-4">Nova Produção</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="md:col-span-2">
@@ -753,7 +753,7 @@ const ProducaoEstoque: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Quantidade *</label>
                 <input
                   type="number"
                   min="1"
@@ -777,7 +777,7 @@ const ProducaoEstoque: React.FC = () => {
 
             {itensProducao.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Itens para Produção ({itensProducao.length})</h4>
+                <h4 className="text-sm font-medium text-white/80 mb-2">Itens para Produção ({itensProducao.length})</h4>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <table className="w-full">
                     <thead className="bg-gray-50">
@@ -822,7 +822,7 @@ const ProducaoEstoque: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Data *</label>
                 <input
                   type="date"
                   value={formData.data_producao}
@@ -859,7 +859,7 @@ const ProducaoEstoque: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Observações</label>
                 <textarea
                   value={formData.observacoes}
                   onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
@@ -872,7 +872,7 @@ const ProducaoEstoque: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => { setShowForm(false); resetForm(); }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -912,7 +912,7 @@ const ProducaoEstoque: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 Detalhes da Produção - {producaoDetalhes.producao.lote_producao}
               </h3>
               <button onClick={() => setShowDetalhes(false)}>
@@ -940,7 +940,7 @@ const ProducaoEstoque: React.FC = () => {
 
             {producaoDetalhes.reservas.length > 0 && (
               <div className="mb-6">
-                <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                <h4 className="font-medium text-white mb-3 flex items-center">
                   <Package className="w-5 h-5 mr-2" />
                   Insumos Reservados
                 </h4>

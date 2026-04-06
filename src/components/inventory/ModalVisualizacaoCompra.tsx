@@ -65,7 +65,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
       case 'cancelado':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-white/90';
     }
   };
 
@@ -126,25 +126,25 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Fornecedor e Destino */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+              <h4 className="font-semibold text-white mb-3 flex items-center">
                 <User className="w-5 h-5 mr-2 text-blue-600" />
                 Fornecedor e Destino
               </h4>
               <div className="space-y-2 text-sm">
                 <div>
                   <span className="text-gray-600">Fornecedor:</span>
-                  <p className="font-medium text-gray-900">{compra.fornecedor_nome || 'Não informado'}</p>
+                  <p className="font-medium text-white">{compra.fornecedor_nome || 'Não informado'}</p>
                 </div>
                 <div>
                   <span className="text-gray-600">Estoque Destino:</span>
-                  <p className="font-medium text-gray-900">{compra.estoque_destino_nome}</p>
+                  <p className="font-medium text-white">{compra.estoque_destino_nome}</p>
                 </div>
               </div>
             </div>
 
             {/* Timeline */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+              <h4 className="font-semibold text-white mb-3 flex items-center">
                 <Calendar className="w-5 h-5 mr-2 text-blue-600" />
                 Timeline da Compra
               </h4>
@@ -155,7 +155,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
                   </div>
                   <div className="ml-3 flex-1">
                     <p className="text-xs text-gray-600">Data do Pedido</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-white">
                       {compra.data_pedido ? dayjs(compra.data_pedido).format('DD/MM/YYYY') : 'Não informado'}
                     </p>
                   </div>
@@ -168,7 +168,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
                     </div>
                     <div className="ml-3 flex-1">
                       <p className="text-xs text-gray-600">Entrega Prevista</p>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-white">
                         {dayjs(compra.data_entrega_prevista).format('DD/MM/YYYY')}
                       </p>
                     </div>
@@ -182,7 +182,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
                     </div>
                     <div className="ml-3 flex-1">
                       <p className="text-xs text-gray-600">Entrega Real</p>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-white">
                         {dayjs(compra.data_entrega_real).format('DD/MM/YYYY')}
                       </p>
                     </div>
@@ -216,7 +216,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
 
           {/* Valores Financeiros */}
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
-            <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+            <h4 className="font-semibold text-white mb-4 flex items-center">
               <DollarSign className="w-5 h-5 mr-2 text-green-600" />
               Resumo Financeiro
             </h4>
@@ -224,7 +224,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <p className="text-xs text-gray-600 mb-1">Valor dos Produtos</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-lg font-bold text-white">
                   {formatCurrency(compra.valor_produtos || compra.valor_total)}
                 </p>
               </div>
@@ -278,7 +278,7 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
 
           {/* Itens da Compra */}
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+            <h4 className="font-semibold text-white mb-3 flex items-center">
               <Package className="w-5 h-5 mr-2 text-blue-600" />
               Itens da Compra ({compra.itens?.length || 0})
             </h4>
@@ -302,21 +302,21 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
                       <tr key={item.id} className={item.divergencia ? 'bg-yellow-50' : 'hover:bg-gray-50'}>
                         <td className="px-4 py-3">
                           <div>
-                            <p className="font-medium text-gray-900">{item.item_nome}</p>
+                            <p className="font-medium text-white">{item.item_nome}</p>
                             {item.item_codigo && (
                               <p className="text-xs text-gray-500">Cód: {item.item_codigo}</p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <span className="text-sm text-gray-900">
+                          <span className="text-sm text-white">
                             {item.quantidade_pedida || item.quantidade} {item.unidade_medida}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center">
                           <div className="flex items-center justify-center">
                             <span className={`text-sm font-medium ${
-                              item.divergencia ? 'text-orange-600' : 'text-gray-900'
+                              item.divergencia ? 'text-orange-600' : 'text-white'
                             }`}>
                               {item.quantidade_recebida || item.quantidade} {item.unidade_medida}
                             </span>
@@ -350,12 +350,12 @@ const ModalVisualizacaoCompra: React.FC<ModalVisualizacaoCompraProps> = ({ compr
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-white">
                             {formatCurrency(item.custo_unitario_final || item.custo_unitario)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className="text-sm font-bold text-gray-900">
+                          <span className="text-sm font-bold text-white">
                             {formatCurrency(item.custo_total)}
                           </span>
                         </td>

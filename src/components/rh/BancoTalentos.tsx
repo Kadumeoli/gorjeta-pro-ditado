@@ -93,7 +93,7 @@ export default function BancoTalentos() {
       ativo: { color: 'bg-green-100 text-green-800', label: 'Ativo', icon: CheckCircle },
       contatado: { color: 'bg-blue-100 text-blue-800', label: 'Contatado', icon: Phone },
       contratado: { color: 'bg-purple-100 text-purple-800', label: 'Contratado', icon: Star },
-      inativo: { color: 'bg-gray-100 text-gray-800', label: 'Inativo', icon: XCircle }
+      inativo: { color: 'bg-gray-100 text-white/90', label: 'Inativo', icon: XCircle }
     };
     const badge = badges[status] || badges.ativo;
     const Icon = badge.icon;
@@ -128,7 +128,7 @@ export default function BancoTalentos() {
         <div className="flex items-center gap-3">
           <Users className="w-8 h-8 text-blue-600" />
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Banco de Talentos</h2>
+            <h2 className="text-2xl font-bold text-white">Banco de Talentos</h2>
             <p className="text-gray-600">Candidatos em destaque para futuras oportunidades</p>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function BancoTalentos() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    <h3 className="text-lg font-semibold text-white mb-1">
                       {talento.candidato?.nome}
                     </h3>
                     {getStatusBadge(talento.status)}

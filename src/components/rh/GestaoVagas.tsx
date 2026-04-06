@@ -204,7 +204,7 @@ const GestaoVagas: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestão de Vagas</h2>
+          <h2 className="text-2xl font-bold text-white">Gestão de Vagas</h2>
           <p className="text-gray-600">Gerenciar vagas abertas e recrutamento</p>
         </div>
         <button
@@ -259,14 +259,14 @@ const GestaoVagas: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{vaga.titulo}</h3>
+                    <h3 className="text-xl font-bold text-white">{vaga.titulo}</h3>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         vaga.status === 'aberta'
                           ? 'bg-green-100 text-green-700'
                           : vaga.status === 'pausada'
                           ? 'bg-amber-100 text-amber-700'
-                          : 'bg-gray-100 text-gray-700'
+                          : 'bg-gray-100 text-white/80'
                       }`}
                     >
                       {vaga.status}
@@ -324,7 +324,7 @@ const GestaoVagas: React.FC = () => {
                   )}
                 </div>
               </div>
-              <p className="text-gray-700 text-sm line-clamp-2">{vaga.descricao}</p>
+              <p className="text-white/80 text-sm line-clamp-2">{vaga.descricao}</p>
             </div>
           ))}
         </div>
@@ -334,14 +334,14 @@ const GestaoVagas: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            <h3 className="text-2xl font-bold text-white mb-6">
               {editando ? 'Editar Vaga' : 'Nova Vaga'}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Cargo *
                   </label>
                   <select
@@ -366,7 +366,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Título da Vaga *
                   </label>
                   <input
@@ -379,7 +379,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Descrição *
                   </label>
                   <textarea
@@ -392,7 +392,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Requisitos *
                   </label>
                   <textarea
@@ -406,7 +406,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Local de Trabalho
                   </label>
                   <input
@@ -419,7 +419,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Regime Contratual
                   </label>
                   <select
@@ -436,7 +436,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Faixa Salarial
                   </label>
                   <input
@@ -449,7 +449,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Status
                   </label>
                   <select
@@ -464,7 +464,7 @@ const GestaoVagas: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Benefícios
                   </label>
                   <textarea

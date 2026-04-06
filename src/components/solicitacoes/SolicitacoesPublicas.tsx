@@ -151,7 +151,7 @@ export default function SolicitacoesPublicas() {
 
   const getPrioridadeColor = (prioridade: string) => {
     const colors = {
-      baixa: 'bg-gray-100 text-gray-700',
+      baixa: 'bg-gray-100 text-white/80',
       normal: 'bg-blue-100 text-blue-700',
       alta: 'bg-orange-100 text-orange-700',
       urgente: 'bg-red-100 text-red-700',
@@ -245,7 +245,7 @@ export default function SolicitacoesPublicas() {
                         Pendente
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-white">
                       {solicitacao.titulo}
                     </h3>
                   </div>
@@ -297,7 +297,7 @@ export default function SolicitacoesPublicas() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-white">
                 Enriquecer Solicitação
               </h3>
               <p className="text-sm text-gray-600 mt-1">
@@ -308,18 +308,18 @@ export default function SolicitacoesPublicas() {
             <div className="p-6 space-y-6">
               {/* Informações da Solicitação Original */}
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-gray-900">Solicitação Original:</h4>
+                <h4 className="font-semibold text-white">Solicitação Original:</h4>
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Título:</p>
+                  <p className="text-sm font-medium text-white/80">Título:</p>
                   <p className="text-sm text-gray-600">{selectedSolicitacao.titulo}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Descrição:</p>
+                  <p className="text-sm font-medium text-white/80">Descrição:</p>
                   <p className="text-sm text-gray-600">{selectedSolicitacao.descricao}</p>
                 </div>
                 {selectedSolicitacao.local_servico && (
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Local:</p>
+                    <p className="text-sm font-medium text-white/80">Local:</p>
                     <p className="text-sm text-gray-600">{selectedSolicitacao.local_servico}</p>
                   </div>
                 )}
@@ -328,7 +328,7 @@ export default function SolicitacoesPublicas() {
               {/* Formulário de Enriquecimento */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Tipo de Solicitação <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -346,7 +346,7 @@ export default function SolicitacoesPublicas() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Setor Solicitante <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -360,7 +360,7 @@ export default function SolicitacoesPublicas() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Prioridade
                     </label>
                     <select
@@ -377,7 +377,7 @@ export default function SolicitacoesPublicas() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Data Limite
                     </label>
                     <input
@@ -390,7 +390,7 @@ export default function SolicitacoesPublicas() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Valor Estimado (R$)
                   </label>
                   <input
@@ -403,7 +403,7 @@ export default function SolicitacoesPublicas() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Observações Técnicas
                   </label>
                   <textarea
@@ -423,7 +423,7 @@ export default function SolicitacoesPublicas() {
                   setShowEnriquecimentoModal(false);
                   setSelectedSolicitacao(null);
                 }}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                className="flex-1 px-6 py-3 border border-gray-300 text-white/80 rounded-lg hover:bg-gray-100 transition-colors font-medium"
               >
                 Cancelar
               </button>

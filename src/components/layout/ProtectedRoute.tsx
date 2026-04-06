@@ -32,7 +32,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <div className="p-6">
         <div className="text-center py-12">
           <Lock className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Acesso Negado</h3>
+          <h3 className="text-lg font-medium text-white mb-2">Acesso Negado</h3>
           <p className="text-gray-500">
             Você precisa estar logado para acessar esta funcionalidade.
           </p>
@@ -58,7 +58,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <div className="p-6">
         <div className="text-center py-12">
           <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Acesso Negado</h3>
+          <h3 className="text-lg font-medium text-white mb-2">Acesso Negado</h3>
           <p className="text-gray-500">
             Você não tem permissão para {acao} neste módulo.
           </p>

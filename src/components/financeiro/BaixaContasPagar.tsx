@@ -201,7 +201,7 @@ const BaixaContasPagar: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Baixa de Contas Autorizadas</h3>
+        <h3 className="text-lg font-medium text-white">Baixa de Contas Autorizadas</h3>
         <div className="text-sm text-gray-600">
           {contas.length} conta(s) autorizada(s) | Total: {formatCurrency(contas.reduce((sum, c) => sum + c.saldo_restante, 0))}
         </div>
@@ -261,7 +261,7 @@ const BaixaContasPagar: React.FC = () => {
                   <tr key={conta.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{conta.fornecedor_nome}</div>
+                        <div className="font-medium text-white">{conta.fornecedor_nome}</div>
                         {conta.numero_documento && (
                           <div className="text-sm text-gray-500">Doc: {conta.numero_documento}</div>
                         )}
@@ -269,7 +269,7 @@ const BaixaContasPagar: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{conta.descricao}</div>
+                        <div className="font-medium text-white">{conta.descricao}</div>
                         {conta.categoria_nome && (
                           <div className="text-sm text-gray-500">{conta.categoria_nome}</div>
                         )}
@@ -279,7 +279,7 @@ const BaixaContasPagar: React.FC = () => {
                       {dayjs(conta.data_vencimento).format('DD/MM/YYYY')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-white">
                         {formatCurrency(conta.valor_total)}
                       </span>
                       {conta.valor_pago > 0 && (
@@ -311,7 +311,7 @@ const BaixaContasPagar: React.FC = () => {
           {filteredContas.length === 0 && (
             <div className="text-center py-12">
               <CheckCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma conta autorizada para pagamento</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma conta autorizada para pagamento</h3>
               <p className="text-gray-500">
                 {searchTerm
                   ? 'Nenhuma conta corresponde aos filtros aplicados.'
@@ -325,14 +325,14 @@ const BaixaContasPagar: React.FC = () => {
       {baixaModal.isOpen && baixaModal.conta && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               Dar Baixa em Conta a Pagar
             </h3>
 
             <div className="mb-4 p-4 bg-gray-50 rounded-lg">
               <div className="text-sm">
-                <div className="font-medium text-gray-900 mb-1">{baixaModal.conta.fornecedor_nome}</div>
-                <div className="text-gray-700 mb-1">{baixaModal.conta.descricao}</div>
+                <div className="font-medium text-white mb-1">{baixaModal.conta.fornecedor_nome}</div>
+                <div className="text-white/80 mb-1">{baixaModal.conta.descricao}</div>
                 <div className="text-gray-600">
                   <span className="font-medium">Valor Total:</span> {formatCurrency(baixaModal.conta.valor_total)}
                 </div>
@@ -347,7 +347,7 @@ const BaixaContasPagar: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Valor do Pagamento *
                 </label>
                 <div className="relative">
@@ -384,7 +384,7 @@ const BaixaContasPagar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data do Pagamento *
                 </label>
                 <input
@@ -397,7 +397,7 @@ const BaixaContasPagar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Forma de Pagamento *
                 </label>
                 <select
@@ -416,7 +416,7 @@ const BaixaContasPagar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Conta Bancária *
                 </label>
                 <select
@@ -435,7 +435,7 @@ const BaixaContasPagar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Número do Comprovante
                 </label>
                 <input
@@ -448,7 +448,7 @@ const BaixaContasPagar: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações
                 </label>
                 <textarea
@@ -465,7 +465,7 @@ const BaixaContasPagar: React.FC = () => {
               <button
                 onClick={fecharModal}
                 disabled={loading}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50 disabled:opacity-50"
               >
                 Cancelar
               </button>

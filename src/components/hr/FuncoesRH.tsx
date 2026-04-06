@@ -304,11 +304,11 @@ const FuncoesRH: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Funções de RH</h3>
+        <h3 className="text-lg font-medium text-white">Funções de RH</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -500,14 +500,14 @@ const FuncoesRH: React.FC = () => {
                   <tr key={funcao.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{funcao.nome}</div>
+                        <div className="font-medium text-white">{funcao.nome}</div>
                         {funcao.descricao && (
                           <div className="text-sm text-gray-500">{funcao.descricao}</div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         {formatCurrency(funcao.salario_base)}
                       </div>
                     </td>
@@ -570,7 +570,7 @@ const FuncoesRH: React.FC = () => {
           {filteredFuncoes.length === 0 && (
             <div className="text-center py-12">
               <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma função encontrada</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma função encontrada</h3>
               <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' || comissaoFilter !== 'all'
                   ? 'Nenhuma função corresponde aos filtros aplicados.'
@@ -585,13 +585,13 @@ const FuncoesRH: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingFuncao ? 'Editar Função' : 'Nova Função'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome *
                 </label>
                 <input
@@ -605,7 +605,7 @@ const FuncoesRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Salário Base
                 </label>
                 <div className="relative">
@@ -624,7 +624,7 @@ const FuncoesRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Percentual de Comissão
                 </label>
                 <div className="relative">
@@ -644,7 +644,7 @@ const FuncoesRH: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Descrição
                 </label>
                 <textarea
@@ -664,7 +664,7 @@ const FuncoesRH: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'ativo' : 'inativo' })}
                   className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                 />
-                <label htmlFor="status" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="status" className="ml-2 text-sm text-white/80">
                   Função ativa
                 </label>
               </div>
@@ -673,7 +673,7 @@ const FuncoesRH: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

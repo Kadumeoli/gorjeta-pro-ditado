@@ -198,7 +198,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Recontagem por Amostragem</h3>
+              <h3 className="text-lg font-bold text-white">Recontagem por Amostragem</h3>
               <p className="text-xs text-gray-500">Selecao estatistica de itens para verificacao</p>
             </div>
           </div>
@@ -210,7 +210,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
         <div className="overflow-y-auto flex-1 p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Estoque</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Estoque</label>
               {loadingEstoques ? (
                 <div className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-400">
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -231,7 +231,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Responsavel</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Responsavel</label>
               <input
                 type="text"
                 value={responsavel}
@@ -244,7 +244,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Metodo de Amostragem</label>
+            <label className="block text-sm font-medium text-white/80 mb-2">Metodo de Amostragem</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
@@ -278,7 +278,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className={metodo === m.value ? 'text-teal-600' : 'text-gray-400'}>{m.icon}</span>
-                    <span className={`text-sm font-semibold ${metodo === m.value ? 'text-teal-700' : 'text-gray-700'}`}>
+                    <span className={`text-sm font-semibold ${metodo === m.value ? 'text-teal-700' : 'text-white/80'}`}>
                       {m.label}
                     </span>
                   </div>
@@ -290,7 +290,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nivel de Confianca</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Nivel de Confianca</label>
               <select
                 value={confianca}
                 onChange={(e) => { setConfianca(Number(e.target.value) as NivelConfianca); setShowPreview(false); }}
@@ -302,7 +302,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Margem de Erro</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Margem de Erro</label>
               <select
                 value={margem}
                 onChange={(e) => { setMargem(Number(e.target.value) as MargemErro); setShowPreview(false); }}
@@ -324,7 +324,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="text-center p-2 bg-white/70 rounded-lg">
-                  <p className="text-lg font-bold text-gray-900">{populacao}</p>
+                  <p className="text-lg font-bold text-white">{populacao}</p>
                   <p className="text-[10px] text-gray-500 uppercase">Total Itens</p>
                 </div>
                 <div className="text-center p-2 bg-white/70 rounded-lg">
@@ -336,7 +336,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
                   <p className="text-[10px] text-gray-500 uppercase">Cobertura</p>
                 </div>
                 <div className="text-center p-2 bg-white/70 rounded-lg">
-                  <p className="text-sm font-bold text-gray-700">{formatCurrency(valorTotalEstoque)}</p>
+                  <p className="text-sm font-bold text-white/80">{formatCurrency(valorTotalEstoque)}</p>
                   <p className="text-[10px] text-gray-500 uppercase">Valor Total</p>
                 </div>
               </div>
@@ -373,7 +373,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
           {showPreview && itensSelecionados.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-gray-700">
+                <h4 className="text-sm font-semibold text-white/80">
                   Itens Selecionados ({itensSelecionados.length})
                 </h4>
                 <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -401,13 +401,13 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
                     {itensSelecionados.map((item) => (
                       <tr key={item.id} className="hover:bg-gray-50/50">
                         <td className="px-3 py-1.5">
-                          <span className="text-sm font-medium text-gray-900">{item.nome}</span>
+                          <span className="text-sm font-medium text-white">{item.nome}</span>
                           <span className="text-[10px] text-gray-400 ml-2">{item.codigo}</span>
                         </td>
-                        <td className="px-3 py-1.5 text-center text-sm text-gray-700 tabular-nums">
+                        <td className="px-3 py-1.5 text-center text-sm text-white/80 tabular-nums">
                           {item.saldo} {item.unidade_medida}
                         </td>
-                        <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 tabular-nums">
+                        <td className="px-3 py-1.5 text-right text-sm font-medium text-white tabular-nums">
                           {formatCurrency(item.valor_total)}
                         </td>
                       </tr>
@@ -427,7 +427,7 @@ const AmostragemModal: React.FC<Props> = ({ onClose, onCreated }) => {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-2.5 border border-gray-200 text-white/80 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Cancelar
           </button>

@@ -374,7 +374,7 @@ ${categorias.map(cat => `
               <ShoppingCart size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Lista de Compras</h1>
+              <h1 className="text-xl font-bold text-white">Lista de Compras</h1>
               <p className="text-sm text-gray-500">Geração automática por estoque mínimo</p>
             </div>
           </div>
@@ -395,7 +395,7 @@ ${categorias.map(cat => `
         {aba === 'nova' && !listaAtiva && (
           <div className="flex-1 p-6 max-w-2xl mx-auto w-full">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-              <h2 className="font-semibold text-gray-800 flex items-center gap-2">
+              <h2 className="font-semibold text-white/90 flex items-center gap-2">
                 <BarChart2 size={16} className="text-[#7D1F2C]" /> Gerar nova lista
               </h2>
 
@@ -459,10 +459,10 @@ ${categorias.map(cat => `
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-3">
                   <button onClick={() => { setListaAtiva(null); setItens([]); setErroGerar(''); }}
-                    className="text-gray-400 hover:text-gray-700 text-sm">← Nova lista</button>
+                    className="text-gray-400 hover:text-white/80 text-sm">← Nova lista</button>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-900">{listaAtiva.numero}</span>
+                      <span className="font-bold text-white">{listaAtiva.numero}</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs border ${STATUS_COLOR[listaAtiva.status]}`}>{listaAtiva.status.replace('_', ' ')}</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs border ${TIPO_COLOR[listaAtiva.tipo_compra]}`}>{TIPO_LABEL[listaAtiva.tipo_compra]}</span>
                     </div>
@@ -471,7 +471,7 @@ ${categorias.map(cat => `
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="text-right text-xs text-gray-500 mr-2">
-                    <p className="font-semibold text-gray-800">{totalComprados}/{totalItens} itens</p>
+                    <p className="font-semibold text-white/90">{totalComprados}/{totalItens} itens</p>
                     <p>{fmtMoeda(valorTotal)} est.</p>
                   </div>
                   <button onClick={imprimir}
@@ -527,7 +527,7 @@ ${categorias.map(cat => `
                       className="w-full flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
                         {isExp ? <ChevronDown size={16} className="text-gray-400"/> : <ChevronRight size={16} className="text-gray-400"/>}
-                        <span className="font-semibold text-gray-800">{cat}</span>
+                        <span className="font-semibold text-white/90">{cat}</span>
                         <span className="text-xs text-gray-400">{itensCat.length} {itensCat.length === 1 ? 'item' : 'itens'}</span>
                       </div>
                       {comprados > 0 && <span className="text-xs text-green-600 font-medium">{comprados}/{itensCat.length} ✓</span>}
@@ -543,7 +543,7 @@ ${categorias.map(cat => `
                             </button>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
-                                <p className={`text-sm font-medium ${item.comprado ? 'line-through text-gray-400' : 'text-gray-800'}`}>{item.nome_item}</p>
+                                <p className={`text-sm font-medium ${item.comprado ? 'line-through text-gray-400' : 'text-white/90'}`}>{item.nome_item}</p>
                                 <span className={`flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded-md border ${TIPO_COLOR[item.tipo_compra] || 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                                   {item.tipo_compra === 'rua' ? '🛒 Rua' : item.tipo_compra === 'fornecedor' ? '🚚 Forn.' : '🔀 Ambos'}
                                 </span>
@@ -583,7 +583,7 @@ ${categorias.map(cat => `
         {aba === 'historico' && (
           <div className="flex-1 p-6 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-800">Listas geradas</h2>
+              <h2 className="font-semibold text-white/90">Listas geradas</h2>
               <button onClick={carregarListas} className="p-2 rounded-xl hover:bg-gray-100 text-gray-500">
                 <RefreshCw size={15} className={carregandoListas ? 'animate-spin' : ''} />
               </button>
@@ -604,7 +604,7 @@ ${categorias.map(cat => `
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <span className="font-bold text-gray-800">{lista.numero}</span>
+                            <span className="font-bold text-white/90">{lista.numero}</span>
                             <span className={`px-2 py-0.5 rounded-full text-xs border ${STATUS_COLOR[lista.status]}`}>{lista.status.replace('_', ' ')}</span>
                             <span className={`px-2 py-0.5 rounded-full text-xs border ${TIPO_COLOR[lista.tipo_compra]}`}>{TIPO_LABEL[lista.tipo_compra]}</span>
                           </div>

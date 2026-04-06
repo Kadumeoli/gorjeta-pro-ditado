@@ -287,7 +287,7 @@ const GestaoCandidaturas: React.FC = () => {
       nao_recomendado: { color: 'bg-red-100 text-red-800 border-red-300', label: 'Não Recomendado' }
     };
 
-    const badge = badges[recomendacao] || { color: 'bg-gray-100 text-gray-800', label: recomendacao };
+    const badge = badges[recomendacao] || { color: 'bg-gray-100 text-white/90', label: recomendacao };
 
     return (
       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${badge.color}`}>
@@ -321,7 +321,7 @@ const GestaoCandidaturas: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestão de Candidaturas</h2>
+          <h2 className="text-2xl font-bold text-white">Gestão de Candidaturas</h2>
           <p className="text-gray-600">Análise e acompanhamento de candidatos</p>
         </div>
         <button
@@ -338,7 +338,7 @@ const GestaoCandidaturas: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{candidaturas.length}</p>
+              <p className="text-2xl font-bold text-white">{candidaturas.length}</p>
             </div>
             <Users className="w-8 h-8 text-blue-600" />
           </div>
@@ -434,7 +434,7 @@ const GestaoCandidaturas: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="text-lg font-semibold text-white">
                         {candidatura.candidato?.nome}
                       </h3>
                       {getStatusBadge(candidatura.status)}
@@ -466,7 +466,7 @@ const GestaoCandidaturas: React.FC = () => {
                       <div className="mb-4">
                         <div className="flex items-center gap-2 mb-2">
                           <TrendingUp className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm font-medium text-gray-700">
+                          <span className="text-sm font-medium text-white/80">
                             Pontuação Geral: {candidatura.pontuacao_geral}/100
                           </span>
                         </div>
@@ -537,7 +537,7 @@ const GestaoCandidaturas: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Nova Candidatura</h3>
+              <h3 className="text-xl font-bold text-white">Nova Candidatura</h3>
               <button
                 onClick={() => setShowUploadModal(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -548,7 +548,7 @@ const GestaoCandidaturas: React.FC = () => {
 
             <form onSubmit={handleUploadCurriculo} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Vaga *
                 </label>
                 <select
@@ -564,7 +564,7 @@ const GestaoCandidaturas: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Nome Completo *
                 </label>
                 <input
@@ -576,7 +576,7 @@ const GestaoCandidaturas: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Email *
                 </label>
                 <input
@@ -588,7 +588,7 @@ const GestaoCandidaturas: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Telefone *
                 </label>
                 <input
@@ -600,7 +600,7 @@ const GestaoCandidaturas: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Currículo (Cole o texto aqui) *
                 </label>
                 <textarea
@@ -625,7 +625,7 @@ const GestaoCandidaturas: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="px-4 py-2 text-white/80 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   Cancelar
                 </button>
@@ -646,7 +646,7 @@ const GestaoCandidaturas: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Análise Detalhada</h3>
+              <h3 className="text-xl font-bold text-white">Análise Detalhada</h3>
               <button
                 onClick={() => setShowAnaliseModal(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -657,7 +657,7 @@ const GestaoCandidaturas: React.FC = () => {
 
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                <h4 className="text-lg font-semibold text-white mb-2">
                   {selectedCandidatura.candidato?.nome}
                 </h4>
                 <div className="flex items-center gap-2">
@@ -668,7 +668,7 @@ const GestaoCandidaturas: React.FC = () => {
 
               {selectedCandidatura.pontuacao_geral && (
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Pontuação Geral</h5>
+                  <h5 className="font-medium text-white mb-2">Pontuação Geral</h5>
                   <div className="flex items-center gap-4">
                     <div className="flex-1 bg-gray-200 rounded-full h-4">
                       <div
@@ -685,9 +685,9 @@ const GestaoCandidaturas: React.FC = () => {
 
               {selectedCandidatura.parecer_ia && (
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Parecer da IA</h5>
+                  <h5 className="font-medium text-white mb-2">Parecer da IA</h5>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-gray-800">{selectedCandidatura.parecer_ia}</p>
+                    <p className="text-white/90">{selectedCandidatura.parecer_ia}</p>
                   </div>
                 </div>
               )}
@@ -698,13 +698,13 @@ const GestaoCandidaturas: React.FC = () => {
 
               {selectedCandidatura.notas && Object.keys(selectedCandidatura.notas).length > 0 && (
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-4">Notas por Competência</h5>
+                  <h5 className="font-medium text-white mb-4">Notas por Competência</h5>
                   <div className="space-y-3">
                     {Object.entries(selectedCandidatura.notas).map(([competencia, nota]) => (
                       <div key={competencia}>
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm text-gray-700">{competencia}</span>
-                          <span className="text-sm font-medium text-gray-900">{nota}/100</span>
+                          <span className="text-sm text-white/80">{competencia}</span>
+                          <span className="text-sm font-medium text-white">{nota}/100</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
@@ -721,7 +721,7 @@ const GestaoCandidaturas: React.FC = () => {
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   onClick={() => setShowAnaliseModal(false)}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="px-4 py-2 text-white/80 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   Fechar
                 </button>
@@ -735,7 +735,7 @@ const GestaoCandidaturas: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Próxima Etapa do Processo</h3>
+              <h3 className="text-xl font-bold text-white">Próxima Etapa do Processo</h3>
               <button
                 onClick={() => {
                   setShowProximaEtapaModal(false);
@@ -748,7 +748,7 @@ const GestaoCandidaturas: React.FC = () => {
             </div>
 
             <div className="mb-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              <h4 className="text-lg font-semibold text-white mb-2">
                 {selectedCandidatura.candidato?.nome}
               </h4>
               <p className="text-gray-600 mb-4">
@@ -822,7 +822,7 @@ const GestaoCandidaturas: React.FC = () => {
                   setShowProximaEtapaModal(false);
                   setSelectedCandidatura(null);
                 }}
-                className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                className="w-full px-4 py-2 text-white/80 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 Cancelar
               </button>

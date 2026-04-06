@@ -760,7 +760,7 @@ const MovimentacoesEstoque: React.FC = () => {
       case 'ajuste':
         return 'text-purple-700 bg-purple-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -877,11 +877,11 @@ const MovimentacoesEstoque: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Movimentações de Estoque</h3>
+        <h3 className="text-lg font-medium text-white">Movimentações de Estoque</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -1124,7 +1124,7 @@ const MovimentacoesEstoque: React.FC = () => {
                 {filteredMovimentacoes.map((mov) => (
                   <tr key={mov.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {dayjs(mov.data_movimentacao).format('DD/MM/YYYY')}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -1144,7 +1144,7 @@ const MovimentacoesEstoque: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{mov.item_nome}</div>
+                        <div className="font-medium text-white">{mov.item_nome}</div>
                         {mov.item_codigo && (
                           <div className="text-sm text-gray-500">Cód: {mov.item_codigo}</div>
                         )}
@@ -1195,7 +1195,7 @@ const MovimentacoesEstoque: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-right">
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-white">
                           {formatCurrency(mov.custo_total)}
                         </div>
                         <div className="text-sm text-gray-500">
@@ -1204,7 +1204,7 @@ const MovimentacoesEstoque: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {mov.motivo || '-'}
                       </div>
                       {mov.observacoes && (
@@ -1238,7 +1238,7 @@ const MovimentacoesEstoque: React.FC = () => {
           {filteredMovimentacoes.length === 0 && (
             <div className="text-center py-12">
               <ArrowLeftRight className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma movimentação encontrada</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma movimentação encontrada</h3>
               <p className="text-gray-500">
                 {searchTerm || tipoFilter !== 'all' || estoqueFilter !== 'all' || itemFilter !== 'all'
                   ? 'Nenhuma movimentação corresponde aos filtros aplicados.'
@@ -1253,13 +1253,13 @@ const MovimentacoesEstoque: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingMovimentacao ? 'Editar Movimentação' : 'Nova Movimentação'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo de Movimentação *
                 </label>
                 <select
@@ -1284,7 +1284,7 @@ const MovimentacoesEstoque: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data da Movimentação *
                 </label>
                 <input
@@ -1311,7 +1311,7 @@ const MovimentacoesEstoque: React.FC = () => {
                       })}
                       className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                     />
-                    <span className="ml-2 text-sm font-medium text-gray-900">
+                    <span className="ml-2 text-sm font-medium text-white">
                       Usar Ficha Técnica de Venda Direta
                     </span>
                   </label>
@@ -1409,7 +1409,7 @@ const MovimentacoesEstoque: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Quantidade * {formData.usar_ficha_tecnica && '(porções)'}
                 </label>
                 <input
@@ -1440,7 +1440,7 @@ const MovimentacoesEstoque: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Custo Unitário *
                 </label>
                 <div className="relative">
@@ -1475,7 +1475,7 @@ const MovimentacoesEstoque: React.FC = () => {
 
               {itensMovimentacao.length > 0 && (
                 <div className="md:col-span-2 mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <h4 className="text-sm font-medium text-white/80 mb-2 flex items-center">
                     <Package className="w-4 h-4 mr-2" />
                     Itens para Movimentação ({itensMovimentacao.length})
                   </h4>
@@ -1530,7 +1530,7 @@ const MovimentacoesEstoque: React.FC = () => {
               )}
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Motivo
                 </label>
                 <input
@@ -1543,7 +1543,7 @@ const MovimentacoesEstoque: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações
                 </label>
                 <textarea
@@ -1590,7 +1590,7 @@ const MovimentacoesEstoque: React.FC = () => {
                   setEditingMovimentacao(null);
                   resetForm();
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

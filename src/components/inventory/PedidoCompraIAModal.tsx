@@ -220,7 +220,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
                     <Upload className="w-8 h-8 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-medium text-gray-900">
+                    <p className="text-lg font-medium text-white">
                       Clique para selecionar ou arraste um arquivo
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
@@ -233,7 +233,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
               {/* Preview */}
               {preview && (
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Preview do arquivo:</h4>
+                  <h4 className="font-medium text-white">Preview do arquivo:</h4>
                   <img
                     src={preview}
                     alt="Preview"
@@ -310,18 +310,18 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
               {/* Fornecedor */}
               {extractionData.extracted.fornecedor && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">Fornecedor</h4>
+                  <h4 className="font-semibold text-white mb-3">Fornecedor</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600">Nome</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-white">
                         {extractionData.extracted.fornecedor.nome}
                       </p>
                     </div>
                     {extractionData.extracted.fornecedor.cnpj && (
                       <div>
                         <p className="text-sm text-gray-600">CNPJ</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-white">
                           {extractionData.extracted.fornecedor.cnpj}
                         </p>
                       </div>
@@ -332,7 +332,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
 
               {/* Estoque Destino */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Estoque de Destino *
                 </label>
                 <select
@@ -352,7 +352,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
 
               {/* Itens */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3">
+                <h4 className="font-semibold text-white mb-3">
                   Itens ({extractionData.extracted.itens.length})
                 </h4>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -394,23 +394,23 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
                               )}
                             </td>
                             <td className="px-4 py-3">
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-sm font-medium text-white">
                                 {item.descricao}
                               </p>
                               {item.codigo && (
                                 <p className="text-xs text-gray-500">Cód: {item.codigo}</p>
                               )}
                             </td>
-                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                            <td className="px-4 py-3 text-right text-sm text-white">
                               {item.quantidade} {item.unidade || 'un'}
                             </td>
-                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                            <td className="px-4 py-3 text-right text-sm text-white">
                               {item.valor_unitario.toLocaleString('pt-BR', {
                                 style: 'currency',
                                 currency: 'BRL',
                               })}
                             </td>
-                            <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
+                            <td className="px-4 py-3 text-right text-sm font-medium text-white">
                               {item.valor_total.toLocaleString('pt-BR', {
                                 style: 'currency',
                                 currency: 'BRL',
@@ -427,7 +427,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
               {/* Totais */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-900">Total do Pedido</span>
+                  <span className="text-lg font-semibold text-white">Total do Pedido</span>
                   <span className="text-2xl font-bold text-blue-600">
                     {extractionData.extracted.totais.valor_total.toLocaleString('pt-BR', {
                       style: 'currency',
@@ -445,7 +445,7 @@ const PedidoCompraIAModal: React.FC<PedidoCompraIAModalProps> = ({
           <div className="flex justify-between items-center">
             <button
               onClick={handleCancel}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100 transition-colors"
             >
               Cancelar
             </button>

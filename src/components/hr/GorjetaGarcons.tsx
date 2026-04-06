@@ -538,7 +538,7 @@ const GorjetaGarcons: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Gestão de Gorjetas</h3>
+        <h3 className="text-lg font-medium text-white">Gestão de Gorjetas</h3>
         <div className="flex gap-2 flex-wrap">
           {/* ★ BOTÃO ZIG */}
           <button
@@ -551,7 +551,7 @@ const GorjetaGarcons: React.FC = () => {
           <button onClick={() => setShowVendaForm(true)}     className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"><Plus className="w-4 h-4 inline mr-2" />Nova Venda</button>
           <button onClick={() => setShowAdicionalForm(true)} className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"><Plus className="w-4 h-4 inline mr-2" />Gorjeta Adicional</button>
           <button onClick={() => setShowDescontoForm(true)}  className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"><Plus className="w-4 h-4 inline mr-2" />Desconto</button>
-          <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"><Download className="w-4 h-4 inline mr-2" />Exportar Tudo</button>
+          <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"><Download className="w-4 h-4 inline mr-2" />Exportar Tudo</button>
         </div>
       </div>
 
@@ -560,14 +560,14 @@ const GorjetaGarcons: React.FC = () => {
       {/* Controles de Semana */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-medium text-gray-900 flex items-center">
+          <h4 className="text-lg font-medium text-white flex items-center">
             <Calendar className="w-5 h-5 mr-2 text-[#7D1F2C]" />
             Semana {semanaAtual.semana}/{semanaAtual.ano}
           </h4>
           <div className="flex items-center space-x-4">
-            <button onClick={() => alterarSemana('anterior')} className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">← Anterior</button>
+            <button onClick={() => alterarSemana('anterior')} className="px-3 py-1 bg-gray-100 text-white/80 rounded hover:bg-gray-200">← Anterior</button>
             <span className="text-sm text-gray-600">{weekDates.startFormatted} a {weekDates.endFormatted}</span>
-            <button onClick={() => alterarSemana('proxima')}  className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">Próxima →</button>
+            <button onClick={() => alterarSemana('proxima')}  className="px-3 py-1 bg-gray-100 text-white/80 rounded hover:bg-gray-200">Próxima →</button>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -628,7 +628,7 @@ const GorjetaGarcons: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredSaldos.map(saldo => (
                   <tr key={saldo.colaborador_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{saldo.colaborador_nome}</td>
+                    <td className="px-6 py-4 font-medium text-white">{saldo.colaborador_nome}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{saldo.funcao_nome || '-'}</td>
                     <td className="px-6 py-4 font-medium text-blue-600">{formatCurrency(saldo.total_vendas)}</td>
                     <td className="px-6 py-4 font-medium text-green-600">{formatCurrency(saldo.comissao_base)}</td>
@@ -638,7 +638,7 @@ const GorjetaGarcons: React.FC = () => {
                     </td>
                     <td className="px-6 py-4"><span className={`font-medium ${saldo.adicionais_total > 0 ? 'text-orange-600' : 'text-gray-400'}`}>{formatCurrency(saldo.adicionais_total)}</span></td>
                     <td className="px-6 py-4"><span className={`font-medium ${saldo.descontos_total > 0 ? 'text-red-600' : 'text-gray-400'}`}>{saldo.descontos_total > 0 ? '-' : ''}{formatCurrency(saldo.descontos_total)}</span></td>
-                    <td className="px-6 py-4 font-bold text-lg text-gray-900">{formatCurrency(saldo.total_liquido)}</td>
+                    <td className="px-6 py-4 font-bold text-lg text-white">{formatCurrency(saldo.total_liquido)}</td>
                     <td className="px-6 py-4">
                       <div className="flex space-x-2">
                         <button onClick={() => gerarRecibo(saldo.colaborador_id)} className="text-[#7D1F2C] hover:text-[#6a1a25]" title="Gerar Recibo"><Receipt className="w-4 h-4" /></button>
@@ -654,7 +654,7 @@ const GorjetaGarcons: React.FC = () => {
           {filteredSaldos.length === 0 && (
             <div className="text-center py-12">
               <Calculator className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum saldo de gorjeta encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum saldo de gorjeta encontrado</h3>
               <p className="text-gray-500">{searchTerm || colaboradorFilter !== 'all' ? 'Nenhum colaborador corresponde aos filtros.' : 'Não há dados de gorjetas para esta semana.'}</p>
             </div>
           )}
@@ -673,7 +673,7 @@ const GorjetaGarcons: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-50 rounded-lg"><Zap className="w-5 h-5 text-amber-500" /></div>
                 <div>
-                  <h3 className="text-base font-semibold text-gray-900">Importar Vendas da ZIG</h3>
+                  <h3 className="text-base font-semibold text-white">Importar Vendas da ZIG</h3>
                   <p className="text-xs text-gray-500">Semana {semanaAtual.semana}/{semanaAtual.ano} · {weekDates.startFormatted} a {weekDates.endFormatted}</p>
                 </div>
               </div>
@@ -746,7 +746,7 @@ const GorjetaGarcons: React.FC = () => {
                             {/* info */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-sm font-medium text-gray-800">{g.nome_zig}</p>
+                                <p className="text-sm font-medium text-white/90">{g.nome_zig}</p>
                                 {colIdUsado
                                   ? <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
                                       <CheckCircle className="w-3 h-3" />
@@ -759,7 +759,7 @@ const GorjetaGarcons: React.FC = () => {
                             </div>
 
                             {/* valor */}
-                            <p className="text-sm font-bold text-gray-900 shrink-0">{formatCurrency(g.valor_total)}</p>
+                            <p className="text-sm font-bold text-white shrink-0">{formatCurrency(g.valor_total)}</p>
 
                             {/* expandir */}
                             <button onClick={() => setExpandidoZig(aberto ? null : g.nome_zig)}
@@ -845,10 +845,10 @@ const GorjetaGarcons: React.FC = () => {
       {showVendaForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">{editingItem ? 'Editar Venda' : 'Nova Venda'}</h3>
+            <h3 className="text-lg font-medium text-white mb-4">{editingItem ? 'Editar Venda' : 'Nova Venda'}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Colaborador *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Colaborador *</label>
                 <select value={formVenda.colaborador_id} onChange={e => setFormVenda({...formVenda, colaborador_id: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required>
                   <option value="">Selecione um colaborador...</option>
@@ -856,19 +856,19 @@ const GorjetaGarcons: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data da Venda *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Data da Venda *</label>
                 <input type="date" value={formVenda.data_venda} onChange={e => setFormVenda({...formVenda, data_venda: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Turno *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Turno *</label>
                 <select value={formVenda.turno} onChange={e => setFormVenda({...formVenda, turno: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50">
                   <option value="almoco">Almoço</option><option value="jantar">Jantar</option><option value="noite">Noite</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valor das Vendas *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Valor das Vendas *</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">R$</span>
                   <input type="number" step="0.01" min="0" value={formVenda.valor_vendas}
@@ -877,14 +877,14 @@ const GorjetaGarcons: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Observações</label>
                 <textarea value={formVenda.observacoes} onChange={e => setFormVenda({...formVenda, observacoes: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" rows={2} />
               </div>
             </div>
             <div className="mt-6 flex justify-end space-x-3">
               <button onClick={() => { setShowVendaForm(false); setEditingItem(null); }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50">Cancelar</button>
               <button onClick={salvarVenda} disabled={loading || !formVenda.colaborador_id || !formVenda.valor_vendas}
                 className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50">{loading ? 'Salvando...' : 'Salvar'}</button>
             </div>
@@ -896,10 +896,10 @@ const GorjetaGarcons: React.FC = () => {
       {showAdicionalForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">{editingItem ? 'Editar Gorjeta Adicional' : 'Nova Gorjeta Adicional'}</h3>
+            <h3 className="text-lg font-medium text-white mb-4">{editingItem ? 'Editar Gorjeta Adicional' : 'Nova Gorjeta Adicional'}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Colaborador *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Colaborador *</label>
                 <select value={formAdicional.colaborador_id} onChange={e => setFormAdicional({...formAdicional, colaborador_id: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required>
                   <option value="">Selecione um colaborador...</option>
@@ -907,7 +907,7 @@ const GorjetaGarcons: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Tipo *</label>
                 <select value={formAdicional.tipo} onChange={e => setFormAdicional({...formAdicional, tipo: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50">
                   <option value="gratificacao_lideranca">Gratificação Liderança</option>
@@ -917,12 +917,12 @@ const GorjetaGarcons: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Descrição *</label>
                 <input type="text" value={formAdicional.descricao} onChange={e => setFormAdicional({...formAdicional, descricao: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valor *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Valor *</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">R$</span>
                   <input type="number" step="0.01" min="0" value={formAdicional.valor}
@@ -931,14 +931,14 @@ const GorjetaGarcons: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Referência *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Data de Referência *</label>
                 <input type="date" value={formAdicional.data_referencia} onChange={e => setFormAdicional({...formAdicional, data_referencia: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required />
               </div>
             </div>
             <div className="mt-6 flex justify-end space-x-3">
               <button onClick={() => { setShowAdicionalForm(false); setEditingItem(null); setFormAdicional({ colaborador_id:'', tipo:'outros', descricao:'', valor:0, data_referencia: dayjs().format('YYYY-MM-DD') }); }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50">Cancelar</button>
               <button onClick={salvarAdicional} disabled={loading || !formAdicional.colaborador_id || !formAdicional.descricao || !formAdicional.valor}
                 className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50">{loading ? 'Salvando...' : 'Salvar'}</button>
             </div>
@@ -950,10 +950,10 @@ const GorjetaGarcons: React.FC = () => {
       {showDescontoForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">{editingItem ? 'Editar Desconto' : 'Novo Desconto'}</h3>
+            <h3 className="text-lg font-medium text-white mb-4">{editingItem ? 'Editar Desconto' : 'Novo Desconto'}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Colaborador *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Colaborador *</label>
                 <select value={formDesconto.colaborador_id} onChange={e => setFormDesconto({...formDesconto, colaborador_id: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required>
                   <option value="">Selecione um colaborador...</option>
@@ -961,12 +961,12 @@ const GorjetaGarcons: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data do Desconto *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Data do Desconto *</label>
                 <input type="date" value={formDesconto.data_desconto} onChange={e => setFormDesconto({...formDesconto, data_desconto: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Consumo *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Tipo de Consumo *</label>
                 <select value={formDesconto.tipo_consumo} onChange={e => setFormDesconto({...formDesconto, tipo_consumo: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50">
                   <option value="refeicao">Refeição</option><option value="bebida">Bebida</option>
@@ -974,12 +974,12 @@ const GorjetaGarcons: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Descrição *</label>
                 <input type="text" value={formDesconto.descricao} onChange={e => setFormDesconto({...formDesconto, descricao: e.target.value})}
                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valor do Desconto *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Valor do Desconto *</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">R$</span>
                   <input type="number" step="0.01" min="0" value={formDesconto.valor_desconto}
@@ -990,7 +990,7 @@ const GorjetaGarcons: React.FC = () => {
             </div>
             <div className="mt-6 flex justify-end space-x-3">
               <button onClick={() => { setShowDescontoForm(false); setEditingItem(null); }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50">Cancelar</button>
               <button onClick={salvarDesconto} disabled={loading || !formDesconto.colaborador_id || !formDesconto.descricao || !formDesconto.valor_desconto}
                 className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50">{loading ? 'Salvando...' : 'Salvar'}</button>
             </div>
@@ -1002,7 +1002,7 @@ const GorjetaGarcons: React.FC = () => {
       {showFornecedorModal && colaboradorParaPagamento && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Selecionar Fornecedor para Pagamento</h3>
+            <h3 className="text-lg font-medium text-white mb-4">Selecionar Fornecedor para Pagamento</h3>
             <div className="mb-4">
               <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-700 space-y-1">
                 <div><strong>Colaborador:</strong> {colaboradores.find(c => c.id === colaboradorParaPagamento)?.nome_completo}</div>
@@ -1012,7 +1012,7 @@ const GorjetaGarcons: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fornecedor *</label>
+              <label className="block text-sm font-medium text-white/80 mb-1">Fornecedor *</label>
               <select value={selectedFornecedor} onChange={e => setSelectedFornecedor(e.target.value)}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50" required>
                 <option value="">Selecione um fornecedor...</option>
@@ -1021,7 +1021,7 @@ const GorjetaGarcons: React.FC = () => {
             </div>
             <div className="mt-6 flex justify-end space-x-3">
               <button onClick={() => { setShowFornecedorModal(false); setColaboradorParaPagamento(null); setValorParaPagamento(0); setSelectedFornecedor(''); }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancelar</button>
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50">Cancelar</button>
               <button onClick={confirmarPagamentoComFornecedor} disabled={loading || !selectedFornecedor}
                 className="px-4 py-2 bg-[#7D1F2C] text-white rounded-md hover:bg-[#6a1a25] disabled:opacity-50">{loading ? 'Criando Conta...' : 'Criar Conta a Pagar'}</button>
             </div>

@@ -150,10 +150,10 @@ const CategorizarLancamentos: React.FC = () => {
         <div className="flex items-start">
           <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5 mr-3" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-white mb-2">
               Lançamentos Não Classificados
             </h3>
-            <p className="text-sm text-gray-700 mb-3">
+            <p className="text-sm text-white/80 mb-3">
               Existem lançamentos no fluxo de caixa que não possuem categoria associada.
               Esses lançamentos aparecem no DRE como "Não Classificados".
               Use esta ferramenta para categorizá-los corretamente.
@@ -165,13 +165,13 @@ const CategorizarLancamentos: React.FC = () => {
       {/* Resumo por Mês */}
       {resumo.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <h4 className="font-semibold text-gray-900 mb-3">Resumo por Período</h4>
+          <h4 className="font-semibold text-white mb-3">Resumo por Período</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {resumo.map((r, idx) => (
               <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-white">
                       {dayjs(`${r.ano}-${r.mes}-01`).format('MMMM/YYYY')}
                     </p>
                     <p className="text-xs text-gray-600">{r.tipo_nome}</p>
@@ -193,7 +193,7 @@ const CategorizarLancamentos: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               <Filter className="w-4 h-4 inline mr-1" />
               Tipo
             </label>
@@ -209,7 +209,7 @@ const CategorizarLancamentos: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               <Calendar className="w-4 h-4 inline mr-1" />
               Período
             </label>
@@ -222,7 +222,7 @@ const CategorizarLancamentos: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               <Tag className="w-4 h-4 inline mr-1" />
               Categoria para Aplicar
             </label>
@@ -246,7 +246,7 @@ const CategorizarLancamentos: React.FC = () => {
       {selectedIds.size > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex justify-between items-center">
           <div>
-            <p className="font-semibold text-gray-900">
+            <p className="font-semibold text-white">
               {selectedIds.size} lançamento(s) selecionado(s)
             </p>
             <p className="text-sm text-gray-600">
@@ -296,7 +296,7 @@ const CategorizarLancamentos: React.FC = () => {
                       className="rounded border-gray-300"
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                     {dayjs(lancamento.data).format('DD/MM/YYYY')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -310,7 +310,7 @@ const CategorizarLancamentos: React.FC = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-white">
                         {lancamento.descricao || 'Sem descrição'}
                       </div>
                       {lancamento.observacoes && (
@@ -337,7 +337,7 @@ const CategorizarLancamentos: React.FC = () => {
         {lancamentosFiltrados.length === 0 && (
           <div className="text-center py-12">
             <Tag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-white mb-2">
               Nenhum lançamento encontrado
             </h3>
             <p className="text-gray-500">

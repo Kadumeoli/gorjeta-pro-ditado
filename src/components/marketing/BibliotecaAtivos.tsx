@@ -262,7 +262,7 @@ const BibliotecaAtivos: React.FC = () => {
                 </div>
 
                 <div className="p-3">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-white truncate">
                     {ativo.nome}
                   </p>
                   <div className="flex items-center justify-between mt-2">
@@ -306,7 +306,7 @@ const BibliotecaAtivos: React.FC = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-white">
                     {selectedAtivo.nome}
                   </h2>
                   {selectedAtivo.descricao && (
@@ -347,40 +347,40 @@ const BibliotecaAtivos: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Tipo</label>
-                  <p className="mt-1 text-sm text-gray-900 capitalize">{selectedAtivo.tipo}</p>
+                  <label className="text-sm font-medium text-white/80">Tipo</label>
+                  <p className="mt-1 text-sm text-white capitalize">{selectedAtivo.tipo}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Formato</label>
-                  <p className="mt-1 text-sm text-gray-900 uppercase">{selectedAtivo.formato}</p>
+                  <label className="text-sm font-medium text-white/80">Formato</label>
+                  <p className="mt-1 text-sm text-white uppercase">{selectedAtivo.formato}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Tamanho</label>
-                  <p className="mt-1 text-sm text-gray-900">
+                  <label className="text-sm font-medium text-white/80">Tamanho</label>
+                  <p className="mt-1 text-sm text-white">
                     {formatFileSize(selectedAtivo.tamanho_bytes)}
                   </p>
                 </div>
                 {selectedAtivo.largura && selectedAtivo.altura && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Dimensões</label>
-                    <p className="mt-1 text-sm text-gray-900">
+                    <label className="text-sm font-medium text-white/80">Dimensões</label>
+                    <p className="mt-1 text-sm text-white">
                       {selectedAtivo.largura} x {selectedAtivo.altura}
                     </p>
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Versão</label>
-                  <p className="mt-1 text-sm text-gray-900">v{selectedAtivo.versao}</p>
+                  <label className="text-sm font-medium text-white/80">Versão</label>
+                  <p className="mt-1 text-sm text-white">v{selectedAtivo.versao}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Usado</label>
-                  <p className="mt-1 text-sm text-gray-900">
+                  <label className="text-sm font-medium text-white/80">Usado</label>
+                  <p className="mt-1 text-sm text-white">
                     {selectedAtivo.uso_contagem} {selectedAtivo.uso_contagem === 1 ? 'vez' : 'vezes'}
                   </p>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-gray-700">Criado em</label>
-                  <p className="mt-1 text-sm text-gray-900">
+                  <label className="text-sm font-medium text-white/80">Criado em</label>
+                  <p className="mt-1 text-sm text-white">
                     {dayjs(selectedAtivo.created_at).format('DD/MM/YYYY HH:mm')}
                   </p>
                 </div>
@@ -388,12 +388,12 @@ const BibliotecaAtivos: React.FC = () => {
 
               {selectedAtivo.tags.length > 0 && (
                 <div className="mt-4">
-                  <label className="text-sm font-medium text-gray-700">Tags</label>
+                  <label className="text-sm font-medium text-white/80">Tags</label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {selectedAtivo.tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                        className="px-3 py-1 bg-gray-100 text-white/80 rounded-full text-xs"
                       >
                         {tag}
                       </span>

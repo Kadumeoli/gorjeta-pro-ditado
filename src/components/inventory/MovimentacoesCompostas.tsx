@@ -135,7 +135,7 @@ const MovimentacoesCompostas: React.FC = () => {
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${classes[tipo] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${classes[tipo] || 'bg-gray-100 text-white/90'}`}>
         {tipo.toUpperCase()}
       </span>
     );
@@ -157,7 +157,7 @@ const MovimentacoesCompostas: React.FC = () => {
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${classes[tipoItem] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${classes[tipoItem] || 'bg-gray-100 text-white/90'}`}>
         {labels[tipoItem] || tipoItem}
       </span>
     );
@@ -166,7 +166,7 @@ const MovimentacoesCompostas: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Movimentações Compostas</h2>
+        <h2 className="text-2xl font-bold text-white">Movimentações Compostas</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -244,13 +244,13 @@ const MovimentacoesCompostas: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{mov.descricao}</div>
+                      <div className="text-sm text-white">{mov.descricao}</div>
                       {mov.referencia_tipo && (
                         <div className="text-xs text-gray-500">Ref: {mov.referencia_tipo}</div>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-medium text-gray-900">{mov.total_itens} itens</span>
+                      <span className="text-sm font-medium text-white">{mov.total_itens} itens</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -279,7 +279,7 @@ const MovimentacoesCompostas: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
             <div className="px-6 py-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-medium text-gray-900">Detalhes da Movimentação</h3>
+              <h3 className="text-lg font-medium text-white">Detalhes da Movimentação</h3>
               <button
                 onClick={() => setSelectedMovimentacao(null)}
                 className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
@@ -301,7 +301,7 @@ const MovimentacoesCompostas: React.FC = () => {
                     <div key={item.id} className="border rounded-lg p-4 bg-gray-50">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-white">
                             {item.movimentacao.item.nome}
                           </div>
                           {item.movimentacao.item.codigo && (
@@ -314,7 +314,7 @@ const MovimentacoesCompostas: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="text-gray-600">
-                          Quantidade: <span className="font-medium text-gray-900">{item.movimentacao.quantidade}</span> {item.movimentacao.item.unidade_medida}
+                          Quantidade: <span className="font-medium text-white">{item.movimentacao.quantidade}</span> {item.movimentacao.item.unidade_medida}
                         </span>
                         <span className={`px-2 py-1 text-xs rounded-full ${item.movimentacao.tipo === 'saida' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
                           {item.movimentacao.tipo === 'saida' ? 'SAÍDA' : 'ENTRADA'}

@@ -78,7 +78,7 @@ const Ocorrencias: React.FC = () => {
     { value: 'aberta', label: 'Aberta', color: 'bg-red-100 text-red-800' },
     { value: 'em_analise', label: 'Em Análise', color: 'bg-yellow-100 text-yellow-800' },
     { value: 'resolvida', label: 'Resolvida', color: 'bg-green-100 text-green-800' },
-    { value: 'arquivada', label: 'Arquivada', color: 'bg-gray-100 text-gray-800' }
+    { value: 'arquivada', label: 'Arquivada', color: 'bg-gray-100 text-white/90' }
   ];
 
   useEffect(() => {
@@ -200,11 +200,11 @@ const Ocorrencias: React.FC = () => {
   };
 
   const getGravidadeColor = (gravidade: string) => {
-    return gravidades.find(g => g.value === gravidade)?.color || 'bg-gray-100 text-gray-800';
+    return gravidades.find(g => g.value === gravidade)?.color || 'bg-gray-100 text-white/90';
   };
 
   const getStatusColor = (status: string) => {
-    return statusOptions.find(s => s.value === status)?.color || 'bg-gray-100 text-gray-800';
+    return statusOptions.find(s => s.value === status)?.color || 'bg-gray-100 text-white/90';
   };
 
   const filteredOcorrencias = ocorrencias.filter(item => {
@@ -242,7 +242,7 @@ const Ocorrencias: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Livro de Ocorrências</h1>
+          <h1 className="text-3xl font-bold text-white">Livro de Ocorrências</h1>
           <p className="text-gray-600">Registro de acontecimentos nos setores</p>
         </div>
         <button
@@ -361,7 +361,7 @@ const Ocorrencias: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{item.titulo}</h3>
+                        <h3 className="text-lg font-semibold text-white">{item.titulo}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getGravidadeColor(item.gravidade)}`}>
                           {gravidades.find(g => g.value === item.gravidade)?.label}
                         </span>
@@ -400,24 +400,24 @@ const Ocorrencias: React.FC = () => {
 
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700">Descrição: </span>
+                      <span className="font-medium text-white/80">Descrição: </span>
                       <span className="text-gray-600">{item.descricao}</span>
                     </div>
                     {item.envolvidos && (
                       <div>
-                        <span className="font-medium text-gray-700">Envolvidos: </span>
+                        <span className="font-medium text-white/80">Envolvidos: </span>
                         <span className="text-gray-600">{item.envolvidos}</span>
                       </div>
                     )}
                     {item.acoes_tomadas && (
                       <div>
-                        <span className="font-medium text-gray-700">Ações Tomadas: </span>
+                        <span className="font-medium text-white/80">Ações Tomadas: </span>
                         <span className="text-gray-600">{item.acoes_tomadas}</span>
                       </div>
                     )}
                     {item.observacoes && (
                       <div>
-                        <span className="font-medium text-gray-700">Observações: </span>
+                        <span className="font-medium text-white/80">Observações: </span>
                         <span className="text-gray-600">{item.observacoes}</span>
                       </div>
                     )}
@@ -435,7 +435,7 @@ const Ocorrencias: React.FC = () => {
           <div className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-white">
                   {editingItem ? 'Editar Ocorrência' : 'Nova Ocorrência'}
                 </h2>
                 <button
@@ -452,7 +452,7 @@ const Ocorrencias: React.FC = () => {
               <div className="space-y-4">
                 {/* Data e Hora */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data e Hora da Ocorrência *
                   </label>
                   <input
@@ -466,7 +466,7 @@ const Ocorrencias: React.FC = () => {
                 {/* Setor e Tipo */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Setor *
                     </label>
                     <select
@@ -481,7 +481,7 @@ const Ocorrencias: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Tipo de Ocorrência *
                     </label>
                     <select
@@ -499,7 +499,7 @@ const Ocorrencias: React.FC = () => {
                 {/* Gravidade e Status */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Gravidade *
                     </label>
                     <select
@@ -514,7 +514,7 @@ const Ocorrencias: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Status *
                     </label>
                     <select
@@ -531,7 +531,7 @@ const Ocorrencias: React.FC = () => {
 
                 {/* Título */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Título *
                   </label>
                   <input
@@ -545,7 +545,7 @@ const Ocorrencias: React.FC = () => {
 
                 {/* Descrição */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Descrição Detalhada *
                   </label>
                   <textarea
@@ -559,7 +559,7 @@ const Ocorrencias: React.FC = () => {
 
                 {/* Envolvidos */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Pessoas/Clientes Envolvidos
                   </label>
                   <input
@@ -573,7 +573,7 @@ const Ocorrencias: React.FC = () => {
 
                 {/* Ações Tomadas */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Ações Tomadas
                   </label>
                   <textarea
@@ -587,7 +587,7 @@ const Ocorrencias: React.FC = () => {
 
                 {/* Observações */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Observações Adicionais
                   </label>
                   <textarea
@@ -606,7 +606,7 @@ const Ocorrencias: React.FC = () => {
                     setShowForm(false);
                     resetForm();
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>

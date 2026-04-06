@@ -19,7 +19,7 @@ const ModalVerificacaoInsumos: React.FC<ModalVerificacaoInsumosProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             Verificação de Disponibilidade de Insumos
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -85,11 +85,11 @@ const ModalVerificacaoInsumos: React.FC<ModalVerificacaoInsumosProps> = ({
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <Package className="w-4 h-4 text-gray-400 mr-2" />
-                      <span className="font-medium text-gray-900">{v.item_nome}</span>
+                      <span className="font-medium text-white">{v.item_nome}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-white">
                       {v.quantidade_necessaria.toFixed(3)}
                     </span>
                   </td>
@@ -100,7 +100,7 @@ const ModalVerificacaoInsumos: React.FC<ModalVerificacaoInsumosProps> = ({
                       {v.quantidade_disponivel.toFixed(3)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                     {v.estoque_nome}
                   </td>
                 </tr>
@@ -112,7 +112,7 @@ const ModalVerificacaoInsumos: React.FC<ModalVerificacaoInsumosProps> = ({
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
           >
             Cancelar
           </button>

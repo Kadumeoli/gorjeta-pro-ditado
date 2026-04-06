@@ -472,7 +472,7 @@ const Musicians: React.FC = () => {
       case 'cancelado':
         return 'text-red-700 bg-red-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -771,7 +771,7 @@ const Musicians: React.FC = () => {
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <h4 className="text-xl font-semibold text-gray-900 min-w-[200px] text-center">
+              <h4 className="text-xl font-semibold text-white min-w-[200px] text-center">
                 {currentMonth.format('MMMM [de] YYYY')}
               </h4>
               <button
@@ -834,7 +834,7 @@ const Musicians: React.FC = () => {
                     isCurrentMonthDay 
                       ? isTodayDay 
                         ? 'text-blue-600' 
-                        : 'text-gray-900'
+                        : 'text-white'
                       : 'text-gray-400'
                   }`}>
                     {day.format('D')}
@@ -881,7 +881,7 @@ const Musicians: React.FC = () => {
 
         {/* Calendar Legend */}
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <h5 className="text-sm font-medium text-gray-700 mb-2">Legenda:</h5>
+          <h5 className="text-sm font-medium text-white/80 mb-2">Legenda:</h5>
           <div className="flex flex-wrap gap-4 text-xs">
             <div className="flex items-center">
               <div className="w-3 h-3 bg-green-100 border border-green-200 rounded mr-2"></div>
@@ -1363,7 +1363,7 @@ const Musicians: React.FC = () => {
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-white/80">
                       Fornecedor (Para Pagamento)
                     </label>
                     {sugestedFornecedorId && formData.fornecedor_id === sugestedFornecedorId && (
@@ -1591,7 +1591,7 @@ const Musicians: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={loading || !formData.nome || !formData.data_evento || formData.valor <= 0}
-                  className="px-6 py-2 rounded-lg text-black font-medium hover:scale-105 transition-all shadow-md disabled:opacity-50"
+                  className="px-6 py-2 rounded-lg text-white font-medium hover:scale-105 transition-all shadow-md disabled:opacity-50"
                   style={{ background: 'linear-gradient(135deg, #D4AF37, #C5A028)' }}
                 >
                   {loading ? 'Salvando...' : 'Salvar'}

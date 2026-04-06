@@ -1069,7 +1069,7 @@ const ComprasEstoque: React.FC = () => {
       case 'cancelado':
         return 'text-red-700 bg-red-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -1132,18 +1132,18 @@ const ComprasEstoque: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Compras de Estoque</h3>
+        <h3 className="text-lg font-medium text-white">Compras de Estoque</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setShowMetricasModal(true)}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50 flex items-center"
           >
             <Activity className="w-4 h-4 mr-2" />
             Métricas e Análises
           </button>
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -1362,7 +1362,7 @@ const ComprasEstoque: React.FC = () => {
                   <tr key={compra.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-white">
                           {compra.fornecedor_nome || 'Fornecedor não informado'}
                         </div>
                         {compra.observacoes && (
@@ -1371,22 +1371,22 @@ const ComprasEstoque: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
+                      <span className="text-sm text-white">
                         {compra.numero_documento || '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {dayjs(compra.data_compra).format('DD/MM/YYYY')}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
+                      <span className="text-sm text-white">
                         {compra.estoque_destino_nome || 'Estoque não informado'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         {formatCurrency(compra.valor_total)}
                       </div>
                     </td>
@@ -1448,7 +1448,7 @@ const ComprasEstoque: React.FC = () => {
           {filteredCompras.length === 0 && (
             <div className="text-center py-12">
               <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma compra encontrada</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma compra encontrada</h3>
               <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' || fornecedorFilter !== 'all'
                   ? 'Nenhuma compra corresponde aos filtros aplicados.'
@@ -1463,7 +1463,7 @@ const ComprasEstoque: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingCompra ? 'Editar Compra' : 'Nova Compra'}
             </h3>
             
@@ -1480,7 +1480,7 @@ const ComprasEstoque: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Número do Documento
                 </label>
                 <input
@@ -1493,7 +1493,7 @@ const ComprasEstoque: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data da Compra *
                 </label>
                 <input
@@ -1521,7 +1521,7 @@ const ComprasEstoque: React.FC = () => {
 
             <div className="border-t border-gray-200 pt-6">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações
                 </label>
                 <textarea
@@ -1537,7 +1537,7 @@ const ComprasEstoque: React.FC = () => {
             {/* Itens da Compra */}
             <div className="border-t border-gray-200 pt-6">
               <div className="flex justify-between items-center mb-4">
-                <h4 className="text-md font-medium text-gray-900">Itens da Compra</h4>
+                <h4 className="text-md font-medium text-white">Itens da Compra</h4>
                 <button
                   onClick={adicionarItem}
                   className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
@@ -1670,7 +1670,7 @@ const ComprasEstoque: React.FC = () => {
               <div className="mt-6 border-t border-gray-200 pt-4">
                 <div className="max-w-md ml-auto">
                   <div className="flex justify-between text-lg font-bold">
-                    <span className="text-gray-900">Valor Total:</span>
+                    <span className="text-white">Valor Total:</span>
                     <span className="text-[#7D1F2C]">
                       {formatCurrency(calcularValorTotal())}
                     </span>
@@ -1685,7 +1685,7 @@ const ComprasEstoque: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -1714,7 +1714,7 @@ const ComprasEstoque: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 Itens da Compra - {compraSelecionada.fornecedor_nome}
               </h3>
               <button
@@ -1796,7 +1796,7 @@ const ComprasEstoque: React.FC = () => {
                           return (
                             <tr key={item.id} className={`hover:bg-gray-50 ${hasDivergencia ? 'bg-yellow-50' : ''}`}>
                               <td className="px-4 py-3">
-                                <div className="font-medium text-gray-900">{item.item_nome}</div>
+                                <div className="font-medium text-white">{item.item_nome}</div>
                                 {hasDivergencia && item.motivo_divergencia && (
                                   <div className="text-xs text-yellow-700 mt-1">
                                     <AlertTriangle className="w-3 h-3 inline mr-1" />
@@ -1805,12 +1805,12 @@ const ComprasEstoque: React.FC = () => {
                                 )}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-sm text-gray-900">
+                                <span className="text-sm text-white">
                                   {item.item_codigo || '-'}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-sm text-gray-900">
+                                <span className="text-sm text-white">
                                   {quantidadePedida.toFixed(3)}
                                 </span>
                               </td>
@@ -1825,28 +1825,28 @@ const ComprasEstoque: React.FC = () => {
                                     </span>
                                   </div>
                                 ) : (
-                                  <span className="text-sm text-gray-900">
+                                  <span className="text-sm text-white">
                                     {quantidadeRecebida.toFixed(3)}
                                   </span>
                                 )}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-sm text-gray-900">
+                                <span className="text-sm text-white">
                                   {item.unidade_medida}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-sm text-gray-900">
+                                <span className="text-sm text-white">
                                   {formatCurrency(item.custo_unitario)}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-white">
                                   {formatCurrency(quantidadeRecebida * item.custo_unitario)}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-sm text-gray-900">
+                                <span className="text-sm text-white">
                                   {item.data_validade ? dayjs(item.data_validade).format('DD/MM/YYYY') : '-'}
                                 </span>
                               </td>
@@ -1895,7 +1895,7 @@ const ComprasEstoque: React.FC = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-xl font-semibold text-white mb-2">
                     Conferência de Recebimento
                   </h3>
                   <div className="text-sm text-gray-600 space-y-1">
@@ -1948,7 +1948,7 @@ const ComprasEstoque: React.FC = () => {
                         <tr key={item.id} className={`border-b ${hasDivergencia ? 'bg-yellow-50' : ''}`}>
                           <td className="px-4 py-3">
                             <div>
-                              <p className="font-medium text-gray-900">{item.item_nome}</p>
+                              <p className="font-medium text-white">{item.item_nome}</p>
                               {item.item_codigo && (
                                 <p className="text-sm text-gray-500">Cód: {item.item_codigo}</p>
                               )}
@@ -1958,7 +1958,7 @@ const ComprasEstoque: React.FC = () => {
                             <span className="text-sm text-gray-600">{item.unidade_medida}</span>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <span className="font-medium text-gray-900">{quantidadePedida}</span>
+                            <span className="font-medium text-white">{quantidadePedida}</span>
                           </td>
                           <td className="px-4 py-3">
                             <input
@@ -1981,7 +1981,7 @@ const ComprasEstoque: React.FC = () => {
                             />
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-white">
                               {formatCurrency((item.quantidade_recebida || 0) * (item.custo_unitario || 0))}
                             </span>
                           </td>
@@ -2055,7 +2055,7 @@ const ComprasEstoque: React.FC = () => {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Valor dos Encargos (R$)
                     </label>
                     <input
@@ -2079,7 +2079,7 @@ const ComprasEstoque: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Percentual (%)
                     </label>
                     <input
@@ -2104,7 +2104,7 @@ const ComprasEstoque: React.FC = () => {
                   </div>
 
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Descrição dos Encargos
                     </label>
                     <input
@@ -2126,7 +2126,7 @@ const ComprasEstoque: React.FC = () => {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Valor do Desconto (R$)
                     </label>
                     <input
@@ -2150,7 +2150,7 @@ const ComprasEstoque: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Percentual (%)
                     </label>
                     <input
@@ -2175,7 +2175,7 @@ const ComprasEstoque: React.FC = () => {
                   </div>
 
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Motivo do Desconto
                     </label>
                     <input
@@ -2197,8 +2197,8 @@ const ComprasEstoque: React.FC = () => {
                 </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700">Valor dos Produtos:</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="text-white/80">Valor dos Produtos:</span>
+                    <span className="font-medium text-white">
                       {formatCurrency(itensRecebimento.reduce((sum, item) => {
                         const qtd = item.quantidade_recebida ?? (item.quantidade_pedida || item.quantidade);
                         return sum + (qtd * item.custo_unitario);
@@ -2207,7 +2207,7 @@ const ComprasEstoque: React.FC = () => {
                   </div>
                   {valorDescontoRecebimento > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-700">
+                      <span className="text-white/80">
                         Desconto ({percentualDescontoRecebimento.toFixed(2)}%):
                       </span>
                       <span className="font-medium text-green-600">
@@ -2217,7 +2217,7 @@ const ComprasEstoque: React.FC = () => {
                   )}
                   {valorEncargosRecebimento > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-700">
+                      <span className="text-white/80">
                         Encargos ({percentualEncargosRecebimento.toFixed(2)}%):
                       </span>
                       <span className="font-medium text-orange-600">
@@ -2226,7 +2226,7 @@ const ComprasEstoque: React.FC = () => {
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-bold pt-3 border-t-2 border-blue-300">
-                    <span className="text-gray-900">Valor Total Final:</span>
+                    <span className="text-white">Valor Total Final:</span>
                     <span className="text-blue-900">
                       {formatCurrency(
                         itensRecebimento.reduce((sum, item) => {
@@ -2247,7 +2247,7 @@ const ComprasEstoque: React.FC = () => {
                   setCompraRecebimento(null);
                   setItensRecebimento([]);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100"
               >
                 Cancelar
               </button>
@@ -2294,7 +2294,7 @@ const ComprasEstoque: React.FC = () => {
           <div className="bg-white rounded-lg w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">Métricas e Análises de Compras</h3>
+                <h3 className="text-xl font-semibold text-white">Métricas e Análises de Compras</h3>
                 <p className="text-sm text-gray-500 mt-1">
                   Visão completa das compras com filtros e indicadores
                 </p>

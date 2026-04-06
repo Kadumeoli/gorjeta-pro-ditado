@@ -166,7 +166,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
             <>
               {/* Input de Mensagem */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-white/80">
                   Digite ou cole os lançamentos
                 </label>
                 <textarea
@@ -184,13 +184,13 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
 
               {/* Exemplos */}
               <div className="space-y-3">
-                <p className="text-sm font-medium text-gray-700">Exemplos de formato:</p>
+                <p className="text-sm font-medium text-white/80">Exemplos de formato:</p>
                 <div className="space-y-2">
                   {exemplos.map((exemplo, index) => (
                     <button
                       key={index}
                       onClick={() => setMensagem(exemplo)}
-                      className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-mono text-gray-700 transition-colors whitespace-pre-wrap"
+                      className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-mono text-white/80 transition-colors whitespace-pre-wrap"
                     >
                       {exemplo}
                     </button>
@@ -238,7 +238,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
                 <div className="grid grid-cols-4 gap-4 mt-4">
                   <div className="bg-white rounded-lg p-4">
                     <p className="text-sm text-gray-600">Total Processado</p>
-                    <p className="text-2xl font-bold text-gray-900">{resultado.resumo.total_processado}</p>
+                    <p className="text-2xl font-bold text-white">{resultado.resumo.total_processado}</p>
                   </div>
                   <div className="bg-white rounded-lg p-4">
                     <p className="text-sm text-gray-600">Sucesso</p>
@@ -258,7 +258,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
               {/* Lançamentos Criados */}
               {resultado.lancamentos_criados && resultado.lancamentos_criados.length > 0 && (
                 <div className="space-y-3">
-                  <h5 className="font-semibold text-gray-900">Contas criadas:</h5>
+                  <h5 className="font-semibold text-white">Contas criadas:</h5>
                   <div className="space-y-2">
                     {resultado.lancamentos_criados.map((lanc: any, index: number) => (
                       <div
@@ -269,7 +269,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <CheckCircle className="w-5 h-5 text-green-600" />
-                              <p className="font-medium text-gray-900">{lanc.descricao}</p>
+                              <p className="font-medium text-white">{lanc.descricao}</p>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                               <div className="flex items-center gap-1">
@@ -332,7 +332,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
                     setResultado(null);
                     setMensagem('');
                   }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100 transition-colors"
                 >
                   Novo Lançamento
                 </button>
@@ -347,7 +347,7 @@ const LancamentoLoteIA: React.FC<LancamentoLoteIAProps> = ({ isOpen, onClose, on
               <>
                 <button
                   onClick={handleFechar}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-6 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100 transition-colors"
                 >
                   Cancelar
                 </button>

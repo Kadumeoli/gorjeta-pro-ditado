@@ -39,7 +39,7 @@ const colunas = [
 ];
 
 const prioridadeCores: Record<string, string> = {
-  baixa: 'bg-gray-100 text-gray-700',
+  baixa: 'bg-gray-100 text-white/80',
   media: 'bg-blue-100 text-blue-700',
   alta: 'bg-orange-100 text-orange-700',
   urgente: 'bg-red-100 text-red-700'
@@ -284,7 +284,7 @@ const KanbanCampanhas: React.FC = () => {
               >
                 <div className={`flex items-center gap-2 p-4 pb-3 border-b-2 ${coluna.cor}`}>
                   <div className={`w-2.5 h-2.5 rounded-full ${coluna.dotColor}`} />
-                  <h3 className="font-semibold text-gray-800 text-sm">{coluna.titulo}</h3>
+                  <h3 className="font-semibold text-white/90 text-sm">{coluna.titulo}</h3>
                   <span className="ml-auto px-2 py-0.5 bg-white rounded-full text-xs font-medium text-gray-600 shadow-sm">
                     {campanhasDaColuna.length}
                   </span>
@@ -301,7 +301,7 @@ const KanbanCampanhas: React.FC = () => {
                     >
                       <div className="flex items-start justify-between mb-1.5">
                         <h4
-                          className="font-medium text-gray-900 text-sm flex-1 cursor-pointer hover:text-amber-700 transition-colors"
+                          className="font-medium text-white text-sm flex-1 cursor-pointer hover:text-amber-700 transition-colors"
                           onClick={() => setSelectedCampanhaId(campanha.id)}
                         >
                           {campanha.nome}
@@ -320,13 +320,13 @@ const KanbanCampanhas: React.FC = () => {
                             <div className="absolute right-0 top-7 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 py-1">
                               <button
                                 onClick={() => setSelectedCampanhaId(campanha.id)}
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                className="w-full text-left px-3 py-2 text-sm text-white/80 hover:bg-gray-50"
                               >
                                 Ver Detalhes
                               </button>
                               <button
                                 onClick={() => handleEditarCampanha(campanha)}
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                className="w-full text-left px-3 py-2 text-sm text-white/80 hover:bg-gray-50"
                               >
                                 Editar
                               </button>

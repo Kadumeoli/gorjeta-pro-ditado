@@ -252,7 +252,7 @@ const ContagemResultado: React.FC<Props> = ({
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-white">
               Resultado da Contagem
             </h2>
             <p className="text-xs text-gray-500">
@@ -265,14 +265,14 @@ const ContagemResultado: React.FC<Props> = ({
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={exportarPDF}
-            className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors"
+            className="px-4 py-2 bg-white border border-gray-200 text-white/80 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors"
           >
             <FileText className="w-4 h-4" />
             Exportar PDF
           </button>
           <button
             onClick={exportarXLSX}
-            className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors"
+            className="px-4 py-2 bg-white border border-gray-200 text-white/80 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors"
           >
             <Download className="w-4 h-4" />
             Exportar XLSX
@@ -405,13 +405,13 @@ const ContagemResultado: React.FC<Props> = ({
               {filteredItens.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-4 py-2.5">
-                    <div className="font-medium text-gray-900 text-sm">{item.item_nome}</div>
+                    <div className="font-medium text-white text-sm">{item.item_nome}</div>
                     <div className="text-[11px] text-gray-400">{item.item_codigo}</div>
                   </td>
-                  <td className="px-4 py-2.5 text-center text-sm text-gray-700 tabular-nums">
+                  <td className="px-4 py-2.5 text-center text-sm text-white/80 tabular-nums">
                     {item.quantidade_sistema} {item.unidade_medida}
                   </td>
-                  <td className="px-4 py-2.5 text-center text-sm font-semibold text-gray-900 tabular-nums">
+                  <td className="px-4 py-2.5 text-center text-sm font-semibold text-white tabular-nums">
                     {item.quantidade_contada} {item.unidade_medida}
                   </td>
                   <td className="px-4 py-2.5 text-center">
@@ -497,7 +497,7 @@ function StatCard({
               ? 'text-green-600'
               : color === 'orange'
                 ? 'text-orange-600'
-                : 'text-gray-900'
+                : 'text-white'
         }`}
       >
         {value}

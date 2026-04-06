@@ -110,7 +110,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="bg-white rounded-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
             <User className="w-8 h-8 text-blue-600" />
             Ficha Completa do Candidato
           </h2>
@@ -125,13 +125,13 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
         <div className="p-6 space-y-6">
           {/* Informações Pessoais */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Informações Pessoais</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Informações Pessoais</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-600">Nome Completo</p>
-                  <p className="font-semibold text-gray-900">{talento.candidato?.nome}</p>
+                  <p className="font-semibold text-white">{talento.candidato?.nome}</p>
                 </div>
               </div>
 
@@ -140,7 +140,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                   <Mail className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">Email</p>
-                    <p className="font-semibold text-gray-900">{talento.candidato.email}</p>
+                    <p className="font-semibold text-white">{talento.candidato.email}</p>
                   </div>
                 </div>
               )}
@@ -150,7 +150,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                   <Phone className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">Telefone</p>
-                    <p className="font-semibold text-gray-900">{talento.candidato.telefone}</p>
+                    <p className="font-semibold text-white">{talento.candidato.telefone}</p>
                   </div>
                 </div>
               )}
@@ -160,7 +160,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                   <MapPin className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">Localização</p>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-white">
                       {talento.candidato.cidade}, {talento.candidato.estado}
                     </p>
                   </div>
@@ -172,7 +172,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
           {/* Informações Profissionais */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Briefcase className="w-6 h-6 text-blue-600" />
                 Informações Profissionais
               </h3>
@@ -205,7 +205,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Áreas de Interesse
                 </label>
                 {editMode ? (
@@ -245,7 +245,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Disponibilidade
                 </label>
                 {editMode ? (
@@ -257,12 +257,12 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                     placeholder="Ex: Imediata, 30 dias..."
                   />
                 ) : (
-                  <p className="text-gray-900">{formData.disponibilidade || 'Não informado'}</p>
+                  <p className="text-white">{formData.disponibilidade || 'Não informado'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Pretensão Salarial
                 </label>
                 {editMode ? (
@@ -274,7 +274,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                     placeholder="0.00"
                   />
                 ) : (
-                  <p className="text-gray-900">
+                  <p className="text-white">
                     {formData.pretensao_salarial
                       ? `R$ ${formData.pretensao_salarial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
                       : 'Não informado'}
@@ -283,7 +283,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Observações
                 </label>
                 {editMode ? (
@@ -295,7 +295,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                     placeholder="Observações sobre o candidato..."
                   />
                 ) : (
-                  <p className="text-gray-900 whitespace-pre-wrap">{formData.observacoes || 'Nenhuma observação'}</p>
+                  <p className="text-white whitespace-pre-wrap">{formData.observacoes || 'Nenhuma observação'}</p>
                 )}
               </div>
             </div>
@@ -304,12 +304,12 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
           {/* Currículo */}
           {talento.candidato?.curriculo_texto && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <FileText className="w-6 h-6 text-blue-600" />
                 Currículo
               </h3>
               <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                <p className="text-gray-800 whitespace-pre-wrap text-sm">
+                <p className="text-white/90 whitespace-pre-wrap text-sm">
                   {talento.candidato.curriculo_texto}
                 </p>
               </div>
@@ -319,7 +319,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
           {/* Pré-Entrevista */}
           {candidatura && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <MessageSquare className="w-6 h-6 text-blue-600" />
                 Pré-Entrevista IA
               </h3>
@@ -330,7 +330,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
           {/* Entrevistas Pessoais */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Mic className="w-6 h-6 text-blue-600" />
                 Entrevistas Pessoais ({entrevistas.length})
               </h3>
@@ -353,7 +353,7 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
                   <div key={entrevista.id} className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="font-semibold text-gray-900">{entrevista.cargo_avaliado}</p>
+                        <p className="font-semibold text-white">{entrevista.cargo_avaliado}</p>
                         <p className="text-sm text-gray-600">
                           {new Date(entrevista.data_entrevista).toLocaleString('pt-BR')}
                         </p>
@@ -371,14 +371,14 @@ export default function FichaCandidato({ talento, onClose, onUpdate }: FichaCand
 
                     {entrevista.notas_entrevistador && (
                       <div className="mb-3">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Notas:</p>
+                        <p className="text-sm font-medium text-white/80 mb-1">Notas:</p>
                         <p className="text-sm text-gray-600">{entrevista.notas_entrevistador}</p>
                       </div>
                     )}
 
                     {entrevista.analise_ia && (
                       <div className="bg-white rounded p-3 space-y-2">
-                        <p className="text-sm font-medium text-gray-700">Análise IA:</p>
+                        <p className="text-sm font-medium text-white/80">Análise IA:</p>
                         {entrevista.analise_ia.resumo && (
                           <p className="text-sm text-gray-600">{entrevista.analise_ia.resumo}</p>
                         )}

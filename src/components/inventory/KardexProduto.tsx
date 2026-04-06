@@ -561,7 +561,7 @@ const KardexProduto: React.FC = () => {
       case 'ajuste':
         return 'text-purple-700 bg-purple-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -604,7 +604,7 @@ const KardexProduto: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">Kardex de Produto</h3>
+          <h3 className="text-lg font-medium text-white">Kardex de Produto</h3>
         </div>
 
         {error && (
@@ -615,7 +615,7 @@ const KardexProduto: React.FC = () => {
 
         {/* Seleção de Item */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h4 className="text-md font-medium text-gray-900 mb-4">Selecionar Produto</h4>
+          <h4 className="text-md font-medium text-white mb-4">Selecionar Produto</h4>
           
           <div className="mb-4">
             <div className="relative">
@@ -642,7 +642,7 @@ const KardexProduto: React.FC = () => {
                     <Package className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h5 className="font-medium text-gray-900">{item.nome}</h5>
+                    <h5 className="font-medium text-white">{item.nome}</h5>
                     {item.codigo && (
                       <p className="text-sm text-gray-600">Código: {item.codigo}</p>
                     )}
@@ -679,18 +679,18 @@ const KardexProduto: React.FC = () => {
         <div className="flex items-center">
           <button
             onClick={() => setItemSelecionado(null)}
-            className="mr-4 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
+            className="mr-4 p-2 text-gray-600 hover:text-white/90 hover:bg-gray-100 rounded-lg"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             Kardex - {itemSelecionado.nome}
           </h3>
         </div>
         <div className="flex gap-2">
           <button
             onClick={exportarExcel}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Excel
@@ -713,7 +713,7 @@ const KardexProduto: React.FC = () => {
 
       {/* Informações do Produto */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h4 className="text-md font-medium text-gray-900 mb-4 flex items-center">
+        <h4 className="text-md font-medium text-white mb-4 flex items-center">
           <Package className="w-5 h-5 mr-2 text-[#7D1F2C]" />
           Informações do Produto
         </h4>
@@ -722,7 +722,7 @@ const KardexProduto: React.FC = () => {
           <div>
             <h5 className="text-sm font-medium text-gray-500 mb-2">Dados Básicos</h5>
             <div className="space-y-1">
-              <p className="font-medium text-gray-900">{itemSelecionado.nome}</p>
+              <p className="font-medium text-white">{itemSelecionado.nome}</p>
               {itemSelecionado.codigo && (
                 <p className="text-sm text-gray-600">Código: {itemSelecionado.codigo}</p>
               )}
@@ -749,7 +749,7 @@ const KardexProduto: React.FC = () => {
               <div className="space-y-1">
                 <p className="text-sm">
                   <span className="text-gray-600">Quantidade:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {indicadores.quantidade_total.toFixed(3)} {itemSelecionado.unidade_medida}
                   </span>
                 </p>
@@ -761,7 +761,7 @@ const KardexProduto: React.FC = () => {
                 </p>
                 <p className="text-sm">
                   <span className="text-gray-600">Custo Médio:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {formatCurrency(indicadores.custo_medio_geral)}
                   </span>
                 </p>
@@ -775,7 +775,7 @@ const KardexProduto: React.FC = () => {
               <div className="space-y-1">
                 <p className="text-sm">
                   <span className="text-gray-600">Total:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {indicadores.total_movimentacoes}
                   </span>
                 </p>
@@ -787,7 +787,7 @@ const KardexProduto: React.FC = () => {
                 </p>
                 <p className="text-sm">
                   <span className="text-gray-600">Estoques:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {indicadores.estoques_com_saldo}
                   </span>
                 </p>
@@ -858,7 +858,7 @@ const KardexProduto: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data Inicial
             </label>
             <input
@@ -870,7 +870,7 @@ const KardexProduto: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data Final
             </label>
             <input
@@ -882,7 +882,7 @@ const KardexProduto: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Tipo Movimentação
             </label>
             <select
@@ -899,7 +899,7 @@ const KardexProduto: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Estoque
             </label>
             <select
@@ -931,7 +931,7 @@ const KardexProduto: React.FC = () => {
       {/* Saldos por Estoque */}
       {saldosEstoque.length > 0 && (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+          <h4 className="text-lg font-medium text-white mb-4 flex items-center">
             <Warehouse className="w-5 h-5 mr-2 text-[#7D1F2C]" />
             Saldos Atuais por Estoque
           </h4>
@@ -940,13 +940,13 @@ const KardexProduto: React.FC = () => {
             {saldosEstoque.map((saldo) => (
               <div key={saldo.estoque_id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <h5 className="font-medium text-gray-900">{saldo.estoque_nome}</h5>
+                  <h5 className="font-medium text-white">{saldo.estoque_nome}</h5>
                   <Warehouse className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Quantidade:</span>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-white">
                       {saldo.quantidade_atual.toFixed(3)} {itemSelecionado.unidade_medida}
                     </span>
                   </div>
@@ -980,7 +980,7 @@ const KardexProduto: React.FC = () => {
       {/* Gráfico de Evolução */}
       {dadosGrafico.length > 0 && (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h4 className="text-lg font-medium text-gray-900 mb-4">
+          <h4 className="text-lg font-medium text-white mb-4">
             Evolução do Estoque
           </h4>
           <div className="h-80">
@@ -1025,7 +1025,7 @@ const KardexProduto: React.FC = () => {
       {/* Kardex Detalhado */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6">
-          <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+          <h4 className="text-lg font-medium text-white mb-4 flex items-center">
             <FileText className="w-5 h-5 mr-2 text-[#7D1F2C]" />
             Kardex Detalhado
           </h4>
@@ -1107,7 +1107,7 @@ const KardexProduto: React.FC = () => {
               ) : (
                 <div className="text-center py-12">
                   <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma movimentação encontrada</h3>
+                  <h3 className="text-lg font-medium text-white mb-2">Nenhuma movimentação encontrada</h3>
                   <p className="text-gray-500">
                     Não há movimentações registradas para este produto no período selecionado.
                   </p>

@@ -232,7 +232,7 @@ const Marketing: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Marketing</h1>
+          <h1 className="text-2xl font-bold text-white">Marketing</h1>
           <p className="text-sm text-gray-600 mt-1">
             Gerencie suas campanhas, ativos e performance
           </p>
@@ -263,7 +263,7 @@ const Marketing: React.FC = () => {
             className={`px-4 py-2 font-medium transition-colors border-b-2 ${
               activeTab === tab.id
                 ? 'border-amber-600 text-amber-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                : 'border-transparent text-gray-600 hover:text-white'
             }`}
           >
             {tab.label}
@@ -278,7 +278,7 @@ const Marketing: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Campanhas Ativas</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {stats.campanhas_ativas}
                   </p>
                 </div>
@@ -292,7 +292,7 @@ const Marketing: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Próximas Publicações</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {stats.proximas_publicacoes}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">Próximos 7 dias</p>
@@ -307,7 +307,7 @@ const Marketing: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Budget Usado</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl font-bold text-white mt-1">
                     R$ {stats.budget_usado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -324,7 +324,7 @@ const Marketing: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Utilização</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {stats.budget_total > 0
                       ? ((stats.budget_usado / stats.budget_total) * 100).toFixed(1)
                       : 0}%
@@ -339,7 +339,7 @@ const Marketing: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold text-white mb-4">
                 Feed de Atividades
               </h2>
               <div className="space-y-4">
@@ -361,7 +361,7 @@ const Marketing: React.FC = () => {
                           <Icon className="w-4 h-4 text-gray-600" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-white">
                             {atividade.descricao}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
@@ -382,7 +382,7 @@ const Marketing: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold text-white mb-4">
                 Performance Rápida
               </h2>
               <div className="space-y-4">
@@ -397,7 +397,7 @@ const Marketing: React.FC = () => {
           </div>
 
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">
+            <h3 className="text-sm font-semibold text-white/80 mb-4">
               Atalhos Rápidos
             </h3>
             <div className="flex flex-wrap gap-3">
@@ -406,21 +406,21 @@ const Marketing: React.FC = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <FileText className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Novo Brief</span>
+                <span className="text-sm font-medium text-white/80">Novo Brief</span>
               </button>
               <button
                 onClick={() => setActiveTab('templates')}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <Target className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Templates</span>
+                <span className="text-sm font-medium text-white/80">Templates</span>
               </button>
               <button
                 onClick={() => setActiveTab('ativos')}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <Upload className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Upload de Ativo</span>
+                <span className="text-sm font-medium text-white/80">Upload de Ativo</span>
               </button>
             </div>
           </div>
@@ -488,7 +488,7 @@ const Marketing: React.FC = () => {
           ).length === 0 ? (
             <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
               <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Nenhum brief cadastrado</h3>
+              <h3 className="text-lg font-semibold text-white/80 mb-2">Nenhum brief cadastrado</h3>
               <p className="text-sm text-gray-500 mb-6">
                 Crie briefs estruturados para organizar as demandas de criação
               </p>
@@ -505,7 +505,7 @@ const Marketing: React.FC = () => {
                 .filter(b => !briefSearch || b.nome?.toLowerCase().includes(briefSearch.toLowerCase()))
                 .map(brief => {
                   const statusColors: Record<string, string> = {
-                    rascunho: 'bg-gray-100 text-gray-700',
+                    rascunho: 'bg-gray-100 text-white/80',
                     em_andamento: 'bg-blue-100 text-blue-700',
                     em_revisao: 'bg-amber-100 text-amber-700',
                     aprovado: 'bg-green-100 text-green-700',
@@ -521,7 +521,7 @@ const Marketing: React.FC = () => {
                   return (
                     <div key={brief.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between mb-3">
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${statusColors[brief.status] || 'bg-gray-100 text-gray-700'}`}>
+                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${statusColors[brief.status] || 'bg-gray-100 text-white/80'}`}>
                           {statusLabels[brief.status] || brief.status}
                         </span>
                         <button
@@ -531,7 +531,7 @@ const Marketing: React.FC = () => {
                           <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
                         </button>
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{brief.nome}</h3>
+                      <h3 className="font-semibold text-white mb-1 line-clamp-2">{brief.nome}</h3>
                       {brief.objetivo && (
                         <p className="text-sm text-gray-600 line-clamp-2 mb-3">{brief.objetivo}</p>
                       )}
@@ -582,7 +582,7 @@ const Marketing: React.FC = () => {
           ).length === 0 ? (
             <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
               <Copy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Nenhum template disponível</h3>
+              <h3 className="text-lg font-semibold text-white/80 mb-2">Nenhum template disponível</h3>
               <p className="text-sm text-gray-500 max-w-md mx-auto">
                 Templates são criados automaticamente ao salvar um brief como template ou ao criar campanhas recorrentes.
               </p>
@@ -602,7 +602,7 @@ const Marketing: React.FC = () => {
                   return (
                     <div key={template.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow group">
                       <div className="flex items-start justify-between mb-3">
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${categoriaColors[template.categoria] || 'bg-gray-100 text-gray-700'}`}>
+                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${categoriaColors[template.categoria] || 'bg-gray-100 text-white/80'}`}>
                           {template.categoria || 'Geral'}
                         </span>
                         <button
@@ -612,7 +612,7 @@ const Marketing: React.FC = () => {
                           <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
                         </button>
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">{template.nome}</h3>
+                      <h3 className="font-semibold text-white mb-1">{template.nome}</h3>
                       {template.descricao && (
                         <p className="text-sm text-gray-600 line-clamp-2 mb-3">{template.descricao}</p>
                       )}

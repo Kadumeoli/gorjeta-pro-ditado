@@ -429,7 +429,7 @@ export default function MapeamentoItensExcel() {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Mapeamento de Itens</h2>
+            <h2 className="text-2xl font-bold text-white">Mapeamento de Itens</h2>
             <p className="text-sm text-gray-600 mt-1">
               Gerencie mapeamentos entre nomes externos (Excel, vendas) e itens do estoque
             </p>
@@ -437,7 +437,7 @@ export default function MapeamentoItensExcel() {
           <div className="flex gap-2">
             <button
               onClick={handleDownloadModelo}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
             >
               <Download className="w-4 h-4" />
               Baixar Modelo
@@ -497,11 +497,11 @@ export default function MapeamentoItensExcel() {
             <p className="text-2xl font-bold text-orange-900">{estatisticas.producao}</p>
           </div>
           <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-gray-700 mb-1">
+            <div className="flex items-center gap-2 text-white/80 mb-1">
               <Check className="w-4 h-4" />
               <span className="text-xs font-medium">Total Usos</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{estatisticas.totalUsos}</p>
+            <p className="text-2xl font-bold text-white">{estatisticas.totalUsos}</p>
           </div>
         </div>
       </div>
@@ -531,7 +531,7 @@ export default function MapeamentoItensExcel() {
           </select>
           <button
             onClick={handleExportarMapeamentos}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
           >
             <Download className="w-4 h-4" />
             Exportar
@@ -585,7 +585,7 @@ export default function MapeamentoItensExcel() {
                 mapeamentosFiltrados.map((mapeamento) => (
                   <tr key={mapeamento.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-white">
                         {mapeamento.nome_item_externo}
                       </div>
                       {mapeamento.metadata?.observacoes && (
@@ -595,7 +595,7 @@ export default function MapeamentoItensExcel() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {mapeamento.item_estoque?.nome || mapeamento.ficha_tecnica?.nome}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -630,7 +630,7 @@ export default function MapeamentoItensExcel() {
                         <span className="text-xs text-gray-600">{mapeamento.confianca}%</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {mapeamento.total_usos}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -665,13 +665,13 @@ export default function MapeamentoItensExcel() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-white mb-4">
                 {editingId ? 'Editar Mapeamento' : 'Adicionar Mapeamento'}
               </h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Nome Externo *
                   </label>
                   <input
@@ -687,7 +687,7 @@ export default function MapeamentoItensExcel() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Tipo de Mapeamento *
                   </label>
                   <div className="flex gap-4">
@@ -715,7 +715,7 @@ export default function MapeamentoItensExcel() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     {formData.tipo_mapeamento === 'item' ? 'Item do Estoque' : 'Ficha Técnica'} *
                   </label>
                   <SearchableSelect
@@ -754,7 +754,7 @@ export default function MapeamentoItensExcel() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Tipo de Origem
                     </label>
                     <select
@@ -769,7 +769,7 @@ export default function MapeamentoItensExcel() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-white/80 mb-1">
                       Confiança (%)
                     </label>
                     <input
@@ -784,7 +784,7 @@ export default function MapeamentoItensExcel() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Observações
                   </label>
                   <textarea
@@ -804,7 +804,7 @@ export default function MapeamentoItensExcel() {
                     setEditingId(null);
                     resetForm();
                   }}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="px-4 py-2 text-sm text-white/80 hover:bg-gray-100 rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -825,12 +825,12 @@ export default function MapeamentoItensExcel() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-lg font-bold text-white mb-4">
                 Importar Mapeamentos via Excel
               </h3>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo de Origem
                 </label>
                 <select
@@ -865,7 +865,7 @@ export default function MapeamentoItensExcel() {
               )}
 
               <div className="mb-4">
-                <h4 className="font-medium text-gray-900 mb-2">
+                <h4 className="font-medium text-white mb-2">
                   Preview (primeiras 10 linhas)
                 </h4>
                 <div className="overflow-x-auto border border-gray-200 rounded-lg">
@@ -886,13 +886,13 @@ export default function MapeamentoItensExcel() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {importPreview.map((row: any, idx) => (
                         <tr key={idx}>
-                          <td className="px-4 py-2 text-sm text-gray-900">
+                          <td className="px-4 py-2 text-sm text-white">
                             {row['Nome Externo'] || row['nome_externo']}
                           </td>
-                          <td className="px-4 py-2 text-sm text-gray-900">
+                          <td className="px-4 py-2 text-sm text-white">
                             {row['Nome no Estoque'] || row['nome_estoque']}
                           </td>
-                          <td className="px-4 py-2 text-sm text-gray-900">
+                          <td className="px-4 py-2 text-sm text-white">
                             {row['Confiança'] || row['confianca'] || 100}
                           </td>
                         </tr>
@@ -918,7 +918,7 @@ export default function MapeamentoItensExcel() {
                     setImportPreview([]);
                     setImportErrors([]);
                   }}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="px-4 py-2 text-sm text-white/80 hover:bg-gray-100 rounded-lg"
                   disabled={importing}
                 >
                   Cancelar

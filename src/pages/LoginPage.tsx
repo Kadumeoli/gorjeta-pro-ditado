@@ -1,7 +1,7 @@
 @@ .. @@
            <div className="space-y-4">
              <div>
-               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+               <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-1">
                  Email
                </label>
                <input
@@ -16,7 +16,7 @@
              </div>
 
              <div>
-               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+               <label htmlFor="password" className="block text-sm font-medium text-white/80 mb-1">
                  Senha
                </label>
                <input
@@ -47,7 +47,7 @@
 +            {/* Usuários de teste - apenas em desenvolvimento */}
 +            {process.env.NODE_ENV === 'development' && (
 +              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-+                <h3 className="text-sm font-medium text-gray-700 mb-2">Usuários de Teste:</h3>
++                <h3 className="text-sm font-medium text-white/80 mb-2">Usuários de Teste:</h3>
 +                <div className="space-y-2 text-xs text-gray-600">
 +                  <div>
 +                    <strong>Gerente:</strong> gerente@ditadopopular.com / qualquer senha

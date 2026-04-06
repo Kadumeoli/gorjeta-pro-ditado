@@ -75,7 +75,7 @@ export default function SolicitacaoPublica() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Solicitação Enviada!
           </h2>
           <p className="text-gray-600 mb-4">
@@ -146,12 +146,12 @@ export default function SolicitacaoPublica() {
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             {/* Dados do Solicitante */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-white pb-2 border-b">
                 Seus Dados
               </h3>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Seu Nome <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -167,7 +167,7 @@ export default function SolicitacaoPublica() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Email (opcional)
                   </label>
                   <input
@@ -181,7 +181,7 @@ export default function SolicitacaoPublica() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Telefone (opcional)
                   </label>
                   <input
@@ -198,12 +198,12 @@ export default function SolicitacaoPublica() {
 
             {/* Detalhes da Solicitação */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b">
+              <h3 className="text-lg font-semibold text-white pb-2 border-b">
                 Detalhes da Solicitação
               </h3>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Título da Solicitação <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -218,7 +218,7 @@ export default function SolicitacaoPublica() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Descrição Detalhada <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -236,7 +236,7 @@ export default function SolicitacaoPublica() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Local onde o serviço deve ser realizado
                 </label>
                 <input
@@ -250,7 +250,7 @@ export default function SolicitacaoPublica() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Equipamento ou Item Afetado (se aplicável)
                 </label>
                 <input
@@ -277,7 +277,7 @@ export default function SolicitacaoPublica() {
                   local_servico: '',
                   equipamento_afetado: ''
                 })}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="flex-1 px-6 py-3 border border-gray-300 text-white/80 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
                 Limpar
               </button>

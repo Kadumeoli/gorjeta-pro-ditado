@@ -360,14 +360,14 @@ const GeneralRegistrations: React.FC = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-white mb-4">
             {editingItem ? 'Editar' : 'Novo'} {tabTitles[selectedTab]}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {fields.map((field) => (
               <div key={field.name} className={field.fullWidth ? 'md:col-span-2' : ''}>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   {field.label}
                   {field.required && <span className="text-red-500 ml-1">*</span>}
                 </label>
@@ -416,7 +416,7 @@ const GeneralRegistrations: React.FC = () => {
           <div className="mt-6 flex justify-end space-x-3">
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
             >
               Cancelar
             </button>
@@ -613,7 +613,7 @@ const GeneralRegistrations: React.FC = () => {
             label: 'Tipo',
             render: (item: any) => {
               const tipoMap = {
-                'geral': { label: 'Geral', icon: '', color: 'bg-gray-100 text-gray-700' },
+                'geral': { label: 'Geral', icon: '', color: 'bg-gray-100 text-white/80' },
                 'musico': { label: 'Músico', icon: '🎵', color: 'bg-blue-100 text-blue-700' },
                 'rh': { label: 'RH', icon: '👥', color: 'bg-purple-100 text-purple-700' }
               };
@@ -767,7 +767,7 @@ const GeneralRegistrations: React.FC = () => {
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Cadastros Gerais</h2>
+            <h2 className="text-2xl font-semibold text-white/90">Cadastros Gerais</h2>
           </div>
 
           <Tab.Group selectedIndex={selectedTab} onChange={(index) => setSelectedTab(index)}>
@@ -781,7 +781,7 @@ const GeneralRegistrations: React.FC = () => {
                       `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                       ${selected
                         ? 'bg-[#7D1F2C] text-white shadow'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-white/80 hover:bg-gray-100 hover:text-white'
                       }`
                     }
                   >
@@ -819,7 +819,7 @@ const GeneralRegistrations: React.FC = () => {
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Cadastros Gerais</h2>
+            <h2 className="text-2xl font-semibold text-white/90">Cadastros Gerais</h2>
           </div>
 
           <Tab.Group selectedIndex={selectedTab} onChange={(index) => setSelectedTab(index)}>
@@ -833,7 +833,7 @@ const GeneralRegistrations: React.FC = () => {
                       `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                       ${selected
                         ? 'bg-[#7D1F2C] text-white shadow'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-white/80 hover:bg-gray-100 hover:text-white'
                       }`
                     }
                   >
@@ -869,11 +869,11 @@ const GeneralRegistrations: React.FC = () => {
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Cadastros Gerais</h2>
+          <h2 className="text-2xl font-semibold text-white/90">Cadastros Gerais</h2>
           <div className="flex gap-2">
             <button 
               onClick={exportData}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
             >
               <Download className="w-4 h-4 inline mr-2" />
               Exportar
@@ -907,7 +907,7 @@ const GeneralRegistrations: React.FC = () => {
                     `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                     ${selected
                       ? 'bg-[#7D1F2C] text-white shadow'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      : 'text-white/80 hover:bg-gray-100 hover:text-white'
                     }`
                   }
                 >

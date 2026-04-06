@@ -169,7 +169,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
       <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-white">
               {form.id ? 'Editar Brief' : 'Novo Brief'}
             </h2>
             <p className="text-sm text-gray-600 mt-0.5">Brief criativo estruturado</p>
@@ -182,7 +182,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nome do Brief *</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Nome do Brief *</label>
               <input
                 type="text"
                 value={form.nome}
@@ -192,7 +192,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Objetivo</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Objetivo</label>
               <textarea
                 value={form.objetivo}
                 onChange={e => setForm({ ...form, objetivo: e.target.value })}
@@ -202,7 +202,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Público-Alvo</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Público-Alvo</label>
               <input
                 type="text"
                 value={form.publico_alvo}
@@ -212,7 +212,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">CTA</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">CTA</label>
               <input
                 type="text"
                 value={form.cta}
@@ -222,7 +222,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Mensagem Principal</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Mensagem Principal</label>
               <textarea
                 value={form.mensagem_principal}
                 onChange={e => setForm({ ...form, mensagem_principal: e.target.value })}
@@ -234,7 +234,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Formatos Necessários</label>
+            <label className="block text-sm font-medium text-white/80 mb-2">Formatos Necessários</label>
             <div className="flex flex-wrap gap-2">
               {formatosComuns.map(formato => (
                 <button
@@ -255,7 +255,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Deadline</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Deadline</label>
               <input
                 type="date"
                 value={form.deadline}
@@ -264,7 +264,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Budget (R$)</label>
+              <label className="block text-sm font-medium text-white/80 mb-1.5">Budget (R$)</label>
               <input
                 type="number"
                 step="0.01"
@@ -277,7 +277,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Referências</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Referências</label>
             <div className="flex gap-2 mb-2">
               <input
                 type="text"
@@ -299,7 +299,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
               <div className="space-y-1">
                 {form.referencias.map((ref, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm">
-                    <span className="flex-1 text-gray-700 truncate">{ref}</span>
+                    <span className="flex-1 text-white/80 truncate">{ref}</span>
                     <button
                       onClick={() => setForm({ ...form, referencias: form.referencias.filter((_, i) => i !== idx) })}
                       className="text-gray-400 hover:text-red-500"
@@ -313,7 +313,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Checklist</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Checklist</label>
             <div className="flex gap-2 mb-2">
               <input
                 type="text"
@@ -344,7 +344,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
                     >
                       {item.done && <Check className="w-3 h-3 text-white" />}
                     </button>
-                    <span className={`flex-1 text-sm ${item.done ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                    <span className={`flex-1 text-sm ${item.done ? 'line-through text-gray-400' : 'text-white/80'}`}>
                       {item.label}
                     </span>
                     <button
@@ -360,7 +360,7 @@ const ModalBrief: React.FC<ModalBriefProps> = ({ isOpen, onClose, onSaved, brief
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Observações</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Observações</label>
             <textarea
               value={form.observacoes}
               onChange={e => setForm({ ...form, observacoes: e.target.value })}

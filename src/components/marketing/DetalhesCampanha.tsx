@@ -85,7 +85,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-800',
+  draft: 'bg-gray-100 text-white/90',
   em_producao: 'bg-blue-100 text-blue-800',
   em_revisao: 'bg-yellow-100 text-yellow-800',
   aprovado: 'bg-green-100 text-green-800',
@@ -247,14 +247,14 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
               <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[campanha.status]}`}>
                 {statusLabels[campanha.status]}
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-white/80 capitalize">
                 {campanha.prioridade}
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-white/80 capitalize">
                 {campanha.tipo}
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">{campanha.nome}</h2>
+            <h2 className="text-2xl font-bold text-white">{campanha.nome}</h2>
             {campanha.objetivo && (
               <p className="text-sm text-gray-600 mt-1">{campanha.objetivo}</p>
             )}
@@ -295,7 +295,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-amber-600 text-amber-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-white/80'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -310,7 +310,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-xs text-gray-500 mb-1">Período</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-white">
                     {campanha.data_inicio ? dayjs(campanha.data_inicio).format('DD/MM/YY') : '-'}
                     {' - '}
                     {campanha.data_fim ? dayjs(campanha.data_fim).format('DD/MM/YY') : '-'}
@@ -318,19 +318,19 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-xs text-gray-500 mb-1">Budget</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-white">
                     R$ {Number(campanha.budget_planejado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-xs text-gray-500 mb-1">Gasto</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-white">
                     R$ {Number(campanha.budget_gasto).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-xs text-gray-500 mb-1">Utilização</p>
-                  <p className="text-sm font-medium text-gray-900">{budgetPercent.toFixed(1)}%</p>
+                  <p className="text-sm font-medium text-white">{budgetPercent.toFixed(1)}%</p>
                 </div>
               </div>
 
@@ -349,14 +349,14 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
 
               {campanha.descricao && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Descrição</h3>
+                  <h3 className="text-sm font-semibold text-white/80 mb-2">Descrição</h3>
                   <p className="text-sm text-gray-600 whitespace-pre-wrap">{campanha.descricao}</p>
                 </div>
               )}
 
               {campanha.canais && campanha.canais.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Canais</h3>
+                  <h3 className="text-sm font-semibold text-white/80 mb-2">Canais</h3>
                   <div className="flex flex-wrap gap-2">
                     {campanha.canais.map((canal: string, idx: number) => (
                       <span key={idx} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
@@ -369,7 +369,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
 
               {campanha.tags && campanha.tags.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Tags</h3>
+                  <h3 className="text-sm font-semibold text-white/80 mb-2">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {campanha.tags.map((tag: string, idx: number) => (
                       <span key={idx} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium">
@@ -399,48 +399,48 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
               {brief ? (
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">{brief.nome}</h3>
+                    <h3 className="text-lg font-semibold text-white">{brief.nome}</h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                       brief.status === 'aberto' ? 'bg-green-100 text-green-800'
                         : brief.status === 'em_uso' ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800'
+                        : 'bg-gray-100 text-white/90'
                     }`}>{brief.status}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {brief.objetivo && (
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-xs font-medium text-gray-500 mb-1">Objetivo</p>
-                        <p className="text-sm text-gray-800">{brief.objetivo}</p>
+                        <p className="text-sm text-white/90">{brief.objetivo}</p>
                       </div>
                     )}
                     {brief.publico_alvo && (
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-xs font-medium text-gray-500 mb-1">Público-alvo</p>
-                        <p className="text-sm text-gray-800">{brief.publico_alvo}</p>
+                        <p className="text-sm text-white/90">{brief.publico_alvo}</p>
                       </div>
                     )}
                     {brief.mensagem_principal && (
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-xs font-medium text-gray-500 mb-1">Mensagem Principal</p>
-                        <p className="text-sm text-gray-800">{brief.mensagem_principal}</p>
+                        <p className="text-sm text-white/90">{brief.mensagem_principal}</p>
                       </div>
                     )}
                     {brief.cta && (
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-xs font-medium text-gray-500 mb-1">CTA</p>
-                        <p className="text-sm text-gray-800">{brief.cta}</p>
+                        <p className="text-sm text-white/90">{brief.cta}</p>
                       </div>
                     )}
                   </div>
                   {brief.observacoes && (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <p className="text-xs font-medium text-gray-500 mb-1">Observações</p>
-                      <p className="text-sm text-gray-800 whitespace-pre-wrap">{brief.observacoes}</p>
+                      <p className="text-sm text-white/90 whitespace-pre-wrap">{brief.observacoes}</p>
                     </div>
                   )}
                   {brief.checklist && brief.checklist.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Checklist</h4>
+                      <h4 className="text-sm font-medium text-white/80 mb-2">Checklist</h4>
                       <div className="space-y-2">
                         {brief.checklist.map((item: any, idx: number) => (
                           <div key={idx} className="flex items-center gap-2">
@@ -449,7 +449,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
                             }`}>
                               {item.done && <CheckCircle className="w-3 h-3 text-white" />}
                             </div>
-                            <span className={`text-sm ${item.done ? 'text-gray-500 line-through' : 'text-gray-800'}`}>
+                            <span className={`text-sm ${item.done ? 'text-gray-500 line-through' : 'text-white/90'}`}>
                               {item.label}
                             </span>
                           </div>
@@ -486,7 +486,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
                         )}
                       </div>
                       <div className="p-3">
-                        <p className="text-sm font-medium text-gray-900 truncate">{ativo.nome}</p>
+                        <p className="text-sm font-medium text-white truncate">{ativo.nome}</p>
                         <p className="text-xs text-gray-500 mt-1">
                           {ativo.formato?.toUpperCase()} - {formatFileSize(ativo.tamanho_bytes)}
                         </p>
@@ -524,7 +524,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-medium text-gray-900 capitalize">{aprov.status}</span>
+                          <span className="text-sm font-medium text-white capitalize">{aprov.status}</span>
                           <span className="text-xs text-gray-500">{aprov.tipo}</span>
                         </div>
                         {aprov.comentario && (
@@ -556,7 +556,7 @@ const DetalhesCampanha: React.FC<DetalhesCampanhaProps> = ({
                       <div key={atv.id} className="relative flex items-start gap-4 pl-10">
                         <div className="absolute left-2.5 w-3 h-3 bg-amber-500 rounded-full border-2 border-white" />
                         <div className="flex-1 bg-gray-50 rounded-lg p-4">
-                          <p className="text-sm text-gray-800">{atv.descricao}</p>
+                          <p className="text-sm text-white/90">{atv.descricao}</p>
                           <p className="text-xs text-gray-500 mt-1">
                             {dayjs(atv.created_at).format('DD/MM/YYYY HH:mm')} - {dayjs(atv.created_at).fromNow()}
                           </p>

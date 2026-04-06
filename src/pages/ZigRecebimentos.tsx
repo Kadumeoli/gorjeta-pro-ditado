@@ -218,7 +218,7 @@ export default function ZigRecebimentos() {
             <CreditCard className="w-6 h-6 text-[#7D1F2C]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">ZIG → Faturamento</h1>
+            <h1 className="text-2xl font-bold text-white">ZIG → Faturamento</h1>
             <p className="text-sm text-gray-500">Importação por forma de pagamento</p>
           </div>
         </div>
@@ -226,12 +226,12 @@ export default function ZigRecebimentos() {
         <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
           <button onClick={() => setAba('importar')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all
-              ${aba === 'importar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              ${aba === 'importar' ? 'bg-white text-white shadow-sm' : 'text-gray-500 hover:text-white/80'}`}>
             <TrendingUp className="w-4 h-4" /> Importar
           </button>
           <button onClick={() => setAba('configurar')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all
-              ${aba === 'configurar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              ${aba === 'configurar' ? 'bg-white text-white shadow-sm' : 'text-gray-500 hover:text-white/80'}`}>
             <Settings className="w-4 h-4" /> Configurar
           </button>
         </div>
@@ -243,7 +243,7 @@ export default function ZigRecebimentos() {
       {aba === 'configurar' && (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-800">Conta destino por forma de pagamento</h2>
+            <h2 className="font-semibold text-white/90">Conta destino por forma de pagamento</h2>
             <p className="text-xs text-gray-500 mt-0.5">
               Defina em qual conta bancária cada forma de pagamento é depositada.
               Ex: Dinheiro → Cofre · Crédito/PIX → PagSeguro
@@ -331,7 +331,7 @@ export default function ZigRecebimentos() {
           {etapa === 'periodo' && (
             <div className="space-y-4">
               <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-                <h2 className="font-semibold text-gray-800 flex items-center gap-2">
+                <h2 className="font-semibold text-white/90 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-[#7D1F2C]" /> Selecione o período
                 </h2>
                 <div className="flex gap-2">
@@ -377,7 +377,7 @@ export default function ZigRecebimentos() {
               {/* histórico */}
               <div className="bg-white border border-gray-200 rounded-xl p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-700 text-sm">Histórico de importações</h3>
+                  <h3 className="font-semibold text-white/80 text-sm">Histórico de importações</h3>
                   <button onClick={carregarHistorico} className="text-gray-400 hover:text-gray-600">
                     <RefreshCw className={`w-4 h-4 ${loadingHist ? 'animate-spin' : ''}`} />
                   </button>
@@ -392,7 +392,7 @@ export default function ZigRecebimentos() {
                       <div key={h.id}
                         className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                         <div>
-                          <p className="text-sm font-medium text-gray-700">
+                          <p className="text-sm font-medium text-white/80">
                             {h.dtinicio === h.dtfim ? h.dtinicio : `${h.dtinicio} → ${h.dtfim}`}
                           </p>
                           <p className="text-xs text-gray-400">
@@ -403,7 +403,7 @@ export default function ZigRecebimentos() {
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${BADGE[h.status] || 'bg-gray-100 text-gray-500'}`}>
                             {BADGE_LABEL[h.status] || h.status}
                           </span>
-                          <p className="text-xs font-semibold text-gray-700">{moeda(h.total_valor || 0)}</p>
+                          <p className="text-xs font-semibold text-white/80">{moeda(h.total_valor || 0)}</p>
                         </div>
                       </div>
                     ))}
@@ -417,7 +417,7 @@ export default function ZigRecebimentos() {
           {etapa === 'revisao' && (
             <div className="space-y-4">
               <button onClick={() => { setEtapa('periodo'); setErro(''); }}
-                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                className="flex items-center gap-1 text-sm text-gray-500 hover:text-white/90 transition-colors">
                 <ArrowLeft className="w-4 h-4" /> Voltar
               </button>
 
@@ -429,7 +429,7 @@ export default function ZigRecebimentos() {
                       <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium mb-2 ${corForma(forma)}`}>
                         <IconeForma label={forma} /> {forma}
                       </div>
-                      <p className="text-lg font-bold text-gray-900">{moeda(valor)}</p>
+                      <p className="text-lg font-bold text-white">{moeda(valor)}</p>
                     </div>
                   ))}
                 </div>
@@ -438,7 +438,7 @@ export default function ZigRecebimentos() {
               <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                   <div>
-                    <h2 className="font-semibold text-gray-800">Revisar lançamentos</h2>
+                    <h2 className="font-semibold text-white/90">Revisar lançamentos</h2>
                     <p className="text-xs text-gray-500 mt-0.5">
                       {dtinicio === dtfim ? dtinicio : `${dtinicio} → ${dtfim}`} ·{' '}
                       {itens.filter(i => i.selecionado).length} de {itens.length} selecionados
@@ -501,7 +501,7 @@ export default function ZigRecebimentos() {
                 <div className="px-5 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-500">Total selecionado</p>
-                    <p className="text-xl font-bold text-gray-900">{moeda(totalSelecionado)}</p>
+                    <p className="text-xl font-bold text-white">{moeda(totalSelecionado)}</p>
                   </div>
                   <div className="flex gap-3">
                     <button onClick={() => setItens(prev => prev.map(i => ({ ...i, selecionado: false })))}
@@ -537,7 +537,7 @@ export default function ZigRecebimentos() {
                     <CheckCircle className="w-6 h-6 text-emerald-600" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-gray-900">Importação concluída</h2>
+                    <h2 className="font-bold text-white">Importação concluída</h2>
                     <p className="text-xs text-gray-500">
                       {dtinicio === dtfim ? dtinicio : `${dtinicio} → ${dtfim}`}
                     </p>
@@ -573,7 +573,7 @@ export default function ZigRecebimentos() {
                 <div className="flex gap-3 pt-2">
                   <button onClick={() => { setEtapa('periodo'); setResultado(null); setItens([]); setErro(''); }}
                     className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
-                               border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+                               border border-gray-200 text-sm font-medium text-white/80 hover:bg-gray-50 transition-all">
                     <RefreshCw className="w-4 h-4" /> Nova importação
                   </button>
                   <a href="/financeiro/contas-receber"
@@ -586,13 +586,13 @@ export default function ZigRecebimentos() {
 
               {historico.length > 0 && (
                 <div className="bg-white border border-gray-200 rounded-xl p-5">
-                  <h3 className="font-semibold text-gray-700 text-sm mb-3">Últimas importações</h3>
+                  <h3 className="font-semibold text-white/80 text-sm mb-3">Últimas importações</h3>
                   <div className="space-y-2">
                     {historico.slice(0, 5).map(h => (
                       <div key={h.id}
                         className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                         <div>
-                          <p className="text-sm font-medium text-gray-700">
+                          <p className="text-sm font-medium text-white/80">
                             {h.dtinicio === h.dtfim ? h.dtinicio : `${h.dtinicio} → ${h.dtfim}`}
                           </p>
                           <p className="text-xs text-gray-400">
@@ -603,7 +603,7 @@ export default function ZigRecebimentos() {
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${BADGE[h.status] || 'bg-gray-100 text-gray-500'}`}>
                             {BADGE_LABEL[h.status] || h.status}
                           </span>
-                          <p className="text-xs font-semibold text-gray-700">{moeda(h.total_valor || 0)}</p>
+                          <p className="text-xs font-semibold text-white/80">{moeda(h.total_valor || 0)}</p>
                         </div>
                       </div>
                     ))}

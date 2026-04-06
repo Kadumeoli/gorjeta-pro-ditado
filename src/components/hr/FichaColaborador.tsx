@@ -69,7 +69,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible print:shadow-none">
         {/* Header - Esconder na impressão */}
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between print:hidden">
-          <h2 className="text-xl font-bold text-slate-800">Ficha do Colaborador</h2>
+          <h2 className="text-xl font-bold text-white/90">Ficha do Colaborador</h2>
           <div className="flex gap-2">
             <button
               onClick={handleDownload}
@@ -98,7 +98,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
         <div ref={fichaRef} className="p-8 print:p-12">
           {/* Cabeçalho da Empresa */}
           <div className="text-center mb-8 border-b-2 border-slate-200 pb-6">
-            <h1 className="text-2xl font-bold text-slate-800 mb-2">FICHA DE COLABORADOR</h1>
+            <h1 className="text-2xl font-bold text-white/90 mb-2">FICHA DE COLABORADOR</h1>
             <p className="text-slate-600">Dados Cadastrais e Profissionais</p>
           </div>
 
@@ -126,23 +126,23 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
             <div className="md:col-span-2 space-y-4">
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Nome Completo</label>
-                <p className="text-lg font-bold text-slate-800">{colaborador.nome_completo}</p>
+                <p className="text-lg font-bold text-white/90">{colaborador.nome_completo}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase">CPF</label>
-                  <p className="text-slate-800">{colaborador.cpf || 'Não informado'}</p>
+                  <p className="text-white/90">{colaborador.cpf || 'Não informado'}</p>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase">RG</label>
-                  <p className="text-slate-800">{colaborador.rg || 'Não informado'}</p>
+                  <p className="text-white/90">{colaborador.rg || 'Não informado'}</p>
                 </div>
               </div>
 
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Data de Nascimento</label>
-                <p className="text-slate-800">
+                <p className="text-white/90">
                   {colaborador.data_nascimento
                     ? dayjs(colaborador.data_nascimento).format('DD/MM/YYYY')
                     : 'Não informado'}
@@ -153,7 +153,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
                 <label className="text-xs font-semibold text-slate-500 uppercase">Status</label>
                 <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
                   colaborador.status === 'ativo' ? 'bg-green-100 text-green-800' :
-                  colaborador.status === 'inativo' ? 'bg-slate-100 text-slate-800' :
+                  colaborador.status === 'inativo' ? 'bg-slate-100 text-white/90' :
                   colaborador.status === 'afastado' ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
                 }`}>
@@ -165,21 +165,21 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
 
           {/* Dados Profissionais */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-white/90 mb-4 flex items-center gap-2">
               <Briefcase className="w-5 h-5" />
               Dados Profissionais
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-lg">
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Função/Cargo</label>
-                <p className="text-slate-800 font-medium">
+                <p className="text-white/90 font-medium">
                   {colaborador.funcao_nome || colaborador.funcao_personalizada || 'Não informado'}
                 </p>
               </div>
 
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Tipo de Vínculo</label>
-                <p className="text-slate-800">
+                <p className="text-white/90">
                   {colaborador.tipo_vinculo === 'clt' ? 'CLT' :
                    colaborador.tipo_vinculo === 'freelancer' ? 'Freelancer' :
                    colaborador.tipo_vinculo === 'prestador' ? 'Prestador de Serviços' :
@@ -189,7 +189,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
 
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Data de Admissão</label>
-                <p className="text-slate-800">
+                <p className="text-white/90">
                   {colaborador.data_admissao
                     ? dayjs(colaborador.data_admissao).format('DD/MM/YYYY')
                     : 'Não informado'}
@@ -198,13 +198,13 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
 
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Tempo de Empresa</label>
-                <p className="text-slate-800 font-medium">{calcularTempoEmpresa()}</p>
+                <p className="text-white/90 font-medium">{calcularTempoEmpresa()}</p>
               </div>
 
               {colaborador.data_demissao && (
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase">Data de Demissão</label>
-                  <p className="text-slate-800">
+                  <p className="text-white/90">
                     {dayjs(colaborador.data_demissao).format('DD/MM/YYYY')}
                   </p>
                 </div>
@@ -214,14 +214,14 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
 
           {/* Dados Financeiros */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-white/90 mb-4 flex items-center gap-2">
               <DollarSign className="w-5 h-5" />
               Dados Financeiros
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-lg">
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase">Salário Fixo</label>
-                <p className="text-slate-800 text-xl font-bold">
+                <p className="text-white/90 text-xl font-bold">
                   {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(colaborador.salario_fixo || 0)}
                 </p>
               </div>
@@ -229,7 +229,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
               {colaborador.valor_diaria > 0 && (
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase">Valor Diária</label>
-                  <p className="text-slate-800 font-medium">
+                  <p className="text-white/90 font-medium">
                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(colaborador.valor_diaria)}
                   </p>
                 </div>
@@ -238,7 +238,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
               {colaborador.percentual_comissao > 0 && (
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase">Comissão</label>
-                  <p className="text-slate-800 font-medium">{colaborador.percentual_comissao}%</p>
+                  <p className="text-white/90 font-medium">{colaborador.percentual_comissao}%</p>
                 </div>
               )}
             </div>
@@ -246,7 +246,7 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
 
           {/* Dados de Contato */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-white/90 mb-4 flex items-center gap-2">
               <Phone className="w-5 h-5" />
               Dados de Contato
             </h3>
@@ -255,21 +255,21 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
                 <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-2">
                   <Phone className="w-4 h-4" /> Telefone
                 </label>
-                <p className="text-slate-800">{colaborador.telefone || 'Não informado'}</p>
+                <p className="text-white/90">{colaborador.telefone || 'Não informado'}</p>
               </div>
 
               <div>
                 <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-2">
                   <Mail className="w-4 h-4" /> E-mail
                 </label>
-                <p className="text-slate-800">{colaborador.email || 'Não informado'}</p>
+                <p className="text-white/90">{colaborador.email || 'Não informado'}</p>
               </div>
 
               <div className="md:col-span-2">
                 <label className="text-xs font-semibold text-slate-500 uppercase flex items-center gap-2">
                   <MapPin className="w-4 h-4" /> Endereço
                 </label>
-                <p className="text-slate-800">{colaborador.endereco || 'Não informado'}</p>
+                <p className="text-white/90">{colaborador.endereco || 'Não informado'}</p>
               </div>
             </div>
           </div>
@@ -277,12 +277,12 @@ const FichaColaborador: React.FC<FichaColaboradorProps> = ({ colaborador, onClos
           {/* Observações */}
           {colaborador.observacoes && (
             <div className="mb-8">
-              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-white/90 mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5" />
                 Observações
               </h3>
               <div className="bg-slate-50 p-6 rounded-lg">
-                <p className="text-slate-700 whitespace-pre-wrap">{colaborador.observacoes}</p>
+                <p className="text-white/80 whitespace-pre-wrap">{colaborador.observacoes}</p>
               </div>
             </div>
           )}

@@ -224,7 +224,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
       <div className="bg-white rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Mapear Itens da Nota</h3>
+            <h3 className="text-xl font-semibold text-white">Mapear Itens da Nota</h3>
             <p className="text-sm text-gray-500 mt-1">
               Associe os itens da nota com itens existentes no estoque ou crie novos
             </p>
@@ -250,14 +250,14 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
                   <div className="grid grid-cols-2 gap-4">
                     {/* Item Extraído */}
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                      <h4 className="font-medium text-white mb-2 flex items-center">
                         <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs mr-2">
                           Da Nota
                         </span>
                         Item {index + 1}
                       </h4>
                       <div className="bg-white border border-gray-300 rounded-lg p-3 text-sm">
-                        <div className="font-medium text-gray-900 mb-2">
+                        <div className="font-medium text-white mb-2">
                           {mapping.extracted.descricao}
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-xs text-gray-600">
@@ -278,7 +278,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
 
                     {/* Mapeamento */}
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Ação</h4>
+                      <h4 className="font-medium text-white mb-2">Ação</h4>
 
                       {/* Botões de Ação */}
                       <div className="flex gap-2 mb-3">
@@ -287,7 +287,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
                           className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                             mapping.action === 'create'
                               ? 'bg-[#7D1F2C] text-white'
-                              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                              : 'bg-white border border-gray-300 text-white/80 hover:bg-gray-50'
                           }`}
                         >
                           <Plus className="w-4 h-4 inline mr-1" />
@@ -302,7 +302,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
                           className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                             mapping.action === 'map'
                               ? 'bg-[#7D1F2C] text-white'
-                              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                              : 'bg-white border border-gray-300 text-white/80 hover:bg-gray-50'
                           }`}
                         >
                           <Search className="w-4 h-4 inline mr-1" />
@@ -366,7 +366,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
                                   >
                                     <div className="flex items-start justify-between">
                                       <div className="flex-1">
-                                        <div className="text-sm font-medium text-gray-900">
+                                        <div className="text-sm font-medium text-white">
                                           {item.nome}
                                         </div>
                                         <div className="text-xs text-gray-600 mt-1 flex items-center gap-2">
@@ -429,7 +429,7 @@ const ItemMappingModal: React.FC<ItemMappingModalProps> = ({
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100"
             >
               Cancelar
             </button>

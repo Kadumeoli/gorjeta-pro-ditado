@@ -55,7 +55,7 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
       'parcialmente_pago': { color: 'bg-blue-100 text-blue-800', icon: AlertCircle, label: 'Parcialmente Pago' },
       'pago': { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Pago' },
       'vencido': { color: 'bg-red-100 text-red-800', icon: AlertCircle, label: 'Vencido' },
-      'cancelado': { color: 'bg-gray-100 text-gray-800', icon: X, label: 'Cancelado' }
+      'cancelado': { color: 'bg-gray-100 text-white/90', icon: X, label: 'Cancelado' }
     };
 
     const badge = badges[status as keyof typeof badges] || badges.em_aberto;
@@ -78,7 +78,7 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Detalhes da Conta</h2>
+            <h2 className="text-2xl font-bold text-white">Detalhes da Conta</h2>
             <p className="text-sm text-gray-500 mt-1">
               Criado em {dayjs(conta.criado_em).format('DD/MM/YYYY [às] HH:mm')}
               {conta.criado_por_nome && ` por ${conta.criado_por_nome}`}
@@ -98,12 +98,12 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{conta.descricao}</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{conta.descricao}</h3>
                 {getStatusBadge(conta.status)}
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-500">Valor Total</div>
-                <div className="text-2xl font-bold text-gray-900">{formatCurrency(conta.valor_total)}</div>
+                <div className="text-2xl font-bold text-white">{formatCurrency(conta.valor_total)}</div>
               </div>
             </div>
 
@@ -132,67 +132,67 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
             {/* Coluna Esquerda */}
             <div className="space-y-4">
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <Building2 className="w-4 h-4" />
                   Fornecedor
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">{conta.fornecedor_nome}</p>
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">{conta.fornecedor_nome}</p>
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <Tag className="w-4 h-4" />
                   Categoria
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">{conta.categoria_nome || 'N/A'}</p>
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">{conta.categoria_nome || 'N/A'}</p>
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <FileText className="w-4 h-4" />
                   Centro de Custo
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">{conta.centro_custo_nome || 'N/A'}</p>
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">{conta.centro_custo_nome || 'N/A'}</p>
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <CreditCard className="w-4 h-4" />
                   Forma de Pagamento
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">{conta.forma_pagamento_nome || 'N/A'}</p>
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">{conta.forma_pagamento_nome || 'N/A'}</p>
               </div>
             </div>
 
             {/* Coluna Direita */}
             <div className="space-y-4">
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <Calendar className="w-4 h-4" />
                   Data de Emissão
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">
                   {dayjs(conta.data_emissao).format('DD/MM/YYYY')}
                 </p>
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                   <Calendar className="w-4 h-4" />
                   Data de Vencimento
                 </label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">
+                <p className="text-white bg-gray-50 px-3 py-2 rounded">
                   {dayjs(conta.data_vencimento).format('DD/MM/YYYY')}
                 </p>
               </div>
 
               {conta.data_primeira_baixa && (
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                  <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                     <Calendar className="w-4 h-4" />
                     Data da Primeira Baixa
                   </label>
-                  <p className="text-gray-900 bg-green-50 px-3 py-2 rounded">
+                  <p className="text-white bg-green-50 px-3 py-2 rounded">
                     {dayjs(conta.data_primeira_baixa).format('DD/MM/YYYY [às] HH:mm')}
                   </p>
                 </div>
@@ -200,11 +200,11 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
 
               {conta.data_baixa_integral && (
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                  <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                     <CheckCircle className="w-4 h-4" />
                     Data da Baixa Integral
                   </label>
-                  <p className="text-gray-900 bg-green-50 px-3 py-2 rounded font-medium">
+                  <p className="text-white bg-green-50 px-3 py-2 rounded font-medium">
                     {dayjs(conta.data_baixa_integral).format('DD/MM/YYYY [às] HH:mm')}
                   </p>
                 </div>
@@ -212,11 +212,11 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
 
               {conta.numero_documento && (
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                  <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-1">
                     <Receipt className="w-4 h-4" />
                     Número do Documento
                   </label>
-                  <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded">{conta.numero_documento}</p>
+                  <p className="text-white bg-gray-50 px-3 py-2 rounded">{conta.numero_documento}</p>
                 </div>
               )}
             </div>
@@ -240,9 +240,9 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
           {/* Observações */}
           {conta.observacoes && (
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Observações</label>
+              <label className="text-sm font-medium text-white/80 mb-2 block">Observações</label>
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <p className="text-gray-700 whitespace-pre-wrap">{conta.observacoes}</p>
+                <p className="text-white/80 whitespace-pre-wrap">{conta.observacoes}</p>
               </div>
             </div>
           )}
@@ -250,7 +250,7 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
           {/* Histórico de Pagamentos Parciais */}
           {pagamentos.length > 0 && (
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-5 border-2 border-blue-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-blue-600" />
                 Histórico de Pagamentos
                 <span className="ml-2 px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
@@ -266,7 +266,7 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
                           {pagamentos.length - index}
                         </div>
                         <div>
-                          <span className="text-sm font-semibold text-gray-900">
+                          <span className="text-sm font-semibold text-white">
                             Pagamento Parcial
                           </span>
                           <p className="text-xs text-gray-600 mt-0.5">
@@ -284,27 +284,27 @@ const ModalVisualizarConta: React.FC<ModalVisualizarContaProps> = ({ isOpen, con
                     <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-3">
                       <div>
                         <span className="text-gray-600 text-xs">Data do Pagamento:</span>
-                        <p className="text-gray-900 font-medium">{dayjs(pagamento.data).format('DD/MM/YYYY')}</p>
+                        <p className="text-white font-medium">{dayjs(pagamento.data).format('DD/MM/YYYY')}</p>
                       </div>
                       <div>
                         <span className="text-gray-600 text-xs">Forma de Pagamento:</span>
-                        <p className="text-gray-900 font-medium">{pagamento.forma_pagamento || 'N/A'}</p>
+                        <p className="text-white font-medium">{pagamento.forma_pagamento || 'N/A'}</p>
                       </div>
                       <div className="col-span-2">
                         <span className="text-gray-600 text-xs">Conta Bancária:</span>
-                        <p className="text-gray-900 font-medium">{pagamento.conta_bancaria}</p>
+                        <p className="text-white font-medium">{pagamento.conta_bancaria}</p>
                       </div>
                       {pagamento.numero_comprovante && (
                         <div className="col-span-2">
                           <span className="text-gray-600 text-xs">Nº Comprovante:</span>
-                          <p className="text-gray-900 font-medium">{pagamento.numero_comprovante}</p>
+                          <p className="text-white font-medium">{pagamento.numero_comprovante}</p>
                         </div>
                       )}
                     </div>
                     {pagamento.observacoes && (
                       <div className="mt-3 pt-3 border-t border-gray-200">
                         <span className="text-xs text-gray-600 font-medium">Observações:</span>
-                        <p className="text-sm text-gray-700 mt-1 bg-yellow-50 p-2 rounded border border-yellow-200">
+                        <p className="text-sm text-white/80 mt-1 bg-yellow-50 p-2 rounded border border-yellow-200">
                           {pagamento.observacoes}
                         </p>
                       </div>

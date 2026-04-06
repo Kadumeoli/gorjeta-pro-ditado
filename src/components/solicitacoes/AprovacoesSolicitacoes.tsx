@@ -215,7 +215,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
       case 'critica':
         return 'text-red-900 bg-red-200 border border-red-300';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -235,7 +235,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Solicitações Aguardando Aprovação</h3>
+        <h3 className="text-lg font-medium text-white">Solicitações Aguardando Aprovação</h3>
         <div className="flex space-x-2">
           <button
             onClick={() => handleBulkApproval('approve')}
@@ -406,8 +406,8 @@ const AprovacoesSolicitacoes: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{solicitacao.numero_solicitacao}</div>
-                        <div className="text-sm font-medium text-gray-700">{solicitacao.titulo}</div>
+                        <div className="font-medium text-white">{solicitacao.numero_solicitacao}</div>
+                        <div className="text-sm font-medium text-white/80">{solicitacao.titulo}</div>
                         <div className="text-sm text-gray-500 truncate max-w-xs">
                           {solicitacao.descricao}
                         </div>
@@ -429,20 +429,20 @@ const AprovacoesSolicitacoes: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{solicitacao.solicitante_nome}</div>
+                        <div className="font-medium text-white">{solicitacao.solicitante_nome}</div>
                         <div className="text-sm text-gray-500">{solicitacao.setor_solicitante}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         {getTipoIcon(solicitacao.tipo_categoria)}
-                        <span className="ml-2 text-sm text-gray-900">{solicitacao.tipo_nome}</span>
+                        <span className="ml-2 text-sm text-white">{solicitacao.tipo_nome}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         {solicitacao.valor_estimado > 0 && (
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-white">
                             Est: {formatCurrency(solicitacao.valor_estimado)}
                           </div>
                         )}
@@ -458,7 +458,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-white">
                           {dayjs(solicitacao.data_solicitacao).format('DD/MM/YYYY')}
                         </div>
                         {solicitacao.data_limite && (
@@ -504,7 +504,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
           {filteredSolicitacoes.length === 0 && (
             <div className="text-center py-12">
               <CheckSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma solicitação pendente</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhuma solicitação pendente</h3>
               <p className="text-gray-500">
                 {searchTerm || prioridadeFilter !== 'all' || tipoFilter !== 'all' 
                   ? 'Nenhuma solicitação corresponde aos filtros aplicados.' 
@@ -519,7 +519,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
       {showApprovalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {approvalType === 'approve' ? 'Aprovar Solicitações' : 'Rejeitar Solicitações'}
             </h3>
             
@@ -529,7 +529,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
               </p>
               
               <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-white/80">
                   Valor total estimado: {formatCurrency(
                     filteredSolicitacoes
                       .filter(s => selectedSolicitacoes.has(s.id))
@@ -540,7 +540,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Observações {approvalType === 'approve' ? 'da Aprovação' : 'da Rejeição'}
               </label>
               <textarea
@@ -555,7 +555,7 @@ const AprovacoesSolicitacoes: React.FC = () => {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowApprovalModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

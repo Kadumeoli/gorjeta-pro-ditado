@@ -385,7 +385,7 @@ const ExtrasFreelancers: React.FC = () => {
       case 'cancelado':
         return 'text-red-700 bg-red-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -422,12 +422,12 @@ const ExtrasFreelancers: React.FC = () => {
       'Cozinha': 'bg-red-100 text-red-800',
       'Recepção': 'bg-purple-100 text-purple-800',
       'Limpeza': 'bg-yellow-100 text-yellow-800',
-      'Segurança': 'bg-gray-100 text-gray-800',
+      'Segurança': 'bg-gray-100 text-white/90',
       'Administração': 'bg-indigo-100 text-indigo-800',
       'Estoque': 'bg-orange-100 text-orange-800',
       'Eventos': 'bg-pink-100 text-pink-800'
     };
-    return colors[setor as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[setor as keyof typeof colors] || 'bg-gray-100 text-white/90';
   };
 
   const exportData = () => {
@@ -484,11 +484,11 @@ const ExtrasFreelancers: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Extras & Freelancers</h3>
+        <h3 className="text-lg font-medium text-white">Extras & Freelancers</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -694,7 +694,7 @@ const ExtrasFreelancers: React.FC = () => {
                           {extra.nome.split(' ').map(n => n[0]).join('').substring(0, 2)}
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">{extra.nome}</div>
+                          <div className="font-medium text-white">{extra.nome}</div>
                           {extra.cpf && (
                             <div className="text-sm text-gray-500">CPF: {extra.cpf}</div>
                           )}
@@ -709,14 +709,14 @@ const ExtrasFreelancers: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">{extra.funcao_temporaria}</div>
+                        <div className="font-medium text-white">{extra.funcao_temporaria}</div>
                         {extra.motivo_contratacao && (
                           <div className="text-sm text-gray-500">{extra.motivo_contratacao}</div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {dayjs(extra.data_trabalho).format('DD/MM/YYYY')}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -724,7 +724,7 @@ const ExtrasFreelancers: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-white">
                         {extra.horario_inicio} - {extra.horario_fim}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -737,7 +737,7 @@ const ExtrasFreelancers: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         {formatCurrency(extra.valor_diaria)}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -791,7 +791,7 @@ const ExtrasFreelancers: React.FC = () => {
           {filteredExtras.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum extra/freelancer encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum extra/freelancer encontrado</h3>
               <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' || setorFilter !== 'all'
                   ? 'Nenhum registro corresponde aos filtros aplicados.'
@@ -806,13 +806,13 @@ const ExtrasFreelancers: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingExtra ? 'Editar Extra/Freelancer' : 'Novo Extra/Freelancer'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome Completo *
                 </label>
                 <input
@@ -826,7 +826,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   CPF
                 </label>
                 <input
@@ -839,7 +839,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Telefone
                 </label>
                 <input
@@ -852,7 +852,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Função Temporária *
                 </label>
                 <select
@@ -871,7 +871,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Valor da Diária *
                 </label>
                 <div className="relative">
@@ -891,7 +891,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data do Trabalho *
                 </label>
                 <input
@@ -904,7 +904,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Horário de Início
                 </label>
                 <input
@@ -916,7 +916,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Horário de Fim
                 </label>
                 <input
@@ -928,7 +928,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Setor *
                 </label>
                 <select
@@ -946,7 +946,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Motivo da Contratação
                 </label>
                 <input
@@ -959,7 +959,7 @@ const ExtrasFreelancers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Status do Pagamento
                 </label>
                 <select
@@ -975,7 +975,7 @@ const ExtrasFreelancers: React.FC = () => {
 
               {formData.status_pagamento === 'pago' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data do Pagamento
                   </label>
                   <input
@@ -988,7 +988,7 @@ const ExtrasFreelancers: React.FC = () => {
               )}
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações
                 </label>
                 <textarea
@@ -1035,7 +1035,7 @@ const ExtrasFreelancers: React.FC = () => {
                   setEditingExtra(null);
                   resetForm();
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

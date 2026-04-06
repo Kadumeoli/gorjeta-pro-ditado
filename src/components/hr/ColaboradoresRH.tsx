@@ -434,13 +434,13 @@ const ColaboradoresRH: React.FC = () => {
       case 'ativo':
         return 'text-green-700 bg-green-100';
       case 'inativo':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       case 'afastado':
         return 'text-yellow-700 bg-yellow-100';
       case 'demitido':
         return 'text-red-700 bg-red-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -468,7 +468,7 @@ const ColaboradoresRH: React.FC = () => {
       case 'prestador':
         return 'text-orange-700 bg-orange-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -532,11 +532,11 @@ const ColaboradoresRH: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Colaboradores</h3>
+        <h3 className="text-lg font-medium text-white">Colaboradores</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -738,7 +738,7 @@ const ColaboradoresRH: React.FC = () => {
                           </div>
                         )}
                         <div>
-                          <div className="font-medium text-gray-900">{colaborador.nome_completo}</div>
+                          <div className="font-medium text-white">{colaborador.nome_completo}</div>
                           {colaborador.cpf && (
                             <div className="text-sm text-gray-500">CPF: {colaborador.cpf}</div>
                           )}
@@ -759,7 +759,7 @@ const ColaboradoresRH: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-white">
                           {colaborador.funcao_nome || colaborador.funcao_personalizada || 'Não definida'}
                         </div>
                         {colaborador.funcao_salario_base && (
@@ -777,7 +777,7 @@ const ColaboradoresRH: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         {colaborador.data_admissao && (
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-white">
                             {dayjs(colaborador.data_admissao).format('DD/MM/YYYY')}
                           </div>
                         )}
@@ -791,7 +791,7 @@ const ColaboradoresRH: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         {colaborador.salario_fixo > 0 && (
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-white">
                             {formatCurrency(colaborador.salario_fixo)}
                           </div>
                         )}
@@ -864,7 +864,7 @@ const ColaboradoresRH: React.FC = () => {
           {filteredColaboradores.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum colaborador encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum colaborador encontrado</h3>
               <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' || funcaoFilter !== 'all' || tipoVinculoFilter !== 'all'
                   ? 'Nenhum colaborador corresponde aos filtros aplicados.'
@@ -879,13 +879,13 @@ const ColaboradoresRH: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingColaborador ? 'Editar Colaborador' : 'Novo Colaborador'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome Completo *
                 </label>
                 <input
@@ -899,7 +899,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   CPF
                 </label>
                 <input
@@ -912,7 +912,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   RG
                 </label>
                 <input
@@ -925,7 +925,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data de Nascimento
                 </label>
                 <input
@@ -937,7 +937,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Função
                 </label>
                 <select
@@ -955,7 +955,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Função Personalizada
                 </label>
                 <input
@@ -968,7 +968,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo de Vínculo
                 </label>
                 <select
@@ -983,7 +983,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data de Admissão
                 </label>
                 <input
@@ -996,7 +996,7 @@ const ColaboradoresRH: React.FC = () => {
 
               {(formData.status === 'inativo' || formData.status === 'demitido') && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data de Demissão *
                   </label>
                   <input
@@ -1010,7 +1010,7 @@ const ColaboradoresRH: React.FC = () => {
               )}
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Foto do Colaborador
                 </label>
                 <div className="flex items-center gap-4">
@@ -1034,7 +1034,7 @@ const ColaboradoresRH: React.FC = () => {
                     />
                     <label
                       htmlFor="photo-upload"
-                      className={`inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer ${
+                      className={`inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white/80 bg-white hover:bg-gray-50 cursor-pointer ${
                         uploadingPhoto ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
@@ -1048,7 +1048,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Salário Fixo
                 </label>
                 <div className="relative">
@@ -1067,7 +1067,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Valor da Diária
                 </label>
                 <div className="relative">
@@ -1086,7 +1086,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Percentual de Comissão
                 </label>
                 <div className="relative">
@@ -1106,7 +1106,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Telefone
                 </label>
                 <input
@@ -1119,7 +1119,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Email
                 </label>
                 <input
@@ -1132,7 +1132,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Status
                 </label>
                 <select
@@ -1148,7 +1148,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Endereço
                 </label>
                 <textarea
@@ -1161,7 +1161,7 @@ const ColaboradoresRH: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observações
                 </label>
                 <textarea
@@ -1177,7 +1177,7 @@ const ColaboradoresRH: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

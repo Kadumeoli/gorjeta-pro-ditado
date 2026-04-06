@@ -188,7 +188,7 @@ const VendasDashboard: React.FC = () => {
       {/* Header com ações rápidas */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestão de Vendas</h2>
+          <h2 className="text-2xl font-bold text-white">Gestão de Vendas</h2>
           <p className="text-gray-600 mt-1">
             Importe, mapeie e gerencie suas vendas de sistemas externos
           </p>
@@ -196,7 +196,7 @@ const VendasDashboard: React.FC = () => {
         <div className="flex gap-3">
           <button
             onClick={() => setShowLancarVenda(true)}
-            className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-white/80 hover:bg-gray-50 transition-colors"
           >
             <FileText className="w-4 h-4 mr-2" />
             Lançar Venda
@@ -313,7 +313,7 @@ const VendasDashboard: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Importações Recentes</h3>
+            <h3 className="text-lg font-semibold text-white">Importações Recentes</h3>
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-gray-400" />
               <select
@@ -353,7 +353,7 @@ const VendasDashboard: React.FC = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-medium text-gray-900">{imp.arquivo_nome}</h4>
+                      <h4 className="font-medium text-white">{imp.arquivo_nome}</h4>
                       {getStatusBadge(imp.status || 'pendente')}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -414,7 +414,7 @@ const VendasDashboard: React.FC = () => {
               <History className="w-6 h-6 text-blue-600" />
             </div>
           </div>
-          <h4 className="font-semibold text-gray-900 mb-1">Histórico Completo</h4>
+          <h4 className="font-semibold text-white mb-1">Histórico Completo</h4>
           <p className="text-sm text-gray-600">
             Ver todas as importações e seus status
           </p>
@@ -429,7 +429,7 @@ const VendasDashboard: React.FC = () => {
               <Target className="w-6 h-6 text-green-600" />
             </div>
           </div>
-          <h4 className="font-semibold text-gray-900 mb-1">Biblioteca de Mapeamentos</h4>
+          <h4 className="font-semibold text-white mb-1">Biblioteca de Mapeamentos</h4>
           <p className="text-sm text-gray-600">
             Gerenciar correspondências de produtos
           </p>
@@ -444,7 +444,7 @@ const VendasDashboard: React.FC = () => {
               <BarChart3 className="w-6 h-6 text-purple-600" />
             </div>
           </div>
-          <h4 className="font-semibold text-gray-900 mb-1">Relatórios e Análises</h4>
+          <h4 className="font-semibold text-white mb-1">Relatórios e Análises</h4>
           <p className="text-sm text-gray-600">
             Insights sobre suas vendas importadas
           </p>

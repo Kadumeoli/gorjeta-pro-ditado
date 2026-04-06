@@ -189,7 +189,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
       <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-white">
               {form.id ? 'Editar Campanha' : 'Nova Campanha'}
             </h2>
             <p className="text-sm text-gray-600 mt-1">Etapa {step} de 3</p>
@@ -211,7 +211,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               className={`flex-1 py-3 text-sm font-medium transition-colors border-b-2 ${
                 step === s.n
                   ? 'border-amber-600 text-amber-700 bg-amber-50/50'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-white/80'
               }`}
             >
               {s.label}
@@ -223,7 +223,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Nome da Campanha *
                 </label>
                 <input
@@ -236,7 +236,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Objetivo
                 </label>
                 <input
@@ -249,7 +249,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Descrição
                 </label>
                 <textarea
@@ -263,7 +263,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">Status</label>
                   <select
                     value={form.status}
                     onChange={e => setForm({ ...form, status: e.target.value })}
@@ -275,7 +275,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Prioridade</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">Prioridade</label>
                   <select
                     value={form.prioridade}
                     onChange={e => setForm({ ...form, prioridade: e.target.value })}
@@ -290,7 +290,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Data Início</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">Data Início</label>
                   <input
                     type="date"
                     value={form.data_inicio}
@@ -299,7 +299,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Data Fim</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">Data Fim</label>
                   <input
                     type="date"
                     value={form.data_fim}
@@ -314,7 +314,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Tipo</label>
+                <label className="block text-sm font-medium text-white/80 mb-1.5">Tipo</label>
                 <div className="grid grid-cols-3 gap-3">
                   {tipoOptions.map(o => (
                     <button
@@ -334,7 +334,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Canais de Divulgação
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -356,7 +356,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Budget Planejado (R$)
                 </label>
                 <input
@@ -374,7 +374,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
                   Brief Vinculado
                 </label>
                 <select
@@ -390,7 +390,7 @@ const ModalCampanha: React.FC<ModalCampanhaProps> = ({ isOpen, onClose, onSaved,
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Tags</label>
+                <label className="block text-sm font-medium text-white/80 mb-1.5">Tags</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"

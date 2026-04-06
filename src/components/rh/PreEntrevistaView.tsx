@@ -121,7 +121,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { color: string; label: string; icon: any }> = {
-      pendente: { color: 'bg-gray-100 text-gray-800', label: 'Pendente', icon: Clock },
+      pendente: { color: 'bg-gray-100 text-white/90', label: 'Pendente', icon: Clock },
       em_andamento: { color: 'bg-blue-100 text-blue-800', label: 'Em Andamento', icon: MessageSquare },
       concluida: { color: 'bg-green-100 text-green-800', label: 'Concluída', icon: CheckCircle },
       expirada: { color: 'bg-red-100 text-red-800', label: 'Expirada', icon: XCircle }
@@ -140,7 +140,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h5 className="font-medium text-gray-900 flex items-center gap-2">
+        <h5 className="font-medium text-white flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-blue-600" />
           Pré-Entrevista com IA
         </h5>
@@ -164,7 +164,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
       {preEntrevista.pontuacao && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Pontuação da Pré-Entrevista</span>
+            <span className="text-sm font-medium text-white/80">Pontuação da Pré-Entrevista</span>
             <span className="text-lg font-bold text-blue-600">{preEntrevista.pontuacao}/100</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -186,7 +186,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
       {preEntrevista.conversa && preEntrevista.conversa.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-sm font-medium text-white/80">
               Conversa ({preEntrevista.conversa.length} mensagens)
             </p>
             {preEntrevista.status === 'concluida' && (
@@ -219,7 +219,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
                   className={`max-w-[80%] rounded-lg p-3 ${
                     msg.role === 'user'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-white border border-gray-300 text-gray-900'
+                      : 'bg-white border border-gray-300 text-white'
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
@@ -251,7 +251,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
               </div>
               <ul className="space-y-2">
                 {preEntrevista.analise_ia.pontos_fortes.map((ponto: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-gray-800">
+                  <li key={idx} className="flex items-start gap-2 text-sm text-white/90">
                     <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                     <span>{ponto}</span>
                   </li>
@@ -268,7 +268,7 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
               </div>
               <ul className="space-y-2">
                 {preEntrevista.analise_ia.pontos_fracos.map((ponto: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-gray-800">
+                  <li key={idx} className="flex items-start gap-2 text-sm text-white/90">
                     <XCircle className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
                     <span>{ponto}</span>
                   </li>
@@ -279,8 +279,8 @@ export default function PreEntrevistaView({ candidatura_id }: PreEntrevistaViewP
 
           {preEntrevista.analise_ia.resumo && (
             <div className="bg-white rounded-lg p-4 border border-purple-200">
-              <h6 className="font-semibold text-gray-900 mb-2">Resumo Geral</h6>
-              <p className="text-sm text-gray-800 leading-relaxed">{preEntrevista.analise_ia.resumo}</p>
+              <h6 className="font-semibold text-white mb-2">Resumo Geral</h6>
+              <p className="text-sm text-white/90 leading-relaxed">{preEntrevista.analise_ia.resumo}</p>
             </div>
           )}
 

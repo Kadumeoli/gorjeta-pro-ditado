@@ -250,7 +250,7 @@ const InventarioConsolidado: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Inventário Consolidado</h2>
+            <h2 className="text-xl font-bold text-white">Inventário Consolidado</h2>
             <p className="text-sm text-gray-500">Visualização completa de todos os itens e estoques</p>
           </div>
           <button
@@ -286,7 +286,7 @@ const InventarioConsolidado: React.FC = () => {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2 border rounded-lg ${
-                hasActiveFilters ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'
+                hasActiveFilters ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-white/80'
               } hover:bg-gray-50`}
             >
               <Filter className="w-4 h-4" />
@@ -299,7 +299,7 @@ const InventarioConsolidado: React.FC = () => {
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estoque</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Estoque</label>
                   <select
                     value={estoqueFilter}
                     onChange={(e) => setEstoqueFilter(e.target.value)}
@@ -313,7 +313,7 @@ const InventarioConsolidado: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Categoria</label>
                   <select
                     value={categoriaFilter}
                     onChange={(e) => setCategoriaFilter(e.target.value)}
@@ -327,7 +327,7 @@ const InventarioConsolidado: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Tipo</label>
                   <select
                     value={tipoFilter}
                     onChange={(e) => setTipoFilter(e.target.value)}
@@ -340,7 +340,7 @@ const InventarioConsolidado: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Status</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -357,7 +357,7 @@ const InventarioConsolidado: React.FC = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={clearFilters}
-                    className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-white/90"
                   >
                     <X className="w-4 h-4" />
                     Limpar Filtros
@@ -398,7 +398,7 @@ const InventarioConsolidado: React.FC = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('nome')}
                 >
                   <div className="flex items-center gap-1">
@@ -408,25 +408,25 @@ const InventarioConsolidado: React.FC = () => {
                     )}
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   Categoria
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/80 uppercase tracking-wider">
                   Unidade
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-xs font-medium text-white/80 uppercase tracking-wider">
                   Mínimo
                 </th>
                 {estoques.map(estoque => (
                   <th
                     key={estoque.id}
-                    className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider bg-blue-50"
+                    className="px-4 py-3 text-center text-xs font-medium text-white/80 uppercase tracking-wider bg-blue-50"
                   >
                     {estoque.nome}
                   </th>
                 ))}
                 <th
-                  className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 bg-green-50"
+                  className="px-4 py-3 text-center text-xs font-medium text-white/80 uppercase tracking-wider cursor-pointer hover:bg-gray-100 bg-green-50"
                   onClick={() => handleSort('quantidade')}
                 >
                   <div className="flex items-center justify-center gap-1">
@@ -437,7 +437,7 @@ const InventarioConsolidado: React.FC = () => {
                   </div>
                 </th>
                 <th
-                  className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 bg-yellow-50"
+                  className="px-4 py-3 text-center text-xs font-medium text-white/80 uppercase tracking-wider cursor-pointer hover:bg-gray-100 bg-yellow-50"
                   onClick={() => handleSort('valor')}
                 >
                   <div className="flex items-center justify-center gap-1">
@@ -471,20 +471,20 @@ const InventarioConsolidado: React.FC = () => {
                           <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
                         )}
                         <div>
-                          <p className="font-medium text-gray-900">{item.item_nome}</p>
+                          <p className="font-medium text-white">{item.item_nome}</p>
                           {item.item_codigo && (
                             <p className="text-xs text-gray-500">{item.item_codigo}</p>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-white/80">
                       {item.item_categoria || '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-white/80">
                       {item.item_unidade_medida}
                     </td>
-                    <td className="px-4 py-3 text-center text-sm text-gray-700">
+                    <td className="px-4 py-3 text-center text-sm text-white/80">
                       {item.item_estoque_minimo}
                     </td>
                     {estoques.map(estoque => {
@@ -494,17 +494,17 @@ const InventarioConsolidado: React.FC = () => {
                         <td
                           key={estoque.id}
                           className={`px-4 py-3 text-center text-sm font-medium ${
-                            quantidade === 0 ? 'text-gray-400' : 'text-gray-900'
+                            quantidade === 0 ? 'text-gray-400' : 'text-white'
                           }`}
                         >
                           {quantidade > 0 ? quantidade.toFixed(2) : '-'}
                         </td>
                       );
                     })}
-                    <td className="px-4 py-3 text-center text-sm font-bold text-gray-900 bg-green-50">
+                    <td className="px-4 py-3 text-center text-sm font-bold text-white bg-green-50">
                       {item.quantidade_total.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-center text-sm font-medium text-gray-900 bg-yellow-50">
+                    <td className="px-4 py-3 text-center text-sm font-medium text-white bg-yellow-50">
                       R$ {item.valor_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </td>
                   </tr>

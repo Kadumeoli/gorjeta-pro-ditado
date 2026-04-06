@@ -235,7 +235,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
       <div className="bg-white rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Importar Nota com IA</h3>
+            <h3 className="text-xl font-semibold text-white">Importar Nota com IA</h3>
             <p className="text-sm text-gray-500 mt-1">
               Faça upload de foto ou PDF da nota fiscal para extração automática
             </p>
@@ -289,7 +289,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
                       <div className="flex items-center">
                         <FileText className="w-5 h-5 text-gray-600 mr-2" />
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                          <p className="text-sm font-medium text-white">{file.name}</p>
                           <p className="text-xs text-gray-500">
                             {(file.size / 1024 / 1024).toFixed(2)} MB
                           </p>
@@ -334,7 +334,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Fornecedor *
                   </label>
                   <input
@@ -353,7 +353,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     CNPJ
                   </label>
                   <input
@@ -375,7 +375,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Número NF
                   </label>
                   <input
@@ -394,7 +394,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Série
                   </label>
                   <input
@@ -413,7 +413,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data Emissão
                   </label>
                   <input
@@ -435,7 +435,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Estoque Destino *
                   </label>
                   <select
@@ -456,7 +456,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-medium text-gray-900">Itens da Nota</h4>
+                  <h4 className="font-medium text-white">Itens da Nota</h4>
                   <div className="flex items-center gap-2">
                     {editedData && editedData.validation.diferenca > 0.5 && (
                       <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
@@ -579,7 +579,7 @@ const ComprasIAModal: React.FC<ComprasIAModalProps> = ({ isOpen, onClose, onConf
           <div className="p-6 border-t border-gray-200 bg-gray-50 flex justify-between gap-3">
             <button
               onClick={reset}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100"
             >
               Voltar
             </button>

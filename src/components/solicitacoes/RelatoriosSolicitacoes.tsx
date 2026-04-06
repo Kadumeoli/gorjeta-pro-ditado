@@ -365,7 +365,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Relatórios de Solicitações</h3>
+        <h3 className="text-lg font-medium text-white">Relatórios de Solicitações</h3>
         <button
           onClick={exportarRelatorio}
           className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
@@ -385,7 +385,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Período Inicial
             </label>
             <input
@@ -397,7 +397,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Período Final
             </label>
             <input
@@ -409,7 +409,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Agrupamento
             </label>
             <select
@@ -443,7 +443,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
           {/* Evolução das Solicitações */}
           {relatorioSolicitacoes.length > 0 && (
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">
+              <h4 className="text-lg font-medium text-white mb-4">
                 Evolução das Solicitações
               </h4>
               <div className="h-80">
@@ -476,7 +476,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
             {/* Por Tipo */}
             {solicitacoesPorTipo.length > 0 && (
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">
+                <h4 className="text-lg font-medium text-white mb-4">
                   Solicitações por Tipo
                 </h4>
                 <div className="h-64">
@@ -510,7 +510,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
                         <span className="text-sm text-gray-600">{item.tipo_nome}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-medium text-gray-900">{item.total}</span>
+                        <span className="text-sm font-medium text-white">{item.total}</span>
                         <div className="text-xs text-gray-500">
                           {formatCurrency(item.valor_total)}
                         </div>
@@ -524,14 +524,14 @@ const RelatoriosSolicitacoes: React.FC = () => {
             {/* Por Setor */}
             {solicitacoesPorSetor.length > 0 && (
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">
+                <h4 className="text-lg font-medium text-white mb-4">
                   Solicitações por Setor
                 </h4>
                 <div className="space-y-3">
                   {solicitacoesPorSetor.map((setor, index) => (
                     <div key={index} className="p-3 bg-gray-50 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-gray-900">{setor.setor}</span>
+                        <span className="font-medium text-white">{setor.setor}</span>
                         <span className="text-lg font-bold text-[#7D1F2C]">{setor.total}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-sm">
@@ -551,7 +551,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
                       {setor.valor_medio > 0 && (
                         <div className="mt-2 text-center">
                           <span className="text-xs text-gray-500">Valor médio: </span>
-                          <span className="text-xs font-medium text-gray-700">
+                          <span className="text-xs font-medium text-white/80">
                             {formatCurrency(setor.valor_medio)}
                           </span>
                         </div>
@@ -567,7 +567,7 @@ const RelatoriosSolicitacoes: React.FC = () => {
           {relatorioSolicitacoes.length === 0 && solicitacoesPorTipo.length === 0 && (
             <div className="text-center py-12">
               <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum dado encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum dado encontrado</h3>
               <p className="text-gray-500">
                 Não há solicitações para o período selecionado.
               </p>

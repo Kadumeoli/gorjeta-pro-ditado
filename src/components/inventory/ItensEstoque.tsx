@@ -351,7 +351,7 @@ const ItensEstoque: React.FC = () => {
       {/* Cabeçalho */}
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Itens de Estoque</h3>
+          <h3 className="text-lg font-medium text-white">Itens de Estoque</h3>
           <p className="text-sm text-gray-500 mt-1">
             {estoqueFilter === 'all'
               ? 'Quantidades somadas de todos os estoques'
@@ -360,7 +360,7 @@ const ItensEstoque: React.FC = () => {
         </div>
         <div className="flex gap-2">
           <button onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50">
             <Download className="w-4 h-4 inline mr-2" />Exportar Excel
           </button>
           <button onClick={() => openForm()}
@@ -417,7 +417,7 @@ const ItensEstoque: React.FC = () => {
       {/* Filtros */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+          <h4 className="text-sm font-medium text-white/80 flex items-center gap-2">
             <Filter className="w-4 h-4" /> Filtros
             {hasActiveFilters && (
               <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
@@ -496,7 +496,7 @@ const ItensEstoque: React.FC = () => {
                 {filteredItens.map(item => (
                   <tr key={item.id} className={`hover:bg-gray-50 ${item.ignorar_contagem ? 'opacity-60' : ''}`}>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-gray-900 text-sm">{item.nome}</div>
+                      <div className="font-medium text-white text-sm">{item.nome}</div>
                       {item.descricao && <div className="text-xs text-gray-500 truncate max-w-[160px]">{item.descricao}</div>}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{item.codigo || '-'}</td>
@@ -511,7 +511,7 @@ const ItensEstoque: React.FC = () => {
 
                     {/* Grupo de contagem */}
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-xs text-gray-700">{grupoLabel(item.grupo_contagem)}</span>
+                      <span className="text-xs text-white/80">{grupoLabel(item.grupo_contagem)}</span>
                     </td>
 
                     {/* Toggle rápido ignorar contagem */}
@@ -531,21 +531,21 @@ const ItensEstoque: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-white/80">
                         {item.unidade_medida}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`text-sm font-medium ${item.custo_medio > 0 ? 'text-gray-900' : 'text-orange-600'}`}>
+                      <span className={`text-sm font-medium ${item.custo_medio > 0 ? 'text-white' : 'text-orange-600'}`}>
                         {formatCurrency(item.custo_medio)}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`text-sm font-medium ${(item.quantidade_total||0) < item.estoque_minimo ? 'text-red-600' : 'text-gray-900'}`}>
+                      <span className={`text-sm font-medium ${(item.quantidade_total||0) < item.estoque_minimo ? 'text-red-600' : 'text-white'}`}>
                         {(item.quantidade_total||0).toFixed(2)} {item.unidade_medida}
                       </span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-white/80">
                       {formatCurrency(item.valor_total_estoque || 0)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{item.estoque_minimo}</td>
@@ -583,7 +583,7 @@ const ItensEstoque: React.FC = () => {
           {filteredItens.length === 0 && (
             <div className="text-center py-12">
               <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum item encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum item encontrado</h3>
               {hasActiveFilters
                 ? <button onClick={clearAllFilters} className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]">
                     Limpar filtros
@@ -599,7 +599,7 @@ const ItensEstoque: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-white">
                 {editingItem ? 'Editar Item' : 'Novo Item'}
               </h3>
               <button onClick={() => setShowForm(false)} className="p-2 hover:bg-gray-100 rounded-xl">
@@ -611,7 +611,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Nome *</label>
                 <input type="text" value={formData.nome}
                   onChange={e => setFormData({ ...formData, nome: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
@@ -620,7 +620,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Código */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Código</label>
                 <input type="text" value={formData.codigo}
                   onChange={e => setFormData({ ...formData, codigo: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
@@ -629,7 +629,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Tipo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Tipo *</label>
                 <select value={formData.tipo_item}
                   onChange={e => setFormData({ ...formData, tipo_item: e.target.value as any })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
@@ -640,7 +640,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Categoria */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Categoria *</label>
                 {!showNewCategoryInput ? (
                   <select value={formData.categoria} onChange={e => handleCategoryChange(e.target.value)}
                     className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
@@ -670,7 +670,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* ★ GRUPO DE CONTAGEM */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Grupo de Contagem
                 </label>
                 <select value={formData.grupo_contagem}
@@ -685,7 +685,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Descrição */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Descrição</label>
                 <textarea value={formData.descricao}
                   onChange={e => setFormData({ ...formData, descricao: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
@@ -694,7 +694,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Unidade de medida */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Unidade de Medida *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Unidade de Medida *</label>
                 <select value={formData.unidade_medida}
                   onChange={e => setFormData({ ...formData, unidade_medida: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
@@ -704,7 +704,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Custo médio */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Custo Médio</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Custo Médio</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">R$</span>
                   <input type="number" step="0.01" min="0" value={formData.custo_medio}
@@ -715,7 +715,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Estoque crítico */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estoque Crítico (Urgente)</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Estoque Crítico (Urgente)</label>
                 <input type="number" step="0.001" min="0" value={formData.estoque_minimo}
                   onChange={e => setFormData({ ...formData, estoque_minimo: parseFloat(e.target.value) || 0 })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20" />
@@ -724,7 +724,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Ponto de reposição */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ponto de Reposição</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Ponto de Reposição</label>
                 <input type="number" step="0.001" min="0" value={formData.ponto_reposicao}
                   onChange={e => setFormData({ ...formData, ponto_reposicao: parseFloat(e.target.value) || 0 })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20" />
@@ -733,7 +733,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Estoque nativo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estoque Nativo</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Estoque Nativo</label>
                 <select value={formData.estoque_nativo_id}
                   onChange={e => setFormData({ ...formData, estoque_nativo_id: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
@@ -744,7 +744,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Tipo de compra */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Compra *</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Tipo de Compra *</label>
                 <select value={formData.tipo_compra}
                   onChange={e => setFormData({ ...formData, tipo_compra: e.target.value as any })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20">
@@ -756,7 +756,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Fornecedor padrão */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fornecedor Padrão</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Fornecedor Padrão</label>
                 <select value={formData.fornecedor_padrao_id}
                   onChange={e => setFormData({ ...formData, fornecedor_padrao_id: e.target.value })}
                   disabled={formData.tipo_compra === 'rua'}
@@ -775,7 +775,7 @@ const ItensEstoque: React.FC = () => {
                     onChange={e => setFormData({ ...formData, tem_validade: e.target.checked })}
                     className="w-4 h-4 rounded text-[#7D1F2C] border-gray-300 focus:ring-[#7D1F2C]" />
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Tem validade</p>
+                    <p className="text-sm font-medium text-white/80">Tem validade</p>
                     <p className="text-xs text-gray-500">Controlar vencimento</p>
                   </div>
                 </label>
@@ -786,7 +786,7 @@ const ItensEstoque: React.FC = () => {
                     onChange={e => setFormData({ ...formData, status: e.target.checked ? 'ativo' : 'inativo' })}
                     className="w-4 h-4 rounded text-[#7D1F2C] border-gray-300 focus:ring-[#7D1F2C]" />
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Item ativo</p>
+                    <p className="text-sm font-medium text-white/80">Item ativo</p>
                     <p className="text-xs text-gray-500">Visível no sistema</p>
                   </div>
                 </label>
@@ -801,7 +801,7 @@ const ItensEstoque: React.FC = () => {
                     onChange={e => setFormData({ ...formData, ignorar_contagem: e.target.checked })}
                     className="w-4 h-4 rounded text-red-600 border-gray-300 focus:ring-red-500" />
                   <div>
-                    <p className={`text-sm font-medium ${formData.ignorar_contagem ? 'text-red-700' : 'text-gray-700'}`}>
+                    <p className={`text-sm font-medium ${formData.ignorar_contagem ? 'text-red-700' : 'text-white/80'}`}>
                       Não contar
                     </p>
                     <p className="text-xs text-gray-500">
@@ -815,7 +815,7 @@ const ItensEstoque: React.FC = () => {
 
               {/* Observações */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Observações</label>
                 <textarea value={formData.observacoes}
                   onChange={e => setFormData({ ...formData, observacoes: e.target.value })}
                   className="w-full rounded-xl border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C]/20"
@@ -825,7 +825,7 @@ const ItensEstoque: React.FC = () => {
 
             <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
               <button onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50">
+                className="px-4 py-2 border border-gray-300 rounded-xl text-white/80 hover:bg-gray-50">
                 Cancelar
               </button>
               <button onClick={handleSave}

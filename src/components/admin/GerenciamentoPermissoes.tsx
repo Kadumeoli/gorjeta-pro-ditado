@@ -258,7 +258,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
       <div className="p-6">
         <div className="text-center py-12">
           <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Acesso Negado</h3>
+          <h3 className="text-lg font-medium text-white mb-2">Acesso Negado</h3>
           <p className="text-gray-500">
             Apenas usuários Master podem gerenciar permissões.
           </p>
@@ -271,7 +271,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             Permissões - {usuarioNome}
           </h3>
           <p className="text-sm text-gray-600">
@@ -335,7 +335,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
             <button
               onClick={resetarPermissoes}
               disabled={!temAlteracoes() || saving}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50 disabled:opacity-50"
             >
               <RotateCcw className="w-4 h-4 inline mr-2" />
               Resetar
@@ -373,7 +373,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                           <Shield className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">{modulo.nome}</h4>
+                          <h4 className="font-medium text-white">{modulo.nome}</h4>
                           <p className="text-sm text-gray-500">
                             {modulo.abas.length} aba(s) disponível(is)
                           </p>
@@ -407,7 +407,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                   <Settings className="w-4 h-4 text-gray-600" />
                                 </div>
                                 <div>
-                                  <h5 className="font-medium text-gray-900">Acesso Geral ao Módulo</h5>
+                                  <h5 className="font-medium text-white">Acesso Geral ao Módulo</h5>
                                   <p className="text-sm text-gray-500">Aplica-se ao módulo como um todo</p>
                                 </div>
                               </div>
@@ -421,7 +421,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, null, 'pode_visualizar', e.target.checked)}
                                     className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Eye className="w-4 h-4 inline mr-1" />
                                     Ver
                                   </span>
@@ -435,7 +435,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, null, 'pode_criar', e.target.checked)}
                                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Plus className="w-4 h-4 inline mr-1" />
                                     Criar
                                   </span>
@@ -449,7 +449,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, null, 'pode_editar', e.target.checked)}
                                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Edit className="w-4 h-4 inline mr-1" />
                                     Editar
                                   </span>
@@ -463,7 +463,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, null, 'pode_excluir', e.target.checked)}
                                     className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Trash2 className="w-4 h-4 inline mr-1" />
                                     Excluir
                                   </span>
@@ -477,7 +477,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, null, 'pode_aprovar', e.target.checked)}
                                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <CheckCircle className="w-4 h-4 inline mr-1" />
                                     Aprovar
                                   </span>
@@ -498,7 +498,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                   <Settings className="w-4 h-4 text-blue-600" />
                                 </div>
                                 <div>
-                                  <h5 className="font-medium text-gray-900">{aba.nome}</h5>
+                                  <h5 className="font-medium text-white">{aba.nome}</h5>
                                   <p className="text-sm text-gray-500">Aba: {aba.slug}</p>
                                 </div>
                               </div>
@@ -512,7 +512,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, aba.id, 'pode_visualizar', e.target.checked)}
                                     className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Eye className="w-4 h-4 inline mr-1" />
                                     Ver
                                   </span>
@@ -526,7 +526,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, aba.id, 'pode_criar', e.target.checked)}
                                     className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Plus className="w-4 h-4 inline mr-1" />
                                     Criar
                                   </span>
@@ -540,7 +540,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, aba.id, 'pode_editar', e.target.checked)}
                                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Edit className="w-4 h-4 inline mr-1" />
                                     Editar
                                   </span>
@@ -554,7 +554,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, aba.id, 'pode_excluir', e.target.checked)}
                                     className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <Trash2 className="w-4 h-4 inline mr-1" />
                                     Excluir
                                   </span>
@@ -568,7 +568,7 @@ const GerenciamentoPermissoes: React.FC<GerenciamentoPermissoesProps> = ({
                                     onChange={(e) => atualizarPermissao(modulo.id, aba.id, 'pode_aprovar', e.target.checked)}
                                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                   />
-                                  <span className="ml-2 text-sm text-gray-700">
+                                  <span className="ml-2 text-sm text-white/80">
                                     <CheckCircle className="w-4 h-4 inline mr-1" />
                                     Aprovar
                                   </span>

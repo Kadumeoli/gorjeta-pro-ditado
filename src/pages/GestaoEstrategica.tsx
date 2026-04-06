@@ -39,7 +39,7 @@ function SectionHeader({ icon:Icon, title, subtitle, grad }:{
         <Icon className="w-5 h-5 text-white" />
       </div>
       <div>
-        <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-none">{title}</h2>
+        <h2 className="text-base font-extrabold text-white tracking-tight leading-none">{title}</h2>
         {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
       </div>
     </div>
@@ -61,7 +61,7 @@ function Tile({ label, value, sub, trend, alert, loading }:{
     }`}>
       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{label}</p>
       <p className={`text-xl font-extrabold tracking-tight leading-none ${
-        alert==='red' ? 'text-red-700' : alert==='green' ? 'text-emerald-700' : 'text-gray-900'
+        alert==='red' ? 'text-red-700' : alert==='green' ? 'text-emerald-700' : 'text-white'
       }`}>{value}</p>
       <div className="flex items-center justify-between mt-2">
         {trend !== undefined
@@ -357,7 +357,7 @@ export default function GestaoEstrategica() {
           <div className="flex bg-gray-100 rounded-xl p-1 gap-1 h-fit">
             {(['mensal','semanal'] as const).map(m=>(
               <button key={m} onClick={()=>setCmvMode(m)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${cmvMode===m?'bg-white shadow text-gray-900':'text-gray-500 hover:text-gray-700'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${cmvMode===m?'bg-white shadow text-white':'text-gray-500 hover:text-white/80'}`}>
                 {m}
               </button>
             ))}
@@ -418,7 +418,7 @@ export default function GestaoEstrategica() {
                   <div key={i} className="flex items-center gap-3 px-4 py-3 hover:bg-amber-50/40 border-b border-amber-50 last:border-0 transition-colors">
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"/>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-gray-800 truncate">{p.descricao}</p>
+                      <p className="text-xs font-semibold text-white/90 truncate">{p.descricao}</p>
                       <p className="text-[10px] text-gray-400">{new Date(p.vencimento+'T12:00:00').toLocaleDateString('pt-BR')}</p>
                     </div>
                     <div className="text-right shrink-0">
@@ -452,7 +452,7 @@ export default function GestaoEstrategica() {
                   {new Date(ev.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','')}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-gray-800 truncate">{ev.nome}</p>
+                  <p className="text-xs font-semibold text-white/90 truncate">{ev.nome}</p>
                   <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${ev.status==='pago'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}`}>
                     {ev.status==='pago'?'Pago':'Pendente'}
                   </span>
@@ -531,14 +531,14 @@ export default function GestaoEstrategica() {
                     {/* Ring */}
                     <div className="relative shrink-0 cursor-default">
                       <Ring p={okr.progresso} color={st.clr}/>
-                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black text-gray-700 rotate-90">
+                      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black text-white/80 rotate-90">
                         {okr.progresso.toFixed(0)}%
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{okr.titulo}</p>
+                          <p className="text-sm font-bold text-white">{okr.titulo}</p>
                           {okr.descricao&&<p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{okr.descricao}</p>}
                         </div>
                         <button onClick={()=>setConfirmDel(confirmDel===okr.id?null:okr.id)}

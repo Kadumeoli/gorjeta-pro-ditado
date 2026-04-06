@@ -522,8 +522,8 @@ const EscalasTrabalho: React.FC = () => {
       case 'diurno': return 'bg-yellow-100 text-yellow-800';
       case 'noturno': return 'bg-blue-100 text-blue-800';
       case 'madrugada': return 'bg-purple-100 text-purple-800';
-      case 'variavel': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'variavel': return 'bg-gray-100 text-white/90';
+      default: return 'bg-gray-100 text-white/90';
     }
   };
 
@@ -534,11 +534,11 @@ const EscalasTrabalho: React.FC = () => {
       'Cozinha': 'bg-red-100 text-red-800',
       'Recepção': 'bg-purple-100 text-purple-800',
       'Limpeza': 'bg-yellow-100 text-yellow-800',
-      'Segurança': 'bg-gray-100 text-gray-800',
+      'Segurança': 'bg-gray-100 text-white/90',
       'Administração': 'bg-indigo-100 text-indigo-800',
       'Estoque': 'bg-orange-100 text-orange-800'
     };
-    return colors[setor as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[setor as keyof typeof colors] || 'bg-gray-100 text-white/90';
   };
 
   const getDiasDoMes = () => {
@@ -582,7 +582,7 @@ const EscalasTrabalho: React.FC = () => {
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-white">
               {calendarioMes.format('MMMM YYYY')}
             </h3>
             <button
@@ -640,7 +640,7 @@ const EscalasTrabalho: React.FC = () => {
                   }}
                 >
                   <div className={`text-sm font-medium mb-1 ${
-                    isToday ? 'text-[#7D1F2C]' : isPastDay ? 'text-gray-400' : 'text-gray-700'
+                    isToday ? 'text-[#7D1F2C]' : isPastDay ? 'text-gray-400' : 'text-white/80'
                   }`}>
                     {dia}
                   </div>
@@ -652,7 +652,7 @@ const EscalasTrabalho: React.FC = () => {
                         key={escala.id}
                         className={`text-xs px-1 py-0.5 rounded truncate ${
                           escala.eh_folga 
-                            ? 'bg-gray-200 text-gray-700' 
+                            ? 'bg-gray-200 text-white/80' 
                             : getTurnoColor(escala.tipo_turno)
                         }`}
                         title={`${escala.colaborador_nome} - ${
@@ -725,7 +725,7 @@ const EscalasTrabalho: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Escalas de Trabalho</h3>
+        <h3 className="text-lg font-medium text-white">Escalas de Trabalho</h3>
         <div className="flex gap-2">
           {/* Toggle View Mode */}
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
@@ -734,7 +734,7 @@ const EscalasTrabalho: React.FC = () => {
               className={`px-3 py-2 text-sm font-medium transition-colors ${
                 viewMode === 'table'
                   ? 'bg-[#7D1F2C] text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  : 'bg-white text-white/80 hover:bg-gray-50'
               }`}
             >
               <List className="w-4 h-4 inline mr-1" />
@@ -745,7 +745,7 @@ const EscalasTrabalho: React.FC = () => {
               className={`px-3 py-2 text-sm font-medium transition-colors ${
                 viewMode === 'calendar'
                   ? 'bg-[#7D1F2C] text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  : 'bg-white text-white/80 hover:bg-gray-50'
               }`}
             >
               <Grid className="w-4 h-4 inline mr-1" />
@@ -754,7 +754,7 @@ const EscalasTrabalho: React.FC = () => {
           </div>
           <button
             onClick={() => {/* TODO: Export */}}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar
@@ -866,7 +866,7 @@ const EscalasTrabalho: React.FC = () => {
                 onChange={(e) => setApenasfolgas(e.target.checked)}
                 className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
               />
-              <label htmlFor="apenas-folgas" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="apenas-folgas" className="ml-2 text-sm text-white/80">
                 🏖️ Apenas Folgas
               </label>
             </div>
@@ -977,7 +977,7 @@ const EscalasTrabalho: React.FC = () => {
                   onChange={(e) => setApenasfolgas(e.target.checked)}
                   className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                 />
-                <label htmlFor="apenas-folgas-calendario" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="apenas-folgas-calendario" className="ml-2 text-sm text-white/80">
                   🏖️ Apenas Folgas
                 </label>
               </div>
@@ -1063,7 +1063,7 @@ const EscalasTrabalho: React.FC = () => {
                 ) : (
                   filteredEscalas.map((escala) => (
                     <tr key={escala.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                         {dayjs(escala.data_escala).format('DD/MM/YYYY')}
                         <div className="text-xs text-gray-500">
                           {dayjs(escala.data_escala).format('dddd')}
@@ -1073,7 +1073,7 @@ const EscalasTrabalho: React.FC = () => {
                         <div className="flex items-center">
                           <User className="w-4 h-4 text-gray-400 mr-2" />
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-white">
                               {escala.colaborador_nome}
                             </div>
                             <div className="text-sm text-gray-500">
@@ -1087,7 +1087,7 @@ const EscalasTrabalho: React.FC = () => {
                           {escala.setor}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                         {escala.eh_folga ? (
                           <span className="text-gray-500 italic">Folga</span>
                         ) : (
@@ -1104,7 +1104,7 @@ const EscalasTrabalho: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {escala.eh_folga ? (
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-white/90">
                             🏖️ Folga
                           </span>
                         ) : (
@@ -1146,7 +1146,7 @@ const EscalasTrabalho: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 {editingEscala ? 'Editar Escala' : 'Nova Escala'}
               </h3>
               <button
@@ -1161,7 +1161,7 @@ const EscalasTrabalho: React.FC = () => {
               {/* Tipo de Cadastro */}
               {!editingEscala && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Tipo de Cadastro
                   </label>
                   <div className="flex space-x-4">
@@ -1206,7 +1206,7 @@ const EscalasTrabalho: React.FC = () => {
               {formData.tipo_cadastro === 'individual' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Colaborador *
                     </label>
                     <select
@@ -1225,7 +1225,7 @@ const EscalasTrabalho: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Data da Escala *
                     </label>
                     <input
@@ -1245,7 +1245,7 @@ const EscalasTrabalho: React.FC = () => {
                   {/* Período */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-white/80 mb-2">
                         Data Início *
                       </label>
                       <input
@@ -1258,7 +1258,7 @@ const EscalasTrabalho: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-white/80 mb-2">
                         Data Fim *
                       </label>
                       <input
@@ -1274,7 +1274,7 @@ const EscalasTrabalho: React.FC = () => {
                   {/* Dias da semana (apenas para escalas semanais) */}
                   {formData.tipo_cadastro === 'semanal' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-white/80 mb-2">
                         Dias da Semana
                       </label>
                       <div className="flex flex-wrap gap-2">
@@ -1304,7 +1304,7 @@ const EscalasTrabalho: React.FC = () => {
                   {/* Seleção de colaboradores */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-white/80">
                         Colaboradores
                       </label>
                       <button
@@ -1339,7 +1339,7 @@ const EscalasTrabalho: React.FC = () => {
               {/* Campos comuns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Setor *
                   </label>
                   <select
@@ -1357,7 +1357,7 @@ const EscalasTrabalho: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Tipo de Turno
                   </label>
                   <select
@@ -1382,7 +1382,7 @@ const EscalasTrabalho: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, eh_folga: e.target.checked })}
                     className="mr-2 rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                   />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-white/80">
                     🏖️ Esta é uma folga (não definir horários)
                   </span>
                 </label>
@@ -1392,7 +1392,7 @@ const EscalasTrabalho: React.FC = () => {
               {!formData.eh_folga && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Horário Início
                     </label>
                     <input
@@ -1404,7 +1404,7 @@ const EscalasTrabalho: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                       Horário Fim
                     </label>
                     <input
@@ -1419,7 +1419,7 @@ const EscalasTrabalho: React.FC = () => {
 
               {/* Observações */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Observações
                 </label>
                 <textarea
@@ -1437,7 +1437,7 @@ const EscalasTrabalho: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -1460,7 +1460,7 @@ const EscalasTrabalho: React.FC = () => {
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex items-center mb-4">
               <AlertCircle className="w-6 h-6 text-red-600 mr-3" />
-              <h3 className="text-lg font-medium text-gray-900">Confirmar Exclusão</h3>
+              <h3 className="text-lg font-medium text-white">Confirmar Exclusão</h3>
             </div>
             <p className="text-gray-600 mb-6">
               Tem certeza que deseja excluir esta escala? Esta ação não pode ser desfeita.
@@ -1468,7 +1468,7 @@ const EscalasTrabalho: React.FC = () => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

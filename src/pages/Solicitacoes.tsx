@@ -422,7 +422,7 @@ const Solicitacoes: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'rascunho':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       case 'enviado':
         return 'text-blue-700 bg-blue-100';
       case 'em_analise':
@@ -440,9 +440,9 @@ const Solicitacoes: React.FC = () => {
       case 'rejeitado':
         return 'text-red-700 bg-red-100';
       case 'cancelado':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -513,7 +513,7 @@ const Solicitacoes: React.FC = () => {
       case 'critica':
         return 'text-red-900 bg-red-200 border border-red-300';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -664,7 +664,7 @@ const Solicitacoes: React.FC = () => {
                     </div>
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-bold text-lg text-gray-900">
+                        <span className="font-bold text-lg text-white">
                           {solicitacao.numero_solicitacao}
                         </span>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(solicitacao.status)}`}>
@@ -675,7 +675,7 @@ const Solicitacoes: React.FC = () => {
                           {getPrioridadeText(solicitacao.prioridade)}
                         </span>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900">{solicitacao.titulo}</h3>
+                      <h3 className="text-lg font-semibold text-white">{solicitacao.titulo}</h3>
                       <div className="flex items-center text-sm text-gray-600 space-x-4 mt-1">
                         <div className="flex items-center">
                           <User className="w-4 h-4 mr-1" />
@@ -743,7 +743,7 @@ const Solicitacoes: React.FC = () => {
 
                 <div className="space-y-3">
                   <div>
-                    <p className="text-gray-700">{solicitacao.descricao}</p>
+                    <p className="text-white/80">{solicitacao.descricao}</p>
                   </div>
 
                   {solicitacao.equipamento_afetado && (
@@ -800,7 +800,7 @@ const Solicitacoes: React.FC = () => {
             {filteredSolicitacoes.length === 0 && (
               <div className="text-center py-12">
                 <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma solicitação encontrada</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhuma solicitação encontrada</h3>
                 <p className="text-gray-500">
                   {searchTerm || statusFilter !== 'all' || prioridadeFilter !== 'all' 
                     ? 'Nenhuma solicitação corresponde aos filtros aplicados.' 
@@ -824,7 +824,7 @@ const Solicitacoes: React.FC = () => {
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Sistema de Solicitações</h2>
+          <h2 className="text-2xl font-semibold text-white/90">Sistema de Solicitações</h2>
           <div className="flex gap-3">
             <button
               onClick={() => setShowChatIA(true)}
@@ -925,7 +925,7 @@ const Solicitacoes: React.FC = () => {
                       `flex items-center whitespace-nowrap rounded-lg py-2.5 px-4 text-sm font-medium leading-5 transition-all
                       ${selected
                         ? 'bg-[#7D1F2C] text-white shadow'
-                        : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                        : 'text-white/80 hover:bg-white hover:text-white'
                       }`
                     }
                   >

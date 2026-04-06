@@ -224,7 +224,7 @@ function AbaMapeamento() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-white flex items-center gap-2">
           <Map size={20} className="text-[#7D1F2C]"/> Central de Mapeamento
         </h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -241,7 +241,7 @@ function AbaMapeamento() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          {label:'Total no cardápio', val:stats.total,    color:'text-gray-700',  bg:'bg-gray-50',  border:'border-gray-200'},
+          {label:'Total no cardápio', val:stats.total,    color:'text-white/80',  bg:'bg-gray-50',  border:'border-gray-200'},
           {label:'Vinculados',        val:stats.mapeados, color:'text-green-600', bg:'bg-green-50', border:'border-green-200'},
           {label:'Pendentes',         val:stats.pendentes,color:'text-amber-600', bg:'bg-amber-50', border:'border-amber-200'},
         ].map(s=>(
@@ -338,7 +338,7 @@ function AbaMapeamento() {
                   : ok              ? <Check  size={14} className="text-green-600 flex-shrink-0"/>
                   :                   <AlertTriangle size={14} className="text-amber-500 flex-shrink-0"/>}
                   <div className="min-w-0">
-                    <p className={`font-semibold text-sm truncate ${edit.ignorar?'line-through text-gray-400':'text-gray-900'}`}>
+                    <p className={`font-semibold text-sm truncate ${edit.ignorar?'line-through text-gray-400':'text-white'}`}>
                       {m.nome_externo}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap mt-0.5">
@@ -415,7 +415,7 @@ function AbaMapeamento() {
                                 return (
                                   <button key={x.id}
                                     onClick={()=>setEdit(m.nome_externo, edit.tipo==='item'?{item_id:x.id,busca:''}:{ficha_id:x.id,busca:''})}
-                                    className={`w-full text-left px-3 py-2.5 text-sm border-b border-gray-50 last:border-0 flex items-center justify-between transition-colors ${sel?'bg-[#7D1F2C]/5 font-semibold text-[#7D1F2C]':'hover:bg-gray-50 text-gray-700'}`}>
+                                    className={`w-full text-left px-3 py-2.5 text-sm border-b border-gray-50 last:border-0 flex items-center justify-between transition-colors ${sel?'bg-[#7D1F2C]/5 font-semibold text-[#7D1F2C]':'hover:bg-gray-50 text-white/80'}`}>
                                     <div className="flex items-center gap-2 min-w-0">
                                       {sel && <Check size={12} className="text-[#7D1F2C] flex-shrink-0"/>}
                                       <span className="truncate">{x.nome}</span>
@@ -446,7 +446,7 @@ function AbaMapeamento() {
                                 checked={edit.estoque_id===e.id}
                                 onChange={()=>setEdit(m.nome_externo,{estoque_id:e.id})}
                                 className="accent-[#7D1F2C] w-4 h-4"/>
-                              <span className={`text-sm font-medium ${edit.estoque_id===e.id?'text-[#7D1F2C]':'text-gray-700'}`}>{e.nome}</span>
+                              <span className={`text-sm font-medium ${edit.estoque_id===e.id?'text-[#7D1F2C]':'text-white/80'}`}>{e.nome}</span>
                             </label>
                           ))}
                         </div>
@@ -527,9 +527,9 @@ function AbaRevisao({
       {/* Cabeçalho + badges */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button onClick={onVoltar} className="text-gray-400 hover:text-gray-700 text-sm">← Voltar</button>
+          <button onClick={onVoltar} className="text-gray-400 hover:text-white/80 text-sm">← Voltar</button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Revisar vendas</h1>
+            <h1 className="text-xl font-bold text-white">Revisar vendas</h1>
             <p className="text-sm text-gray-500">{dtinicio} → {dtfim} · {produtos.length} produtos</p>
           </div>
         </div>
@@ -596,7 +596,7 @@ function AbaRevisao({
                       ? <Check size={15} className="text-green-600 flex-shrink-0"/>
                       : <AlertTriangle size={15} className="text-amber-500 flex-shrink-0"/>}
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">{prod.productName}</p>
+                    <p className="font-semibold text-white text-sm">{prod.productName}</p>
                     <p className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
                       {prod.expandido_de && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-md text-[10px] font-semibold">
@@ -610,7 +610,7 @@ function AbaRevisao({
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-4">
                   <div className="text-right">
-                    <p className="text-lg font-bold text-gray-800">{prod.count}</p>
+                    <p className="text-lg font-bold text-white/90">{prod.count}</p>
                     <p className="text-xs text-gray-400">unid.</p>
                   </div>
                   <button onClick={()=>toggleIgnorar(prod)} disabled={prod.salvandoIgnore}
@@ -644,7 +644,7 @@ function AbaRevisao({
                   )}
                   {prod.itemEstoqueId&&(
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
+                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-white/80 flex items-center gap-2">
                         <Package size={13} className="text-gray-400"/>{nomeItem(prod.itemEstoqueId)}<span className="text-xs text-gray-400 ml-1">— item</span>
                       </div>
                       <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
@@ -652,7 +652,7 @@ function AbaRevisao({
                   )}
                   {prod.fichaId&&(
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex items-center gap-2">
+                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-white/80 flex items-center gap-2">
                         <RefreshCw size={13} className="text-gray-400"/>{nomeFicha(prod.fichaId)}<span className="text-xs text-gray-400 ml-1">— ficha técnica</span>
                       </div>
                       <button onClick={()=>update(prod.productId,{itemEstoqueId:'',fichaId:'',vinculoTipo:''})} className="p-2 text-gray-400 hover:text-red-500"><X size={15}/></button>
@@ -672,7 +672,7 @@ function AbaRevisao({
                             <button key={item.id}
                               onClick={()=>{update(prod.productId,{itemEstoqueId:item.id,fichaId:'',vinculoTipo:'item'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
                               className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
-                              <span className="font-medium text-gray-800">{item.nome}</span>
+                              <span className="font-medium text-white/90">{item.nome}</span>
                               <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{item.unidade_medida}{item.custo_medio>0&&` · R$ ${Number(item.custo_medio).toFixed(2)}`}</span>
                             </button>
                           ))}
@@ -695,7 +695,7 @@ function AbaRevisao({
                             <button key={f.id}
                               onClick={()=>{update(prod.productId,{fichaId:f.id,itemEstoqueId:'',vinculoTipo:'ficha'});setBuscaVinculo(prev=>({...prev,[prod.productId]:''}));}}
                               className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 border-b border-gray-50 last:border-0 flex items-center justify-between">
-                              <span className="font-medium text-gray-800">{f.nome}</span>
+                              <span className="font-medium text-white/90">{f.nome}</span>
                               <span className="text-xs text-gray-400 ml-2 flex-shrink-0">{f.porcoes>0&&`${f.porcoes} porç.`}{f.custo_total>0&&` · R$ ${Number(f.custo_total).toFixed(2)}`}</span>
                             </button>
                           ))}
@@ -880,7 +880,7 @@ export default function ZigVendasSync() {
           {key:'mapeamento',  label:`🗺 Mapeamento${qtdPendentes>0?` (${qtdPendentes} pendentes no período)`:''}` },
         ] as {key:Aba;label:string}[]).map(tab=>(
           <button key={tab.key} onClick={()=>setAba(tab.key)}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors mr-1 ${aba===tab.key?'border-[#7D1F2C] text-[#7D1F2C]':'border-transparent text-gray-500 hover:text-gray-700'}`}>
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors mr-1 ${aba===tab.key?'border-[#7D1F2C] text-[#7D1F2C]':'border-transparent text-gray-500 hover:text-white/80'}`}>
             {tab.label}
           </button>
         ))}
@@ -901,13 +901,13 @@ export default function ZigVendasSync() {
                   <Package size={20} className="text-white"/>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">ZIG → Estoque</h1>
+                  <h1 className="text-xl font-bold text-white">ZIG → Estoque</h1>
                   <p className="text-sm text-gray-500">Baixa de estoque via vendas ZIG</p>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-                <h2 className="font-semibold text-gray-800">Buscar vendas</h2>
+                <h2 className="font-semibold text-white/90">Buscar vendas</h2>
                 <div className="flex gap-2 flex-wrap">
                   {atalhos.map(a=>(
                     <button key={a.label} onClick={a.fn}
@@ -946,7 +946,7 @@ export default function ZigVendasSync() {
               {logs.length>0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                   <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <h2 className="font-semibold text-white/90 flex items-center gap-2">
                       <Clock size={15} className="text-[#7D1F2C]"/> Histórico de sincronizações
                     </h2>
                     <button onClick={carregarLogs} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
@@ -971,7 +971,7 @@ export default function ZigVendasSync() {
                             <StatusIcon size={14} className={`flex-shrink-0 ${statusColor}`}/>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-xs font-semibold text-gray-700">
+                                <span className="text-xs font-semibold text-white/80">
                                   {new Date(log.iniciado_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}
                                 </span>
                                 <span className="text-xs text-gray-400">{log.dtinicio} → {log.dtfim}</span>
@@ -1002,7 +1002,7 @@ export default function ZigVendasSync() {
                               <div className="px-4 py-3 bg-white border-b border-gray-100">
                                 <div className="grid grid-cols-4 gap-2 text-center">
                                   {[
-                                    {label:'Produtos ZIG', val: log.total_produtos_zig??0,  color:'text-gray-700'},
+                                    {label:'Produtos ZIG', val: log.total_produtos_zig??0,  color:'text-white/80'},
                                     {label:'Baixas geradas', val: log.total_movimentacoes??0, color:'text-green-600'},
                                     {label:'Pendentes',  val: pendentes.length,  color:'text-amber-600'},
                                     {label:'Ignorados',  val: ignorados.length,  color:'text-gray-400'},
@@ -1054,7 +1054,7 @@ export default function ZigVendasSync() {
                                         <tbody className="divide-y divide-gray-100">
                                           {processados.map((item,i)=>(
                                             <tr key={i} className={i%2===0?'bg-white':'bg-gray-50/50'}>
-                                              <td className="px-4 py-2 font-medium text-gray-800">{item.nome}</td>
+                                              <td className="px-4 py-2 font-medium text-white/90">{item.nome}</td>
                                               <td className="px-3 py-2 text-center text-gray-600">{Number(item.quantidade).toFixed(item.quantidade%1===0?0:3).replace(/\.?0+$/,'')}</td>
                                               <td className="px-3 py-2 text-center text-gray-500">{item.data_venda}</td>
                                               <td className="px-3 py-2 text-center">
@@ -1079,7 +1079,7 @@ export default function ZigVendasSync() {
                                         <tbody className="divide-y divide-amber-50">
                                           {pendentes.map((item,i)=>(
                                             <tr key={i} className="bg-white">
-                                              <td className="px-4 py-2 font-medium text-gray-800">{item.nome}</td>
+                                              <td className="px-4 py-2 font-medium text-white/90">{item.nome}</td>
                                               <td className="px-3 py-2 text-center text-gray-600">{item.quantidade}</td>
                                               <td className="px-3 py-2 text-amber-600 italic">{item.motivo}</td>
                                             </tr>
@@ -1145,7 +1145,7 @@ export default function ZigVendasSync() {
                   {resultado?.ok?<CheckCircle size={20} className="text-green-600"/>:<XCircle size={20} className="text-red-500"/>}
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">{resultado?.ok?'Baixas processadas!':'Erro ao processar'}</h1>
+                  <h1 className="text-xl font-bold text-white">{resultado?.ok?'Baixas processadas!':'Erro ao processar'}</h1>
                   <p className="text-sm text-gray-500">{dtinicio} → {dtfim}</p>
                 </div>
               </div>

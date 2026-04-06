@@ -154,7 +154,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-white">
             {form.id ? 'Editar Evento' : 'Novo Evento'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-white/80 rounded-lg transition-colors">
@@ -164,7 +164,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
 
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Campanha *</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Campanha *</label>
             <select
               value={form.campanha_id}
               onChange={e => setForm({ ...form, campanha_id: e.target.value })}
@@ -178,7 +178,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Título *</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Título *</label>
             <input
               type="text"
               value={form.titulo}
@@ -189,7 +189,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Tipo</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Tipo</label>
             <div className="grid grid-cols-2 gap-2">
               {tipoOptions.map(t => (
                 <button
@@ -210,7 +210,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-3">
               <input
                 type="checkbox"
                 checked={form.dia_completo}
@@ -265,7 +265,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Cor</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Cor</label>
             <div className="flex gap-2">
               {coresDisponiveis.map(cor => (
                 <button
@@ -282,7 +282,7 @@ const ModalEvento: React.FC<ModalEventoProps> = ({ isOpen, onClose, onSaved, eve
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Descrição</label>
+            <label className="block text-sm font-medium text-white/80 mb-1.5">Descrição</label>
             <textarea
               value={form.descricao}
               onChange={e => setForm({ ...form, descricao: e.target.value })}

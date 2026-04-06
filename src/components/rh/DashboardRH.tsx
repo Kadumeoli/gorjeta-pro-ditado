@@ -107,7 +107,7 @@ const DashboardRH: React.FC = () => {
                 <TrendingUp className="w-5 h-5 text-gray-400" />
               </div>
               <h3 className="text-gray-600 text-sm font-medium mb-1">{card.title}</h3>
-              <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+              <p className="text-3xl font-bold text-white">{card.value}</p>
             </div>
           );
         })}
@@ -117,7 +117,7 @@ const DashboardRH: React.FC = () => {
         {/* Vagas Recentes */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Vagas Abertas</h3>
+            <h3 className="text-lg font-bold text-white">Vagas Abertas</h3>
             <Briefcase className="w-5 h-5 text-gray-400" />
           </div>
 
@@ -135,7 +135,7 @@ const DashboardRH: React.FC = () => {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 mb-1">{vaga.titulo}</h4>
+                      <h4 className="font-semibold text-white mb-1">{vaga.titulo}</h4>
                       <p className="text-sm text-gray-600">{vaga.cargo?.nome}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs text-gray-500">
@@ -156,7 +156,7 @@ const DashboardRH: React.FC = () => {
         {/* Candidaturas Recentes */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Candidaturas Recentes</h3>
+            <h3 className="text-lg font-bold text-white">Candidaturas Recentes</h3>
             <Users className="w-5 h-5 text-gray-400" />
           </div>
 
@@ -174,7 +174,7 @@ const DashboardRH: React.FC = () => {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 mb-1">
+                      <h4 className="font-semibold text-white mb-1">
                         {candidatura.candidato?.nome}
                       </h4>
                       <p className="text-sm text-gray-600">{candidatura.vaga?.titulo}</p>
@@ -190,7 +190,7 @@ const DashboardRH: React.FC = () => {
                               ? 'bg-green-100 text-green-700'
                               : candidatura.status === 'reprovado'
                               ? 'bg-red-100 text-red-700'
-                              : 'bg-gray-100 text-gray-700'
+                              : 'bg-gray-100 text-white/80'
                           }`}
                         >
                           {candidatura.status}

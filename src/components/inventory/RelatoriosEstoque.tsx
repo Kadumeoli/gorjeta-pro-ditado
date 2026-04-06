@@ -504,7 +504,7 @@ const RelatoriosEstoque: React.FC = () => {
               <>
                 {/* Gráfico de Movimentações */}
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-white mb-4">
                     Movimentações por Período
                   </h4>
                   <div className="h-80">
@@ -533,7 +533,7 @@ const RelatoriosEstoque: React.FC = () => {
 
                 {/* Gráfico de Valores */}
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-white mb-4">
                     Valores Movimentados
                   </h4>
                   <div className="h-80">
@@ -578,7 +578,7 @@ const RelatoriosEstoque: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma movimentação encontrada</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhuma movimentação encontrada</h3>
                 <p className="text-gray-500">
                   Não há movimentações de estoque para o período selecionado.
                 </p>
@@ -594,7 +594,7 @@ const RelatoriosEstoque: React.FC = () => {
               <>
                 {/* Gráfico de CMV */}
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-white mb-4">
                     Custo da Mercadoria Vendida (CMV)
                   </h4>
                   <div className="h-80">
@@ -626,7 +626,7 @@ const RelatoriosEstoque: React.FC = () => {
                 {/* Tabela de CMV */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                   <div className="p-6">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4">
+                    <h4 className="text-lg font-medium text-white mb-4">
                       Análise Detalhada do CMV
                     </h4>
                     <div className="overflow-x-auto">
@@ -643,7 +643,7 @@ const RelatoriosEstoque: React.FC = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                           {cmvData.map((item, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="px-4 py-3 font-medium text-gray-900">{item.periodo}</td>
+                              <td className="px-4 py-3 font-medium text-white">{item.periodo}</td>
                               <td className="px-4 py-3 font-medium text-green-600">
                                 {formatCurrency(item.receita_vendas)}
                               </td>
@@ -653,7 +653,7 @@ const RelatoriosEstoque: React.FC = () => {
                               <td className="px-4 py-3 font-medium text-blue-600">
                                 {formatCurrency(item.margem_bruta)}
                               </td>
-                              <td className="px-4 py-3 font-medium text-gray-900">
+                              <td className="px-4 py-3 font-medium text-white">
                                 {formatPercentage(item.percentual_cmv)}
                               </td>
                             </tr>
@@ -667,7 +667,7 @@ const RelatoriosEstoque: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <DollarSign className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum dado de CMV encontrado</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhum dado de CMV encontrado</h3>
                 <p className="text-gray-500">
                   Não há saídas de estoque (vendas) para calcular o CMV no período selecionado.
                 </p>
@@ -683,7 +683,7 @@ const RelatoriosEstoque: React.FC = () => {
               <>
                 {/* Gráfico de Distribuição de Valor */}
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-white mb-4">
                     Distribuição de Valor por Estoque
                   </h4>
                   <div className="h-80">
@@ -717,7 +717,7 @@ const RelatoriosEstoque: React.FC = () => {
                           <span className="text-sm text-gray-600">{item.estoque_nome}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-white">
                             {formatCurrency(item.valor_total)}
                           </span>
                           <div className="text-xs text-gray-500">
@@ -732,7 +732,7 @@ const RelatoriosEstoque: React.FC = () => {
                 {/* Tabela de Valores */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                   <div className="p-6">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4">
+                    <h4 className="text-lg font-medium text-white mb-4">
                       Análise de Valor por Estoque
                     </h4>
                     <div className="overflow-x-auto">
@@ -749,15 +749,15 @@ const RelatoriosEstoque: React.FC = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                           {estoqueValor.map((item, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="px-4 py-3 font-medium text-gray-900">{item.estoque_nome}</td>
-                              <td className="px-4 py-3 text-gray-900">{item.quantidade_itens}</td>
-                              <td className="px-4 py-3 font-medium text-gray-900">
+                              <td className="px-4 py-3 font-medium text-white">{item.estoque_nome}</td>
+                              <td className="px-4 py-3 text-white">{item.quantidade_itens}</td>
+                              <td className="px-4 py-3 font-medium text-white">
                                 {formatCurrency(item.valor_total)}
                               </td>
                               <td className="px-4 py-3 font-medium text-blue-600">
                                 {formatPercentage(item.percentual_valor)}
                               </td>
-                              <td className="px-4 py-3 text-gray-900">
+                              <td className="px-4 py-3 text-white">
                                 {formatCurrency(item.quantidade_itens > 0 ? item.valor_total / item.quantidade_itens : 0)}
                               </td>
                             </tr>
@@ -771,7 +771,7 @@ const RelatoriosEstoque: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum dado de valor encontrado</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhum dado de valor encontrado</h3>
                 <p className="text-gray-500">
                   Não há itens em estoque para análise de valor.
                 </p>
@@ -786,7 +786,7 @@ const RelatoriosEstoque: React.FC = () => {
             {itensMaisMovimentados.length > 0 ? (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                 <div className="p-6">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-white mb-4">
                     Top 10 Itens Mais Movimentados
                   </h4>
                   <div className="overflow-x-auto">
@@ -815,7 +815,7 @@ const RelatoriosEstoque: React.FC = () => {
                             </td>
                             <td className="px-4 py-3">
                               <div>
-                                <div className="font-medium text-gray-900">{item.item_nome}</div>
+                                <div className="font-medium text-white">{item.item_nome}</div>
                                 {item.item_codigo && (
                                   <div className="text-sm text-gray-500">Código: {item.item_codigo}</div>
                                 )}
@@ -829,13 +829,13 @@ const RelatoriosEstoque: React.FC = () => {
                               </span>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-medium text-gray-900">{item.total_movimentacoes}</span>
+                              <span className="font-medium text-white">{item.total_movimentacoes}</span>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-medium text-gray-900">{item.quantidade_total.toFixed(3)}</span>
+                              <span className="font-medium text-white">{item.quantidade_total.toFixed(3)}</span>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-medium text-gray-900">
+                              <span className="font-medium text-white">
                                 {formatCurrency(item.valor_total)}
                               </span>
                             </td>
@@ -849,7 +849,7 @@ const RelatoriosEstoque: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum dado de giro encontrado</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhum dado de giro encontrado</h3>
                 <p className="text-gray-500">
                   Não há movimentações suficientes para análise de giro de estoque.
                 </p>
@@ -866,7 +866,7 @@ const RelatoriosEstoque: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Relatórios de Estoque</h3>
+        <h3 className="text-lg font-medium text-white">Relatórios de Estoque</h3>
         <button
           onClick={exportarRelatorio}
           className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
@@ -886,7 +886,7 @@ const RelatoriosEstoque: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Período Inicial
             </label>
             <input
@@ -898,7 +898,7 @@ const RelatoriosEstoque: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Período Final
             </label>
             <input
@@ -910,7 +910,7 @@ const RelatoriosEstoque: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Agrupamento
             </label>
             <select
@@ -925,7 +925,7 @@ const RelatoriosEstoque: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Estoque
             </label>
             <select
@@ -943,7 +943,7 @@ const RelatoriosEstoque: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Tipo de Item
             </label>
             <select
@@ -1061,7 +1061,7 @@ const RelatoriosEstoque: React.FC = () => {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'movimentacoes'
                   ? 'border-[#7D1F2C] text-[#7D1F2C]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:border-gray-300'
               }`}
             >
               <Activity className="w-5 h-5 inline mr-2" />
@@ -1072,7 +1072,7 @@ const RelatoriosEstoque: React.FC = () => {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'cmv'
                   ? 'border-[#7D1F2C] text-[#7D1F2C]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:border-gray-300'
               }`}
             >
               <DollarSign className="w-5 h-5 inline mr-2" />
@@ -1083,7 +1083,7 @@ const RelatoriosEstoque: React.FC = () => {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'valor'
                   ? 'border-[#7D1F2C] text-[#7D1F2C]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:border-gray-300'
               }`}
             >
               <Package className="w-5 h-5 inline mr-2" />
@@ -1094,7 +1094,7 @@ const RelatoriosEstoque: React.FC = () => {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'giro'
                   ? 'border-[#7D1F2C] text-[#7D1F2C]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:border-gray-300'
               }`}
             >
               <Target className="w-5 h-5 inline mr-2" />

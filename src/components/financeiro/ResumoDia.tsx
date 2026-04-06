@@ -81,12 +81,12 @@ const ResumoDia: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Resumo do Dia</h2>
+        <h2 className="text-2xl font-bold text-white">Resumo do Dia</h2>
       </div>
 
       {/* Seletor de Data */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white/80 mb-2">
           Selecione a Data
         </label>
         <input
@@ -198,8 +198,8 @@ const ResumoDia: React.FC = () => {
 
           {/* Explicação da Conta */}
           <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
-            <h3 className="text-sm font-semibold text-gray-800 mb-2">Como é calculado:</h3>
-            <div className="space-y-1 text-sm text-gray-700">
+            <h3 className="text-sm font-semibold text-white/90 mb-2">Como é calculado:</h3>
+            <div className="space-y-1 text-sm text-white/80">
               <div className="flex justify-between items-center">
                 <span>Saldo Anterior:</span>
                 <span className="font-mono">{formatCurrency(resumo.saldo_anterior)}</span>

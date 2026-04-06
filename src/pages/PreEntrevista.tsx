@@ -265,7 +265,7 @@ export default function PreEntrevista() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Ops!</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Ops!</h2>
           <p className="text-gray-600">{erro}</p>
         </div>
       </div>
@@ -276,7 +276,7 @@ export default function PreEntrevista() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       <div className="max-w-4xl mx-auto p-4 h-screen flex flex-col">
         <div className="bg-white rounded-t-lg shadow-xl p-6 border-b">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-white mb-2">
             Pré-Entrevista - {preEntrevista?.candidatura.vaga.titulo}
           </h1>
           <p className="text-gray-600">
@@ -295,7 +295,7 @@ export default function PreEntrevista() {
                   className={`max-w-[70%] rounded-lg p-4 ${
                     msg.role === 'user'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-900'
+                      : 'bg-gray-100 text-white'
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>

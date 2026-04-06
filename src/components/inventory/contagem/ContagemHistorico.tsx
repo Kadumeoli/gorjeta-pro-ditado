@@ -76,7 +76,7 @@ const ContagemHistorico: React.FC<Props> = ({ onVoltar, onVerContagem }) => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Historico de Contagens</h2>
+            <h2 className="text-xl font-bold text-white">Historico de Contagens</h2>
             <p className="text-xs text-gray-500">Contagens processadas e finalizadas</p>
           </div>
         </div>
@@ -186,17 +186,17 @@ const ContagemHistorico: React.FC<Props> = ({ onVoltar, onVerContagem }) => {
               <tbody className="divide-y divide-gray-100">
                 {historico.map((c) => (
                   <tr key={c.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-white/80">
                       {dayjs(c.processado_em || c.data_contagem).format('DD/MM/YYYY')}
                       <span className="text-gray-400 ml-1 text-xs">
                         {dayjs(c.processado_em || c.data_contagem).format('HH:mm')}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 text-sm">
+                    <td className="px-4 py-3 font-medium text-white text-sm">
                       {c.estoque_nome}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{c.responsavel}</td>
-                    <td className="px-4 py-3 text-center text-sm font-medium text-gray-900">
+                    <td className="px-4 py-3 text-center text-sm font-medium text-white">
                       {c.total_itens_contados}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -210,7 +210,7 @@ const ContagemHistorico: React.FC<Props> = ({ onVoltar, onVerContagem }) => {
                         {c.total_diferencas}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900 tabular-nums">
+                    <td className="px-4 py-3 text-right text-sm font-semibold text-white tabular-nums">
                       {formatCurrency(Math.abs(c.valor_total_diferencas))}
                     </td>
                     <td className="px-4 py-3 text-center">

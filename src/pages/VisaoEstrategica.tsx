@@ -52,13 +52,13 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
       <div className="p-4 bg-white rounded-lg border-2 border-blue-500">
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Categoria (Fixa)</label>
-            <p className="font-medium text-gray-900 mb-3">{categoria.nome}</p>
+            <label className="block text-xs font-medium text-white/80 mb-2">Categoria (Fixa)</label>
+            <p className="font-medium text-white mb-3">{categoria.nome}</p>
           </div>
 
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="block text-xs font-medium text-gray-700 mb-1">Percentual do Faturamento</label>
+              <label className="block text-xs font-medium text-white/80 mb-1">Percentual do Faturamento</label>
               <div className="relative">
                 <input
                   type="number"
@@ -73,7 +73,7 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
               </div>
             </div>
             <div className="w-32">
-              <label className="block text-xs font-medium text-gray-700 mb-1">Cor</label>
+              <label className="block text-xs font-medium text-white/80 mb-1">Cor</label>
               <input
                 type="color"
                 value={cor}
@@ -93,7 +93,7 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
             </button>
             <button
               onClick={handleCancel}
-              className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+              className="px-3 py-2 bg-gray-200 text-white/80 rounded-lg hover:bg-gray-300 font-medium"
             >
               <X className="w-4 h-4" />
             </button>
@@ -109,7 +109,7 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
         <div className="flex items-center gap-3">
           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: categoria.cor }} />
           <div>
-            <h4 className="font-medium text-gray-900">{categoria.nome}</h4>
+            <h4 className="font-medium text-white">{categoria.nome}</h4>
             {semanaAtual && (
               <p className="text-sm text-gray-500">
                 Orçamento: {formatCurrency((semanaAtual.faturamento * categoria.percentual) / 100)}
@@ -119,7 +119,7 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900">{categoria.percentual}%</div>
+            <div className="text-2xl font-bold text-white">{categoria.percentual}%</div>
             <div className="text-xs text-gray-500">do faturamento</div>
           </div>
           {editMode && (
@@ -150,7 +150,7 @@ const CategoriaEditavel: React.FC<CategoriaEditavelProps> = ({
           <div className="grid grid-cols-2 gap-2">
             {categoria.subcategorias.map(sub => (
               <div key={sub.id} className="flex items-center justify-between text-xs bg-white px-2 py-1 rounded border border-gray-200">
-                <span className="text-gray-700">{sub.nome}</span>
+                <span className="text-white/80">{sub.nome}</span>
                 <span className="text-gray-500 font-medium">{sub.percentual}%</span>
               </div>
             ))}
@@ -500,7 +500,7 @@ const VisaoEstrategica: React.FC = () => {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
               <TrendingUp className="w-8 h-8 text-blue-600" />
               Visão Estratégica
             </h1>
@@ -518,7 +518,7 @@ const VisaoEstrategica: React.FC = () => {
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 hover:text-white/80 hover:border-gray-300'
                 }`}
               >
                 {tab.icon}
@@ -536,7 +536,7 @@ const VisaoEstrategica: React.FC = () => {
             {!semanaAtual || showNovaSemana ? (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
                 <DollarSign className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Criar Nova Semana</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Criar Nova Semana</h2>
                 <p className="text-gray-600 mb-6">
                   Informe o faturamento previsto para calcular os orçamentos
                 </p>
@@ -560,7 +560,7 @@ const VisaoEstrategica: React.FC = () => {
                     {semanaAtual && (
                       <button
                         onClick={() => setShowNovaSemana(false)}
-                        className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+                        className="px-6 py-3 bg-gray-200 text-white/80 rounded-lg hover:bg-gray-300 font-medium"
                       >
                         Cancelar
                       </button>
@@ -588,13 +588,13 @@ const VisaoEstrategica: React.FC = () => {
                           <button onClick={handleAtualizarFaturamento} className="text-green-600 hover:text-green-700">
                             <Check className="w-6 h-6" />
                           </button>
-                          <button onClick={() => setEditandoFaturamento(false)} className="text-gray-600 hover:text-gray-700">
+                          <button onClick={() => setEditandoFaturamento(false)} className="text-gray-600 hover:text-white/80">
                             <X className="w-6 h-6" />
                           </button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-3">
-                          <p className="text-4xl font-bold text-gray-900">{formatCurrency(semanaAtual.faturamento)}</p>
+                          <p className="text-4xl font-bold text-white">{formatCurrency(semanaAtual.faturamento)}</p>
                           <button
                             onClick={() => {
                               setFaturamentoEdit(semanaAtual.faturamento.toString());
@@ -610,7 +610,7 @@ const VisaoEstrategica: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-sm text-gray-500">Período da Semana</p>
-                        <p className="text-lg font-medium text-gray-900">
+                        <p className="text-lg font-medium text-white">
                           {dayjs(semanaAtual.data_inicio).format('DD/MM/YYYY')} - {dayjs(semanaAtual.data_inicio).add(6, 'days').format('DD/MM/YYYY')}
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
@@ -649,7 +649,7 @@ const VisaoEstrategica: React.FC = () => {
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.cor }} />
-                            <h3 className="font-medium text-gray-900">{cat.nome}</h3>
+                            <h3 className="font-medium text-white">{cat.nome}</h3>
                           </div>
                           <span className="text-xs font-medium text-gray-500">{cat.percentual}%</span>
                         </div>
@@ -703,7 +703,7 @@ const VisaoEstrategica: React.FC = () => {
                                 return (
                                   <div key={sub.id} className="space-y-1">
                                     <div className="flex justify-between items-center text-xs">
-                                      <span className="text-gray-700 font-medium">{sub.nome}</span>
+                                      <span className="text-white/80 font-medium">{sub.nome}</span>
                                       <span className="text-gray-500">{sub.percentual}%</span>
                                     </div>
                                     <div className="flex justify-between items-center text-xs">
@@ -761,7 +761,7 @@ const VisaoEstrategica: React.FC = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Pagamentos Registrados</h2>
+                <h2 className="text-2xl font-bold text-white">Pagamentos Registrados</h2>
                 <p className="text-sm text-gray-600 mt-1">Gerenciar pagamentos informativos feitos no planejamento</p>
               </div>
             </div>
@@ -809,7 +809,7 @@ const VisaoEstrategica: React.FC = () => {
                   ) : (
                     todosPagamentosInformativos.map((pagamento: any) => (
                       <tr key={pagamento.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                           {pagamento.fornecedor_nome}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -826,7 +826,7 @@ const VisaoEstrategica: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           {dayjs(pagamento.data_vencimento).format('DD/MM/YYYY')}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {dayjs(pagamento.data_pagamento_informativo).format('DD/MM/YYYY')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">
@@ -869,11 +869,11 @@ const VisaoEstrategica: React.FC = () => {
             {pagamentoEditando && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Editar Pagamento</h3>
+                  <h3 className="text-lg font-bold text-white mb-4">Editar Pagamento</h3>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Fornecedor</label>
+                      <label className="block text-sm font-medium text-white/80 mb-1">Fornecedor</label>
                       <input
                         type="text"
                         value={pagamentoEditando.fornecedor_nome}
@@ -883,7 +883,7 @@ const VisaoEstrategica: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Valor Pago</label>
+                      <label className="block text-sm font-medium text-white/80 mb-1">Valor Pago</label>
                       <input
                         type="number"
                         step="0.01"
@@ -898,7 +898,7 @@ const VisaoEstrategica: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Observação</label>
+                      <label className="block text-sm font-medium text-white/80 mb-1">Observação</label>
                       <textarea
                         value={observacaoEditandoPagamento}
                         onChange={(e) => setObservacaoEditandoPagamento(e.target.value)}
@@ -922,7 +922,7 @@ const VisaoEstrategica: React.FC = () => {
                         setValorEditandoPagamento('');
                         setObservacaoEditandoPagamento('');
                       }}
-                      className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium"
+                      className="flex-1 bg-gray-100 text-white/80 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium"
                     >
                       Cancelar
                     </button>
@@ -936,13 +936,13 @@ const VisaoEstrategica: React.FC = () => {
         {/* CONFIGURAÇÕES TAB */}
         {activeTab === 'config' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Configurações e Previsões</h2>
+            <h2 className="text-2xl font-bold text-white">Configurações e Previsões</h2>
 
             {/* Gestão de Semanas Futuras */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Semanas Futuras</h3>
+                  <h3 className="text-xl font-bold text-white">Semanas Futuras</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     Crie semanas futuras para planejar compromissos antecipadamente
                   </p>
@@ -958,10 +958,10 @@ const VisaoEstrategica: React.FC = () => {
 
               {showNovaSemanaFutura && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <h4 className="font-medium text-gray-900 mb-3">Criar Nova Semana Futura</h4>
+                  <h4 className="font-medium text-white mb-3">Criar Nova Semana Futura</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white/80 mb-1">
                         Data de Início (Segunda-feira)
                       </label>
                       <input
@@ -972,7 +972,7 @@ const VisaoEstrategica: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-white/80 mb-1">
                         Faturamento Previsto
                       </label>
                       <input
@@ -997,7 +997,7 @@ const VisaoEstrategica: React.FC = () => {
                         setShowNovaSemanaFutura(false);
                         setNovaSemanaFutura({ data_inicio: '', faturamento: '' });
                       }}
-                      className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200"
+                      className="bg-gray-100 text-white/80 px-4 py-2 rounded-lg hover:bg-gray-200"
                     >
                       Cancelar
                     </button>
@@ -1010,7 +1010,7 @@ const VisaoEstrategica: React.FC = () => {
                   {semanasFuturas.map((sem) => (
                     <div key={sem.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-white">
                           Semana de {dayjs(sem.data_inicio).format('DD/MM/YYYY')}
                         </p>
                         <p className="text-sm text-gray-600">
@@ -1042,7 +1042,7 @@ const VisaoEstrategica: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Previsão de Gastos por Categoria</h3>
+                  <h3 className="text-xl font-bold text-white">Previsão de Gastos por Categoria</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     Percentuais definidos para cada categoria. O faturamento da semana é distribuído automaticamente.
                   </p>
@@ -1051,7 +1051,7 @@ const VisaoEstrategica: React.FC = () => {
                   onClick={() => setEditingCategories(!editingCategories)}
                   className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
                     editingCategories
-                      ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-gray-200 text-white/80 hover:bg-gray-300'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
@@ -1140,7 +1140,7 @@ const VisaoEstrategica: React.FC = () => {
 
             {/* Contas Vencidas por Categoria */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                 <AlertTriangle className="w-6 h-6 text-red-600" />
                 Contas Vencidas por Categoria
               </h3>
@@ -1150,7 +1150,7 @@ const VisaoEstrategica: React.FC = () => {
                   {contasVencidas.map((conta) => (
                     <div key={conta.categoria_id} className="p-4 bg-red-50 rounded-lg border border-red-200">
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-medium text-gray-900">{conta.categoria_nome}</h4>
+                        <h4 className="font-medium text-white">{conta.categoria_nome}</h4>
                         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
                           {conta.quantidade_contas} conta{conta.quantidade_contas !== 1 ? 's' : ''}
                         </span>
@@ -1162,7 +1162,7 @@ const VisaoEstrategica: React.FC = () => {
                         </div>
                         <div>
                           <p className="text-gray-600">Valor Original</p>
-                          <p className="font-medium text-gray-900">{formatCurrency(conta.valor_total_original)}</p>
+                          <p className="font-medium text-white">{formatCurrency(conta.valor_total_original)}</p>
                         </div>
                         <div>
                           <p className="text-gray-600">Já Pago</p>
@@ -1170,7 +1170,7 @@ const VisaoEstrategica: React.FC = () => {
                         </div>
                         <div>
                           <p className="text-gray-600">Vencimento Mais Antigo</p>
-                          <p className="font-medium text-gray-700">
+                          <p className="font-medium text-white/80">
                             {conta.vencimento_mais_antigo ? dayjs(conta.vencimento_mais_antigo).format('DD/MM/YYYY') : '-'}
                           </p>
                         </div>
@@ -1189,20 +1189,20 @@ const VisaoEstrategica: React.FC = () => {
         {activeTab === 'futuro' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Visão Futura - Orçamento Comprometido</h2>
+              <h2 className="text-2xl font-bold text-white">Visão Futura - Orçamento Comprometido</h2>
             </div>
 
             {semanasFuturas.length === 0 ? (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                 <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma semana futura criada</h3>
+                <h3 className="text-lg font-medium text-white mb-2">Nenhuma semana futura criada</h3>
                 <p className="text-gray-500">Crie semanas futuras na aba "Configurações" para visualizar os compromissos</p>
               </div>
             ) : (
               <>
                 {/* Seletor de Semana */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Selecione a Semana Futura
                   </label>
                   <select
@@ -1233,7 +1233,7 @@ const VisaoEstrategica: React.FC = () => {
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-sm border-2 border-blue-300 p-6">
                     <div className="flex justify-between items-center mb-6">
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900">
+                        <h3 className="text-2xl font-bold text-white">
                           Semana de {dayjs(semanaFuturaSelecionada.data_inicio).format('DD/MM/YYYY')}
                         </h3>
                         <p className="text-gray-600">Orçamento Comprometido</p>
@@ -1270,7 +1270,7 @@ const VisaoEstrategica: React.FC = () => {
                                   className="w-4 h-4 rounded"
                                   style={{ backgroundColor: cat.cor }}
                                 />
-                                <h4 className="font-semibold text-gray-900">{cat.nome}</h4>
+                                <h4 className="font-semibold text-white">{cat.nome}</h4>
                               </div>
                               <div className="text-right">
                                 <p className="text-sm text-gray-600">
@@ -1320,7 +1320,7 @@ const VisaoEstrategica: React.FC = () => {
                                   return (
                                     <div key={sub.id} className="text-sm">
                                       <div className="flex justify-between items-center mb-1">
-                                        <span className="text-gray-700">{sub.nome}</span>
+                                        <span className="text-white/80">{sub.nome}</span>
                                         <span className="text-gray-600">
                                           {formatCurrency(gastoSub)} / {formatCurrency(orcamentoSub)}
                                         </span>
@@ -1346,7 +1346,7 @@ const VisaoEstrategica: React.FC = () => {
                       <div className="grid grid-cols-3 gap-6 text-center">
                         <div>
                           <p className="text-sm text-gray-600 mb-1">Total Orçado</p>
-                          <p className="text-2xl font-bold text-gray-900">
+                          <p className="text-2xl font-bold text-white">
                             {formatCurrency(semanaFuturaSelecionada.faturamento)}
                           </p>
                         </div>
@@ -1390,7 +1390,7 @@ const VisaoEstrategica: React.FC = () => {
 
         {activeTab === 'historico' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Histórico</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Histórico</h2>
             <p className="text-gray-600">
               Histórico de semanas anteriores. Em desenvolvimento.
             </p>
@@ -1403,7 +1403,7 @@ const VisaoEstrategica: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Adicionar Categoria do Plano de Contas</h3>
+              <h3 className="text-lg font-semibold text-white">Adicionar Categoria do Plano de Contas</h3>
               <button
                 onClick={() => setShowAdicionarCategoria(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -1442,7 +1442,7 @@ const VisaoEstrategica: React.FC = () => {
                       }}
                     >
                       <div>
-                        <h4 className="font-medium text-gray-900">{cat.nome}</h4>
+                        <h4 className="font-medium text-white">{cat.nome}</h4>
                         {cat.descricao && (
                           <p className="text-sm text-gray-500 mt-1">{cat.descricao}</p>
                         )}
@@ -1460,7 +1460,7 @@ const VisaoEstrategica: React.FC = () => {
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={() => setShowAdicionarCategoria(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Fechar
               </button>
@@ -1474,7 +1474,7 @@ const VisaoEstrategica: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Configurar: {categoriaEditando.nome}</h3>
+              <h3 className="text-lg font-semibold text-white">Configurar: {categoriaEditando.nome}</h3>
               <button
                 onClick={() => {
                   setCategoriaEditando(null);
@@ -1489,7 +1489,7 @@ const VisaoEstrategica: React.FC = () => {
             <div className="p-6 overflow-y-auto max-h-[calc(80vh-200px)] space-y-6">
               {/* Cor */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Cor da Categoria</label>
+                <label className="block text-sm font-medium text-white/80 mb-2">Cor da Categoria</label>
                 <div className="flex items-center gap-4 mb-3">
                   <input
                     type="color"
@@ -1520,7 +1520,7 @@ const VisaoEstrategica: React.FC = () => {
               {/* Subcategorias */}
               {subcategoriasDisponiveis.length > 0 ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-white/80 mb-3">
                     Configure o percentual de cada subcategoria
                   </label>
                   <p className="text-xs text-gray-500 mb-4">
@@ -1531,7 +1531,7 @@ const VisaoEstrategica: React.FC = () => {
                     {subcategoriasDisponiveis.map((sub) => (
                       <div key={sub.id} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
                         <div className="flex-1">
-                          <span className="text-sm font-medium text-gray-900">{sub.nome}</span>
+                          <span className="text-sm font-medium text-white">{sub.nome}</span>
                         </div>
                         <div className="w-32 relative">
                           <input
@@ -1568,7 +1568,7 @@ const VisaoEstrategica: React.FC = () => {
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white/80 mb-2">
                     Percentual do Faturamento
                   </label>
                   <div className="relative">
@@ -1597,7 +1597,7 @@ const VisaoEstrategica: React.FC = () => {
                   setCategoriaEditando(null);
                   setSubcategoriasDisponiveis([]);
                 }}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -1668,7 +1668,7 @@ const VisaoEstrategica: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 rounded-full" style={{ backgroundColor: categoriaDetalhada.cor }} />
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   {categoriaDetalhada.nome}
                 </h2>
               </div>
@@ -1679,7 +1679,7 @@ const VisaoEstrategica: React.FC = () => {
                     className={`px-4 py-2 rounded font-medium text-sm transition-colors ${
                       tipoVisualizacao === 'atual'
                         ? 'bg-white text-blue-600 shadow'
-                        : 'text-gray-600 hover:text-gray-900'
+                        : 'text-gray-600 hover:text-white'
                     }`}
                   >
                     Semana Atual
@@ -1689,7 +1689,7 @@ const VisaoEstrategica: React.FC = () => {
                     className={`px-4 py-2 rounded font-medium text-sm transition-colors ${
                       tipoVisualizacao === 'futura'
                         ? 'bg-white text-blue-600 shadow'
-                        : 'text-gray-600 hover:text-gray-900'
+                        : 'text-gray-600 hover:text-white'
                     }`}
                   >
                     Semana Futura
@@ -1802,7 +1802,7 @@ const VisaoEstrategica: React.FC = () => {
 
                     {despesasManuaisCat.length > 0 && (
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-3">Despesas Lançadas</h3>
+                        <h3 className="text-lg font-bold text-white mb-3">Despesas Lançadas</h3>
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                           <table className="min-w-full">
                             <thead className="bg-gray-50">
@@ -1836,7 +1836,7 @@ const VisaoEstrategica: React.FC = () => {
                                         </span>
                                       )}
                                     </td>
-                                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                    <td className="px-4 py-3 text-sm font-medium text-white">
                                       {despesa.fornecedor}
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-600">
@@ -1845,7 +1845,7 @@ const VisaoEstrategica: React.FC = () => {
                                     <td className="px-4 py-3 text-sm text-gray-600">
                                       {despesa.data_vencimento ? dayjs(despesa.data_vencimento).format('DD/MM/YYYY') : '-'}
                                     </td>
-                                    <td className="px-4 py-3 text-right text-sm font-bold text-gray-900">
+                                    <td className="px-4 py-3 text-right text-sm font-bold text-white">
                                       {formatCurrency(despesa.valor)}
                                     </td>
                                   </tr>
@@ -1859,7 +1859,7 @@ const VisaoEstrategica: React.FC = () => {
 
                     {pagamentosCat.length > 0 && (
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-3">Pagamentos Realizados</h3>
+                        <h3 className="text-lg font-bold text-white mb-3">Pagamentos Realizados</h3>
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                           <table className="min-w-full">
                             <thead className="bg-gray-50">
@@ -1875,7 +1875,7 @@ const VisaoEstrategica: React.FC = () => {
                                 const subcat = categorias.find(c => c.id === pag.categoria_financeira_id);
                                 return (
                                   <tr key={pag.id} className="hover:bg-gray-50">
-                                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                    <td className="px-4 py-3 text-sm font-medium text-white">
                                       {pag.fornecedor_nome || '-'}
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-600">
@@ -1898,7 +1898,7 @@ const VisaoEstrategica: React.FC = () => {
 
                     {contasCat.length > 0 && (
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-3">
+                        <h3 className="text-lg font-bold text-white mb-3">
                           Contas a Pagar {tipoVisualizacao === 'atual' ? 'do Período' : 'com Pagamentos Planejados'}
                         </h3>
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -1941,7 +1941,7 @@ const VisaoEstrategica: React.FC = () => {
                                         </span>
                                       )}
                                     </td>
-                                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                    <td className="px-4 py-3 text-sm font-medium text-white">
                                       {conta.fornecedor_nome || '-'}
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-600">
@@ -1950,7 +1950,7 @@ const VisaoEstrategica: React.FC = () => {
                                     <td className="px-4 py-3 text-sm text-gray-600">
                                       {dayjs(conta.data_vencimento).format('DD/MM/YYYY')}
                                     </td>
-                                    <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
+                                    <td className="px-4 py-3 text-right text-sm font-medium text-white">
                                       {formatCurrency(conta.valor_total || conta.valor || 0)}
                                     </td>
                                     <td className="px-4 py-3 text-right text-sm font-medium text-orange-600">
@@ -1982,7 +1982,7 @@ const VisaoEstrategica: React.FC = () => {
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={() => setShowModalDetalhes(false)}
-                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-6 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Fechar
               </button>
@@ -2044,7 +2044,7 @@ const RelatoriosTab: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Relatório de Pagamentos Informativos</h2>
+          <h2 className="text-2xl font-bold text-white">Relatório de Pagamentos Informativos</h2>
           <p className="text-sm text-gray-600 mt-1">
             Pagamentos marcados no planejamento (não afetam o financeiro real)
           </p>
@@ -2054,7 +2054,7 @@ const RelatoriosTab: React.FC = () => {
       {/* Filtro de Data */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Data:</label>
+          <label className="text-sm font-medium text-white/80">Data:</label>
           <input
             type="date"
             value={dataFiltro}
@@ -2075,7 +2075,7 @@ const RelatoriosTab: React.FC = () => {
       ) : pagamentosDia.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <Receipt className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-white mb-2">
             Nenhum pagamento informativo
           </h3>
           <p className="text-gray-500">
@@ -2089,7 +2089,7 @@ const RelatoriosTab: React.FC = () => {
             <div key={grupo.nome} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 bg-blue-50 border-b-2 border-blue-600">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-gray-900 uppercase">{grupo.nome}</h3>
+                  <h3 className="text-lg font-bold text-white uppercase">{grupo.nome}</h3>
                   <span className="text-xl font-bold text-blue-600">
                     {formatCurrency(grupo.total)}
                   </span>
@@ -2120,13 +2120,13 @@ const RelatoriosTab: React.FC = () => {
                   <tbody className="bg-white divide-y divide-gray-100">
                     {grupo.pagamentos.map((pag, idx) => (
                       <tr key={pag.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        <td className="px-4 py-3 text-sm font-medium text-white">
                           {pag.fornecedor_nome || '-'}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600">
                           {pag.conta_descricao || '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                        <td className="px-4 py-3 text-sm text-white whitespace-nowrap">
                           {dayjs(pag.data_vencimento).format('DD/MM/YYYY')}
                         </td>
                         <td className="px-4 py-3 text-sm font-bold text-right text-green-600">
@@ -2146,7 +2146,7 @@ const RelatoriosTab: React.FC = () => {
           {/* Resumo Final */}
           <div className="rounded-lg p-6 bg-blue-100 border-2 border-blue-600">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">RESUMO DO DIA</h3>
+              <h3 className="text-xl font-bold text-white">RESUMO DO DIA</h3>
               <span className="text-3xl font-bold text-blue-600">
                 {formatCurrency(totalDia)}
               </span>
@@ -2154,15 +2154,15 @@ const RelatoriosTab: React.FC = () => {
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-gray-600">Total de Pagamentos</p>
-                <p className="text-lg font-bold text-gray-900">{pagamentosDia.length}</p>
+                <p className="text-lg font-bold text-white">{pagamentosDia.length}</p>
               </div>
               <div>
                 <p className="text-gray-600">Categorias</p>
-                <p className="text-lg font-bold text-gray-900">{Object.keys(grupos).length}</p>
+                <p className="text-lg font-bold text-white">{Object.keys(grupos).length}</p>
               </div>
               <div>
                 <p className="text-gray-600">Data</p>
-                <p className="text-lg font-bold text-gray-900">{dayjs(dataFiltro).format('DD/MM/YYYY')}</p>
+                <p className="text-lg font-bold text-white">{dayjs(dataFiltro).format('DD/MM/YYYY')}</p>
               </div>
             </div>
           </div>
@@ -2538,7 +2538,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Despesas</h2>
+          <h2 className="text-2xl font-bold text-white">Despesas</h2>
           <p className="text-sm text-gray-600 mt-1">
             Contas a pagar e despesas lançadas manualmente
           </p>
@@ -2563,7 +2563,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             </>
           ) : (
             <>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={mostrarPagas}
@@ -2592,7 +2592,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           className={`px-6 py-3 font-medium transition-colors ${
             subTab === 'vencidas'
               ? 'border-b-2 border-red-600 text-red-600'
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-500 hover:text-white/80'
           }`}
         >
           Despesas Vencidas ({despesasContasPagar.filter(d => d.situacao === 'vencida' && !(d as any).pagamento_informativo_id).length})
@@ -2602,7 +2602,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           className={`px-6 py-3 font-medium transition-colors ${
             subTab === 'vencendo'
               ? 'border-b-2 border-yellow-600 text-yellow-600'
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-500 hover:text-white/80'
           }`}
         >
           Despesas Vencendo ({despesasContasPagar.filter(d => d.situacao === 'vencendo' && !(d as any).pagamento_informativo_id).length})
@@ -2612,7 +2612,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           className={`px-6 py-3 font-medium transition-colors ${
             subTab === 'manuais'
               ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-500 hover:text-white/80'
           }`}
         >
           Despesas Lançadas ({despesasManuais.filter(d => d.status === 'ativa').length})
@@ -2666,13 +2666,13 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <td className="px-4 py-3 text-sm font-medium text-white">
                         {despesa.fornecedor}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {categoria?.nome || '-'}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-white">
                         {despesa.data_vencimento ? dayjs(despesa.data_vencimento).format('DD/MM/YYYY') : '-'}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
@@ -2689,7 +2689,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                           <span className="text-xs text-gray-400">Sem semana</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right text-sm font-bold text-gray-900">
+                      <td className="px-4 py-3 text-right text-sm font-bold text-white">
                         {formatCurrency(despesa.valor)}
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -2752,7 +2752,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
       {subTab !== 'manuais' && despesasFiltradas.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-white mb-2">
             Nenhuma despesa {subTab === 'vencidas' ? 'vencida' : 'vencendo'}
           </h3>
           <p className="text-gray-500">
@@ -2765,7 +2765,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div key={grupo.nome} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className={`px-6 py-4 ${subTab === 'vencidas' ? 'bg-red-50 border-b-2 border-red-600' : 'bg-yellow-50 border-b-2 border-yellow-600'}`}>
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-gray-900 uppercase">{grupo.nome}</h3>
+                  <h3 className="text-lg font-bold text-white uppercase">{grupo.nome}</h3>
                   <span className={`text-xl font-bold ${subTab === 'vencidas' ? 'text-red-600' : 'text-yellow-600'}`}>
                     {formatCurrency(grupo.total)}
                   </span>
@@ -2776,10 +2776,10 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 {Object.values(grupo.subcategorias).map((subcategoria) => (
                   <div key={subcategoria.nome} className="p-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                      <h4 className="text-sm font-semibold text-white/80 uppercase tracking-wide">
                         {subcategoria.nome}
                       </h4>
-                      <span className="text-sm font-bold text-gray-900">
+                      <span className="text-sm font-bold text-white">
                         {formatCurrency(subcategoria.total)}
                       </span>
                     </div>
@@ -2846,13 +2846,13 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                                   />
                                 )}
                               </td>
-                              <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                              <td className="px-4 py-3 text-sm font-medium text-white">
                                 {conta.fornecedor_nome || '-'}
                               </td>
                               <td className="px-4 py-3 text-sm text-gray-600">
                                 {conta.descricao || '-'}
                               </td>
-                              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                              <td className="px-4 py-3 text-sm text-white whitespace-nowrap">
                                 {dayjs(conta.data_vencimento).format('DD/MM/YYYY')}
                               </td>
                               <td className="px-4 py-3 text-right">
@@ -2883,10 +2883,10 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                                 ) : (
                                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                     conta.status_real === 'em_aberto'
-                                      ? 'bg-gray-100 text-gray-800'
+                                      ? 'bg-gray-100 text-white/90'
                                       : conta.status_real === 'parcialmente_pago'
                                       ? 'bg-orange-100 text-orange-800'
-                                      : 'bg-gray-100 text-gray-800'
+                                      : 'bg-gray-100 text-white/90'
                                   }`}>
                                     {conta.status_real === 'em_aberto' ? 'Em Aberto' :
                                      conta.status_real === 'parcialmente_pago' ? 'Parc. Pago Real' :
@@ -2938,12 +2938,12 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
 
           <div className={`rounded-lg p-6 ${subTab === 'vencidas' ? 'bg-red-100 border-2 border-red-600' : 'bg-yellow-100 border-2 border-yellow-600'}`}>
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900">TOTAL GERAL</h3>
+              <h3 className="text-xl font-bold text-white">TOTAL GERAL</h3>
               <span className={`text-3xl font-bold ${subTab === 'vencidas' ? 'text-red-600' : 'text-yellow-600'}`}>
                 {formatCurrency(totalGeral)}
               </span>
             </div>
-            <p className="text-sm text-gray-700 mt-2">
+            <p className="text-sm text-white/80 mt-2">
               {despesasFiltradas.length} conta(s) • {Object.keys(grupos).length} categoria(s)
             </p>
           </div>
@@ -2953,14 +2953,14 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
       {/* Formulário de Nova Despesa Manual */}
       {showNovaDespesaManual && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Nova Despesa Manual</h3>
+          <h3 className="text-lg font-bold text-white mb-4">Nova Despesa Manual</h3>
           <form onSubmit={(e) => {
             onCriarDespesa(e);
             setShowNovaDespesaManual(false);
           }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fornecedor/Descrição</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Fornecedor/Descrição</label>
                 <input
                   type="text"
                   value={novaDespesa.fornecedor}
@@ -2970,7 +2970,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Valor</label>
                 <input
                   type="number"
                   step="0.01"
@@ -2981,7 +2981,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Categoria</label>
                 <select
                   value={novaDespesa.categoria_id}
                   onChange={(e) => setNovaDespesa({ ...novaDespesa, categoria_id: e.target.value, subcategoria_id: '' })}
@@ -2995,7 +2995,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Subcategoria</label>
                 <select
                   value={novaDespesa.subcategoria_id}
                   onChange={(e) => setNovaDespesa({ ...novaDespesa, subcategoria_id: e.target.value })}
@@ -3011,7 +3011,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Vencimento</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Data de Vencimento</label>
                 <input
                   type="date"
                   value={novaDespesa.data_vencimento}
@@ -3021,7 +3021,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Lançamento</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Tipo de Lançamento</label>
                 <select
                   value={novaDespesa.tipo_lancamento || 'previsao'}
                   onChange={(e) => setNovaDespesa({ ...novaDespesa, tipo_lancamento: e.target.value as 'previsao' | 'realizada' })}
@@ -3032,7 +3032,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 </select>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observações (opcional)</label>
+                <label className="block text-sm font-medium text-white/80 mb-1">Observações (opcional)</label>
                 <input
                   type="text"
                   value={novaDespesa.descricao}
@@ -3051,7 +3051,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               <button
                 type="button"
                 onClick={() => setShowNovaDespesaManual(false)}
-                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200"
+                className="bg-gray-100 text-white/80 px-4 py-2 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -3066,7 +3066,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           {despesasManuaisFiltradas.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
               <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-white mb-2">
                 Nenhuma despesa lançada manualmente
               </h3>
               <p className="text-gray-500">
@@ -3076,7 +3076,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 bg-blue-50 border-b-2 border-blue-600">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-white">
                   DESPESAS LANÇADAS MANUALMENTE
                 </h3>
               </div>
@@ -3108,13 +3108,13 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                   <tbody className="divide-y divide-gray-200">
                     {despesasManuaisFiltradas.map(desp => (
                       <tr key={desp.id} className={`hover:bg-gray-50 ${desp.status !== 'ativa' ? 'opacity-60' : ''}`}>
-                        <td className="px-4 py-3 text-sm text-gray-900">
+                        <td className="px-4 py-3 text-sm text-white">
                           {desp.fornecedor}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600">
                           {desp.data_vencimento ? dayjs(desp.data_vencimento).format('DD/MM/YYYY') : '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-right font-bold text-gray-900">
+                        <td className="px-4 py-3 text-sm text-right font-bold text-white">
                           {formatCurrency(desp.valor)}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600">
@@ -3133,7 +3133,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                             </span>
                           )}
                           {desp.status === 'cancelada' && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-white/90">
                               Cancelada
                             </span>
                           )}
@@ -3188,7 +3188,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                   </tbody>
                   <tfoot className="bg-gray-50">
                     <tr>
-                      <td colSpan={2} className="px-4 py-3 text-sm font-bold text-gray-900 text-right">
+                      <td colSpan={2} className="px-4 py-3 text-sm font-bold text-white text-right">
                         TOTAL:
                       </td>
                       <td className="px-4 py-3 text-sm font-bold text-blue-600 text-right">
@@ -3209,7 +3209,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Marcar Pagamentos no Planejamento</h3>
+              <h3 className="text-lg font-semibold text-white">Marcar Pagamentos no Planejamento</h3>
               <button
                 onClick={() => setShowModalPagamento(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -3227,7 +3227,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div>
-                <p className="text-sm text-gray-700 font-medium mb-2">
+                <p className="text-sm text-white/80 font-medium mb-2">
                   Você está marcando {contasSelecionadas.size} conta(s) como pagas no planejamento:
                 </p>
                 <div className="max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3 space-y-2">
@@ -3237,8 +3237,8 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                     const valorExibir = (conta as any).valor_restante_planejamento || conta.valor_restante || 0;
                     return (
                       <div key={contaId} className="flex justify-between text-sm bg-white p-2 rounded border border-gray-200">
-                        <span className="text-gray-900">{(conta as any).fornecedor_nome || conta.fornecedor}</span>
-                        <span className="font-bold text-gray-900">{formatCurrency(valorExibir)}</span>
+                        <span className="text-white">{(conta as any).fornecedor_nome || conta.fornecedor}</span>
+                        <span className="font-bold text-white">{formatCurrency(valorExibir)}</span>
                       </div>
                     );
                   })}
@@ -3246,7 +3246,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Observação (opcional)
                 </label>
                 <textarea
@@ -3262,7 +3262,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
               <button
                 onClick={() => setShowModalPagamento(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -3283,7 +3283,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Registrar Pagamento Parcial</h3>
+              <h3 className="text-lg font-semibold text-white">Registrar Pagamento Parcial</h3>
               <button
                 onClick={() => setShowModalParcial(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -3323,13 +3323,13 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                   </div>
                 )}
                 <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
-                  <span className="text-gray-900 font-semibold">Saldo Restante:</span>
+                  <span className="text-white font-semibold">Saldo Restante:</span>
                   <span className="font-bold text-lg text-red-600">{formatCurrency(contaParcialSelecionada.valor_restante_planejamento)}</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Valor do Pagamento Parcial <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -3345,7 +3345,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Observação (opcional)
                 </label>
                 <textarea
@@ -3361,7 +3361,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
               <button
                 onClick={() => setShowModalParcial(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -3382,7 +3382,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Editar Pagamento Informativo</h3>
+              <h3 className="text-lg font-semibold text-white">Editar Pagamento Informativo</h3>
               <button
                 onClick={() => setShowModalEditar(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -3418,7 +3418,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Novo Valor <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -3433,7 +3433,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Observação
                 </label>
                 <textarea
@@ -3449,7 +3449,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
               <button
                 onClick={() => setShowModalEditar(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -3470,7 +3470,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Histórico de Pagamentos Informativos</h3>
+              <h3 className="text-lg font-semibold text-white">Histórico de Pagamentos Informativos</h3>
               <button
                 onClick={() => setShowHistorico(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -3555,7 +3555,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={() => setShowHistorico(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Fechar
               </button>
@@ -3569,7 +3569,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-white">
                 Vincular Despesa com Conta a Pagar
               </h2>
               <button
@@ -3585,7 +3585,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
 
             <div className="p-6">
               <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                <h3 className="font-medium text-gray-900 mb-2">Despesa a Vincular</h3>
+                <h3 className="font-medium text-white mb-2">Despesa a Vincular</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-gray-600">Fornecedor:</span>
@@ -3599,7 +3599,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Buscar Conta
                 </label>
                 <div className="relative">
@@ -3616,7 +3616,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                 </div>
               </div>
 
-              <h3 className="font-medium text-gray-900 mb-3">Selecione a Conta a Pagar</h3>
+              <h3 className="font-medium text-white mb-3">Selecione a Conta a Pagar</h3>
               <div className="overflow-y-auto max-h-96">
                 {(() => {
                   const contasFiltradas = contasDisponiveis.filter(c => {
@@ -3658,7 +3658,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-medium text-gray-900">{conta.fornecedor_nome}</h4>
+                              <h4 className="font-medium text-white">{conta.fornecedor_nome}</h4>
                               {conta.ja_vinculada && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
                                   Já Vinculada
@@ -3672,7 +3672,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-bold text-gray-900">{formatCurrency(conta.valor_total)}</p>
+                            <p className="text-lg font-bold text-white">{formatCurrency(conta.valor_total)}</p>
                             {conta.valor_pago > 0 && (
                               <p className="text-xs text-green-600">
                                 Pago: {formatCurrency(conta.valor_pago)}
@@ -3694,7 +3694,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                   setShowModalVincular(false);
                   setDespesaParaVincular(null);
                 }}
-                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-6 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Cancelar
               </button>
@@ -3709,7 +3709,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   Importar Contas Futuras como Previsão
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
@@ -3726,7 +3726,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
 
             <div className="p-6">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Buscar Conta
                 </label>
                 <div className="relative">
@@ -3783,7 +3783,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                           <div className="flex justify-between items-start mb-3">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-medium text-gray-900">{conta.fornecedor_nome}</h4>
+                                <h4 className="font-medium text-white">{conta.fornecedor_nome}</h4>
                                 {conta.ja_importada && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                     Já Importada
@@ -3798,7 +3798,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="text-lg font-bold text-gray-900">{formatCurrency(conta.valor_total)}</p>
+                              <p className="text-lg font-bold text-white">{formatCurrency(conta.valor_total)}</p>
                             </div>
                           </div>
 
@@ -3843,7 +3843,7 @@ const DespesasTab: React.FC<DespesasTabProps> = ({
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={() => setShowModalImportarFuturas(false)}
-                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                className="px-6 py-2 bg-gray-100 text-white/80 rounded-lg hover:bg-gray-200"
               >
                 Fechar
               </button>

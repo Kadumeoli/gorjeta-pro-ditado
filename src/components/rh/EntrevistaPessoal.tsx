@@ -128,7 +128,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl max-w-2xl w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
             <Mic className="w-8 h-8 text-purple-600" />
             Registrar Entrevista Pessoal
           </h2>
@@ -158,7 +158,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/80 mb-2">
               Entrevistador *
             </label>
             <input
@@ -172,7 +172,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/80 mb-2">
               Cargo Avaliado *
             </label>
             <input
@@ -186,7 +186,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/80 mb-2">
               Notas do Entrevistador
             </label>
             <textarea
@@ -199,7 +199,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/80 mb-2">
               Áudio da Entrevista *
             </label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-purple-400 transition-colors">
@@ -208,7 +208,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
                   <div className="flex items-center justify-center gap-3">
                     <FileAudio className="w-8 h-8 text-purple-600" />
                     <div className="text-left">
-                      <p className="text-sm font-medium text-gray-900">{audioFile.name}</p>
+                      <p className="text-sm font-medium text-white">{audioFile.name}</p>
                       <p className="text-xs text-gray-500">
                         {(audioFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
@@ -255,7 +255,7 @@ export default function EntrevistaPessoal({ candidatura_id, onClose }: Entrevist
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-white/80 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               disabled={uploading || analyzing}
             >
               Cancelar

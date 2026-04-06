@@ -233,7 +233,7 @@ const ChatFinanceiroIA: React.FC<ChatFinanceiroIAProps> = ({ onClose }) => {
               <div className={`rounded-2xl px-4 py-3 max-w-[80%] ${
                 msg.role === 'user'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-800'
+                  : 'bg-gray-100 text-white/90'
               }`}>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
                 {msg.acao && (
@@ -272,7 +272,7 @@ const ChatFinanceiroIA: React.FC<ChatFinanceiroIAProps> = ({ onClose }) => {
               <button
                 key={index}
                 onClick={() => enviarMensagem(sugestao)}
-                className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
+                className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-white/80 rounded-full transition-colors"
               >
                 {sugestao}
               </button>

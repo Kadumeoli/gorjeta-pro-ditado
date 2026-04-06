@@ -47,7 +47,7 @@ const ModalConcluirProducao: React.FC<ModalConcluirProducaoProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             Concluir Produção
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -75,7 +75,7 @@ const ModalConcluirProducao: React.FC<ModalConcluirProducaoProps> = ({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Quantidade Produzida *
             </label>
             <input
@@ -92,7 +92,7 @@ const ModalConcluirProducao: React.FC<ModalConcluirProducaoProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Quantidade Aprovada *
             </label>
             <input
@@ -110,7 +110,7 @@ const ModalConcluirProducao: React.FC<ModalConcluirProducaoProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Observações
             </label>
             <textarea
@@ -156,7 +156,7 @@ const ModalConcluirProducao: React.FC<ModalConcluirProducaoProps> = ({
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
           >
             Cancelar
           </button>

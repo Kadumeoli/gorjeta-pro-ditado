@@ -197,9 +197,9 @@ const KardexFinanceiroFornecedor: React.FC = () => {
       case 'vencido':
         return 'text-red-700 bg-red-100';
       case 'cancelado':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-white/80 bg-gray-100';
     }
   };
 
@@ -259,7 +259,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">Kardex Financeiro do Fornecedor</h3>
+          <h3 className="text-lg font-medium text-white">Kardex Financeiro do Fornecedor</h3>
         </div>
 
         {error && (
@@ -270,7 +270,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
 
         {/* Busca de Fornecedores */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h4 className="text-md font-medium text-gray-900 mb-4">Selecionar Fornecedor</h4>
+          <h4 className="text-md font-medium text-white mb-4">Selecionar Fornecedor</h4>
           
           <div className="mb-4">
             <div className="relative">
@@ -297,7 +297,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
                     <Building2 className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h5 className="font-medium text-gray-900">{fornecedor.nome}</h5>
+                    <h5 className="font-medium text-white">{fornecedor.nome}</h5>
                     {fornecedor.cnpj && (
                       <p className="text-sm text-gray-600">CNPJ: {fornecedor.cnpj}</p>
                     )}
@@ -333,11 +333,11 @@ const KardexFinanceiroFornecedor: React.FC = () => {
         <div className="flex items-center">
           <button
             onClick={() => setFornecedorSelecionado(null)}
-            className="mr-4 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
+            className="mr-4 p-2 text-gray-600 hover:text-white/90 hover:bg-gray-100 rounded-lg"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-white">
             Kardex Financeiro - {fornecedorSelecionado.nome}
           </h3>
         </div>
@@ -358,7 +358,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
 
       {/* Visão Geral do Fornecedor */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h4 className="text-md font-medium text-gray-900 mb-4 flex items-center">
+        <h4 className="text-md font-medium text-white mb-4 flex items-center">
           <Building2 className="w-5 h-5 mr-2 text-[#7D1F2C]" />
           Dados do Fornecedor
         </h4>
@@ -367,7 +367,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
           <div>
             <h5 className="text-sm font-medium text-gray-500 mb-2">Informações Básicas</h5>
             <div className="space-y-1">
-              <p className="font-medium text-gray-900">{fornecedorSelecionado.nome}</p>
+              <p className="font-medium text-white">{fornecedorSelecionado.nome}</p>
               {fornecedorSelecionado.cnpj && (
                 <p className="text-sm text-gray-600">CNPJ: {fornecedorSelecionado.cnpj}</p>
               )}
@@ -401,7 +401,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
               <div className="space-y-1">
                 <p className="text-sm">
                   <span className="text-gray-600">Total Comprado:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {formatCurrency(indicadores.total_comprado)}
                   </span>
                 </p>
@@ -413,7 +413,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
                 </p>
                 <p className="text-sm">
                   <span className="text-gray-600">Ticket Médio:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {formatCurrency(indicadores.ticket_medio)}
                   </span>
                 </p>
@@ -435,7 +435,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
                 </p>
                 <p className="text-sm">
                   <span className="text-gray-600">Contas em Aberto:</span>
-                  <span className="font-medium text-gray-900 ml-2">
+                  <span className="font-medium text-white ml-2">
                     {indicadores.total_contas - (indicadores.total_contas - indicadores.contas_vencidas)}
                   </span>
                 </p>
@@ -457,7 +457,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data Inicial
             </label>
             <input
@@ -469,7 +469,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Data Final
             </label>
             <input
@@ -481,7 +481,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Status
             </label>
             <select
@@ -499,7 +499,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Centro de Custo
             </label>
             <select
@@ -517,7 +517,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white/80 mb-1">
               Forma de Pagamento
             </label>
             <select
@@ -550,7 +550,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h4 className="text-lg font-medium text-gray-900 flex items-center">
+            <h4 className="text-lg font-medium text-white flex items-center">
               <FileText className="w-5 h-5 mr-2 text-[#7D1F2C]" />
               Kardex Financeiro
             </h4>
@@ -608,7 +608,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-medium text-gray-900">{item.descricao}</div>
+                            <div className="font-medium text-white">{item.descricao}</div>
                             {item.observacoes && (
                               <div className="text-sm text-gray-500">{item.observacoes}</div>
                             )}
@@ -619,7 +619,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             {item.tipo === 'conta_pagar' ? (
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-white">
                                   {formatCurrency(item.valor_total)}
                                 </div>
                                 {item.valor_pago > 0 && (
@@ -659,7 +659,7 @@ const KardexFinanceiroFornecedor: React.FC = () => {
               ) : (
                 <div className="text-center py-12">
                   <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum lançamento encontrado</h3>
+                  <h3 className="text-lg font-medium text-white mb-2">Nenhum lançamento encontrado</h3>
                   <p className="text-gray-500">
                     Não há lançamentos registrados para este fornecedor no período selecionado.
                   </p>

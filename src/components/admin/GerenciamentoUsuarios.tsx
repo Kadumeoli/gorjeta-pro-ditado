@@ -346,9 +346,9 @@ const GerenciamentoUsuarios: React.FC = () => {
       case 'usuario':
         return 'text-blue-700 bg-blue-100 border border-blue-200';
       case 'visitante':
-        return 'text-gray-700 bg-gray-100 border border-gray-200';
+        return 'text-white/80 bg-gray-100 border border-gray-200';
       default:
-        return 'text-gray-700 bg-gray-100 border border-gray-200';
+        return 'text-white/80 bg-gray-100 border border-gray-200';
     }
   };
 
@@ -424,7 +424,7 @@ const GerenciamentoUsuarios: React.FC = () => {
       <div className="p-6">
         <div className="text-center py-12">
           <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Acesso Negado</h3>
+          <h3 className="text-lg font-medium text-white mb-2">Acesso Negado</h3>
           <p className="text-gray-500">
             Apenas usuários com nível Master podem gerenciar usuários do sistema.
           </p>
@@ -436,11 +436,11 @@ const GerenciamentoUsuarios: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Gerenciamento de Usuários</h3>
+        <h3 className="text-lg font-medium text-white">Gerenciamento de Usuários</h3>
         <div className="flex gap-2">
           <button
             onClick={exportData}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-white/80 hover:bg-gray-50"
           >
             <Download className="w-4 h-4 inline mr-2" />
             Exportar Excel
@@ -638,7 +638,7 @@ const GerenciamentoUsuarios: React.FC = () => {
                           {usuario.nome_completo.split(' ').map(n => n[0]).join('').substring(0, 2)}
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">{usuario.nome_completo}</div>
+                          <div className="font-medium text-white">{usuario.nome_completo}</div>
                           <div className="text-sm text-gray-500">{usuario.email}</div>
                           {usuario.telefone && (
                             <div className="text-sm text-gray-500 flex items-center">
@@ -658,7 +658,7 @@ const GerenciamentoUsuarios: React.FC = () => {
                     <td className="px-6 py-4">
                       <div>
                         {usuario.cargo && (
-                          <div className="flex items-center text-sm text-gray-900">
+                          <div className="flex items-center text-sm text-white">
                             <Briefcase className="w-4 h-4 mr-1 text-gray-400" />
                             {usuario.cargo}
                           </div>
@@ -673,7 +673,7 @@ const GerenciamentoUsuarios: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm">
-                        <div className="text-gray-900">
+                        <div className="text-white">
                           {usuario.total_modulos_permitidos || 0} módulos
                         </div>
                         <div className="text-gray-500">
@@ -707,7 +707,7 @@ const GerenciamentoUsuarios: React.FC = () => {
                       <div className="text-sm">
                         {usuario.ultimo_acesso ? (
                           <>
-                            <div className="text-gray-900">
+                            <div className="text-white">
                               {dayjs(usuario.ultimo_acesso).format('DD/MM/YYYY')}
                             </div>
                             <div className="text-gray-500">
@@ -770,7 +770,7 @@ const GerenciamentoUsuarios: React.FC = () => {
           {filteredUsuarios.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum usuário encontrado</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum usuário encontrado</h3>
               <p className="text-gray-500">
                 {searchTerm || nivelFilter !== 'all' || statusFilter !== 'all' || departamentoFilter !== 'all'
                   ? 'Nenhum usuário corresponde aos filtros aplicados.'
@@ -785,13 +785,13 @@ const GerenciamentoUsuarios: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingUsuario ? 'Editar Usuário' : 'Novo Usuário'}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome Completo *
                 </label>
                 <input
@@ -805,7 +805,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Email *
                 </label>
                 <input
@@ -819,7 +819,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   {editingUsuario ? 'Nova Senha (deixe vazio para manter)' : 'Senha *'}
                 </label>
                 <input
@@ -833,7 +833,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nível de Acesso *
                 </label>
                 <select
@@ -856,7 +856,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Telefone
                 </label>
                 <input
@@ -869,7 +869,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Cargo
                 </label>
                 <input
@@ -882,7 +882,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Departamento *
                 </label>
                 <select
@@ -900,7 +900,7 @@ const GerenciamentoUsuarios: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Data de Admissão
                 </label>
                 <input
@@ -920,7 +920,7 @@ const GerenciamentoUsuarios: React.FC = () => {
                   className="rounded border-gray-300 text-[#7D1F2C] focus:ring-[#7D1F2C]"
                   disabled={editingUsuario?.id === usuarioLogado?.id}
                 />
-                <label htmlFor="ativo" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="ativo" className="ml-2 text-sm text-white/80">
                   Usuário ativo
                 </label>
                 {editingUsuario?.id === usuarioLogado?.id && (
@@ -934,7 +934,7 @@ const GerenciamentoUsuarios: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -955,7 +955,7 @@ const GerenciamentoUsuarios: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-white">
                 Permissões - {usuarioPermissoes.nome_completo}
               </h3>
               <button

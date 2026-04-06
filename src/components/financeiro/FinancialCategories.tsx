@@ -259,7 +259,7 @@ const FinancialCategories: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Categorias Financeiras</h3>
+        <h3 className="text-lg font-medium text-white">Categorias Financeiras</h3>
         <button
           onClick={() => openForm()}
           className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
@@ -347,7 +347,7 @@ const FinancialCategories: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center" style={getIndentationStyle(category.nivel || 0)}>
                         {getCategoryIcon(category)}
-                        <span className={`ml-2 ${category.nivel === 0 ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>
+                        <span className={`ml-2 ${category.nivel === 0 ? 'font-semibold text-white' : 'font-medium text-white/80'}`}>
                           {category.nome}
                         </span>
                       </div>
@@ -404,13 +404,13 @@ const FinancialCategories: React.FC = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {editingCategory ? 'Editar Categoria' : 'Nova Categoria'}
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Nome *
                 </label>
                 <input
@@ -423,7 +423,7 @@ const FinancialCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Tipo *
                 </label>
                 <select
@@ -438,7 +438,7 @@ const FinancialCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Categoria Pai
                 </label>
                 <select
@@ -456,7 +456,7 @@ const FinancialCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Descrição
                 </label>
                 <textarea
@@ -468,7 +468,7 @@ const FinancialCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Ordem
                 </label>
                 <input
@@ -480,7 +480,7 @@ const FinancialCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Status
                 </label>
                 <select
@@ -497,7 +497,7 @@ const FinancialCategories: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

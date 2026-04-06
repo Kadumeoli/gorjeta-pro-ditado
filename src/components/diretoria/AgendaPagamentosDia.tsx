@@ -499,9 +499,9 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
       case 'executado':
         return 'text-purple-700 bg-purple-100 border-purple-200';
       case 'cancelado':
-        return 'text-gray-700 bg-gray-100 border-gray-200';
+        return 'text-white/80 bg-gray-100 border-gray-200';
       default:
-        return 'text-gray-700 bg-gray-100 border-gray-200';
+        return 'text-white/80 bg-gray-100 border-gray-200';
     }
   };
 
@@ -555,14 +555,14 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Aprovação do Dia</h3>
+        <h3 className="text-lg font-medium text-white">Aprovação do Dia</h3>
         <div className="flex items-center space-x-3">
           {agendaCompleta && (
             <div className="flex items-center space-x-2">
               <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border ${
                 agendaCompleta.agenda.status === 'aberta'
                   ? 'text-green-700 bg-green-100 border-green-200'
-                  : 'text-gray-700 bg-gray-100 border-gray-200'
+                  : 'text-white/80 bg-gray-100 border-gray-200'
               }`}>
                 {agendaCompleta.agenda.status === 'aberta' ? (
                   <Unlock className="w-4 h-4 mr-1" />
@@ -619,7 +619,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white/80 mb-1">
                 Data da Agenda
               </label>
               <input
@@ -658,7 +658,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
             <h4 className="text-md font-medium text-blue-900 mb-3">Adicionar Pagamento Ad-hoc</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Fornecedor *
                 </label>
                 <select
@@ -703,7 +703,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Valor *
                 </label>
                 <div className="relative">
@@ -723,7 +723,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Descrição *
                 </label>
                 <input
@@ -737,7 +737,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Vencimento
                 </label>
                 <input
@@ -749,7 +749,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white/80 mb-1">
                   Observação
                 </label>
                 <textarea
@@ -764,7 +764,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
               <div className="md:col-span-2 flex justify-end space-x-3">
                 <button
                   onClick={() => setShowFormAdHoc(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>
@@ -857,7 +857,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
       {/* Tabela de Itens */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h4 className="text-lg font-medium text-gray-900">
+          <h4 className="text-lg font-medium text-white">
             Pagamentos da Agenda - {dayjs(dataISO).format('DD/MM/YYYY')}
           </h4>
           {agendaCompleta && (
@@ -914,12 +914,12 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <Building2 className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="font-medium text-gray-900">{item.fornecedor}</span>
+                          <span className="font-medium text-white">{item.fornecedor}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div>
-                          <div className="font-medium text-gray-900">{item.descricao}</div>
+                          <div className="font-medium text-white">{item.descricao}</div>
                           {item.observacao && (
                             <div className="text-sm text-gray-500">{item.observacao}</div>
                           )}
@@ -927,7 +927,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className={
-                          dayjs(item.vencimento).isBefore(dayjs(), 'day') ? 'text-red-600' : 'text-gray-900'
+                          dayjs(item.vencimento).isBefore(dayjs(), 'day') ? 'text-red-600' : 'text-white'
                         }>
                           {dayjs(item.vencimento).format('DD/MM/YYYY')}
                           {dayjs(item.vencimento).isBefore(dayjs(), 'day') && (
@@ -938,7 +938,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-white">
                           {formatCurrency(item.valor)}
                           {item.valor_aprovado && item.valor_aprovado !== item.valor && (
                             <div className="text-xs text-blue-600 mt-1">
@@ -999,7 +999,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
                               <button
                                 onClick={() => handleAlterarStatus(item.id, 'cancelado')}
                                 disabled={loading}
-                                className="text-gray-600 hover:text-gray-800 disabled:opacity-50"
+                                className="text-gray-600 hover:text-white/90 disabled:opacity-50"
                                 title="Cancelar"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1018,7 +1018,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
             ) : (
               <div className="text-center py-12">
                 <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-white mb-2">
                   {agendaCompleta ? 'Nenhum pagamento na agenda' : 'Nenhuma agenda para esta data'}
                 </h3>
                 <p className="text-gray-500 mb-4">
@@ -1066,15 +1066,15 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
       {aprovacaoModal.isOpen && aprovacaoModal.item && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               Aprovar Pagamento
             </h3>
             
             {/* Informações do item */}
             <div className="mb-4 p-4 bg-gray-50 rounded-lg">
               <div className="text-sm">
-                <div className="font-medium text-gray-900 mb-2">{aprovacaoModal.item.fornecedor}</div>
-                <div className="text-gray-700 mb-2">{aprovacaoModal.item.descricao}</div>
+                <div className="font-medium text-white mb-2">{aprovacaoModal.item.fornecedor}</div>
+                <div className="text-white/80 mb-2">{aprovacaoModal.item.descricao}</div>
                 <div className="text-gray-600">
                   <span className="font-medium">Valor Original:</span> {formatCurrency(aprovacaoModal.item.valor)}
                 </div>
@@ -1086,7 +1086,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
 
             {/* Valor a aprovar */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Valor a Aprovar *
               </label>
               <div className="relative">
@@ -1120,7 +1120,7 @@ const AgendaPagamentosDia: React.FC<AgendaPagamentosDiaProps> = ({
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setAprovacaoModal({ isOpen: false, item: null, valorAprovado: 0 })}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-white/80 hover:bg-gray-50"
               >
                 Cancelar
               </button>

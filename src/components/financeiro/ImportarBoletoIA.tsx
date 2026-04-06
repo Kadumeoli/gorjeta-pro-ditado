@@ -283,7 +283,7 @@ const ImportarBoletoIA: React.FC<ImportarBoletoIAProps> = ({
                     {preview === 'pdf' ? (
                       <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded border border-gray-200">
                         <FileText className="w-24 h-24 text-red-500 mb-4" />
-                        <p className="text-gray-700 font-medium">{file?.name}</p>
+                        <p className="text-white/80 font-medium">{file?.name}</p>
                         <p className="text-sm text-gray-500 mt-1">
                           Arquivo PDF ({((file?.size || 0) / 1024 / 1024).toFixed(2)} MB)
                         </p>
@@ -323,7 +323,7 @@ const ImportarBoletoIA: React.FC<ImportarBoletoIAProps> = ({
             <div className="space-y-6">
               {/* Resumo de Confiança */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 mb-3">Confiança da Extração</h4>
+                <h4 className="font-medium text-white mb-3">Confiança da Extração</h4>
                 <div className="grid grid-cols-4 gap-3">
                   {Object.entries(extracted.confidences).map(([key, value]) => (
                     <div key={key} className="text-center">
@@ -346,7 +346,7 @@ const ImportarBoletoIA: React.FC<ImportarBoletoIAProps> = ({
 
               {/* Dados Extraídos */}
               <div className="space-y-4">
-                <h4 className="font-medium text-gray-900">Dados Extraídos - Revise antes de confirmar</h4>
+                <h4 className="font-medium text-white">Dados Extraídos - Revise antes de confirmar</h4>
 
                 {/* Beneficiário */}
                 <div className="grid grid-cols-2 gap-4">
@@ -567,7 +567,7 @@ const ImportarBoletoIA: React.FC<ImportarBoletoIAProps> = ({
               <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   onClick={handleReset}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-white/80 rounded-lg hover:bg-gray-50"
                 >
                   Tentar Novamente
                 </button>

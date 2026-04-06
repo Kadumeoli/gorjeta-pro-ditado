@@ -55,7 +55,7 @@ const ListaComprasMetricas: React.FC = () => {
     <div className="space-y-6">
       {/* Filtros */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Filtros</h3>
+        <h3 className="text-sm font-medium text-white mb-3">Filtros</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Fornecedor</label>
@@ -106,7 +106,7 @@ const ListaComprasMetricas: React.FC = () => {
             </button>
             <button
               onClick={handleLimparFiltros}
-              className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 bg-gray-100 text-white/80 text-sm rounded-lg hover:bg-gray-200 transition-colors"
             >
               Limpar
             </button>
@@ -122,7 +122,7 @@ const ListaComprasMetricas: React.FC = () => {
               <span className="text-xs text-gray-600">Ticket Médio</span>
               <DollarSign className="w-4 h-4 text-green-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-white">
               {formatCurrency(metricas.ticketMedio)}
             </div>
             <div className="text-xs text-gray-500 mt-1">
@@ -135,7 +135,7 @@ const ListaComprasMetricas: React.FC = () => {
               <span className="text-xs text-gray-600">Top Fornecedor</span>
               <Users className="w-4 h-4 text-blue-600" />
             </div>
-            <div className="text-sm font-bold text-gray-900 truncate">
+            <div className="text-sm font-bold text-white truncate">
               {metricas.topFornecedor?.nome || 'N/A'}
             </div>
             <div className="text-xs text-gray-500 mt-1">
@@ -168,7 +168,7 @@ const ListaComprasMetricas: React.FC = () => {
               <span className="text-xs text-gray-600">Total de Itens</span>
               <Package className="w-4 h-4 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-white">
               {metricas.totalItens}
             </div>
             <div className="text-xs text-gray-500 mt-1">
@@ -207,18 +207,18 @@ const ListaComprasMetricas: React.FC = () => {
               ) : (
                 compras.map((compra) => (
                   <tr key={compra.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-white">
                       {compra.data_compra
                         ? new Date(compra.data_compra).toLocaleDateString('pt-BR')
                         : '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-white">
                       {compra.fornecedores?.nome || '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-white">
                       {compra.numero_documento || '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right font-medium">
+                    <td className="px-4 py-3 text-sm text-white text-right font-medium">
                       {formatCurrency(compra.valor_total)}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -227,7 +227,7 @@ const ListaComprasMetricas: React.FC = () => {
                           ? 'bg-green-100 text-green-800'
                           : compra.status === 'pendente'
                           ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
+                          : 'bg-gray-100 text-white/90'
                       }`}>
                         {compra.status === 'recebido' ? 'Recebido' : compra.status === 'pendente' ? 'Pendente' : 'Cancelado'}
                       </span>

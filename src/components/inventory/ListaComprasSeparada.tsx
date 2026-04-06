@@ -156,7 +156,7 @@ const ListaComprasSeparada: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Lista de Compras</h2>
+          <h2 className="text-2xl font-bold text-white">Lista de Compras</h2>
           <p className="mt-1 text-sm text-gray-500">
             Itens com estoque abaixo do mínimo, separados por tipo de compra
           </p>
@@ -178,13 +178,13 @@ const ListaComprasSeparada: React.FC = () => {
               className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 tipoLista === 'rua'
                   ? 'border-[#7D1F2C] text-[#7D1F2C] bg-red-50'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:bg-gray-50'
               }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <Store className="w-5 h-5" />
                 <span>Compras na Rua</span>
-                <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
+                <span className="ml-2 px-2 py-0.5 bg-gray-100 text-white/80 rounded-full text-xs font-semibold">
                   {itensRua.length}
                 </span>
               </div>
@@ -195,13 +195,13 @@ const ListaComprasSeparada: React.FC = () => {
               className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 tipoLista === 'fornecedor'
                   ? 'border-[#7D1F2C] text-[#7D1F2C] bg-red-50'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  : 'border-transparent text-gray-500 hover:text-white/80 hover:bg-gray-50'
               }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <Truck className="w-5 h-5" />
                 <span>Pedidos Fornecedores</span>
-                <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
+                <span className="ml-2 px-2 py-0.5 bg-gray-100 text-white/80 rounded-full text-xs font-semibold">
                   {itensFornecedor.length}
                 </span>
               </div>
@@ -271,14 +271,14 @@ const ListaComprasRua: React.FC<{ itens: ItemCompra[] }> = ({ itens }) => {
       {Object.entries(itensPorCategoria).map(([categoria, itensCategoria]) => (
         <div key={categoria} className="border border-gray-200 rounded-lg overflow-hidden">
           <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900">{categoria}</h3>
+            <h3 className="text-sm font-semibold text-white">{categoria}</h3>
           </div>
           <div className="divide-y divide-gray-200">
             {itensCategoria.map(item => (
               <div key={item.id} className="p-4 hover:bg-gray-50">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">{item.nome}</h4>
+                    <h4 className="text-sm font-medium text-white">{item.nome}</h4>
                     {item.observacoes && (
                       <p className="mt-1 text-xs text-gray-500">{item.observacoes}</p>
                     )}
@@ -327,7 +327,7 @@ const ListaComprasFornecedor: React.FC<{ itens: ItemCompra[] }> = ({ itens }) =>
             <div className="bg-blue-50 px-4 py-3 border-b border-blue-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900">{fornecedor}</h3>
+                  <h3 className="text-sm font-semibold text-white">{fornecedor}</h3>
                   <div className="mt-1 flex items-center space-x-3 text-xs text-gray-600">
                     {itemInfo.fornecedor_telefone && (
                       <span>Tel: {itemInfo.fornecedor_telefone}</span>
@@ -350,7 +350,7 @@ const ListaComprasFornecedor: React.FC<{ itens: ItemCompra[] }> = ({ itens }) =>
                 <div key={item.id} className="p-4 hover:bg-gray-50">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-900">{item.nome}</h4>
+                      <h4 className="text-sm font-medium text-white">{item.nome}</h4>
                       <p className="mt-1 text-xs text-gray-500">{item.categoria}</p>
                       {item.observacoes && (
                         <p className="mt-1 text-xs text-gray-500">{item.observacoes}</p>
@@ -370,7 +370,7 @@ const ListaComprasFornecedor: React.FC<{ itens: ItemCompra[] }> = ({ itens }) =>
                           <p className="mt-1 text-xs text-gray-500">
                             {formatCurrency(item.custo_medio)}/{item.unidade_medida}
                           </p>
-                          <p className="mt-1 text-sm font-medium text-gray-700">
+                          <p className="mt-1 text-sm font-medium text-white/80">
                             {formatCurrency(item.valor_estimado)}
                           </p>
                         </>

@@ -305,7 +305,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.total}</p>
+                <p className="text-2xl font-bold text-white">{estatisticas.total}</p>
               </div>
               <div className="bg-blue-100 p-3 rounded-lg">
                 <Target className="w-6 h-6 text-blue-600" />
@@ -421,7 +421,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
                       <div className="flex items-center gap-3 mb-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-gray-900">{mapeamento.nome_externo}</h4>
+                            <h4 className="font-semibold text-white">{mapeamento.nome_externo}</h4>
                             {getTipoBadge(mapeamento.tipo_mapeamento)}
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -494,7 +494,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              className="px-6 py-2.5 bg-gray-200 text-white/80 rounded-lg font-medium hover:bg-gray-300 transition-colors"
             >
               Fechar
             </button>
@@ -531,7 +531,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Nome Externo (como aparece na importação) *
                 </label>
                 <input
@@ -544,7 +544,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Item do Estoque *
                 </label>
                 <select
@@ -562,7 +562,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Estoque Preferencial (opcional)
                 </label>
                 <select
@@ -583,7 +583,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                   Origem (opcional)
                 </label>
                 <input
@@ -612,7 +612,7 @@ const BibliotecaMapeamentos: React.FC<BibliotecaMapeamentosProps> = ({ onClose }
                     tipo_mapeamento: 'manual'
                   });
                 }}
-                className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                className="px-6 py-2.5 bg-gray-200 text-white/80 rounded-lg font-medium hover:bg-gray-300 transition-colors"
               >
                 Cancelar
               </button>

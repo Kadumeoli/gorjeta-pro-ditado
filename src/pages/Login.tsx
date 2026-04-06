@@ -93,7 +93,7 @@ const Login: React.FC = () => {
         {/* Formulário de Login */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Fazer Login</h2>
+            <h2 className="text-2xl font-semibold text-white/90 mb-2">Fazer Login</h2>
             <p className="text-gray-600">Acesse sua conta para continuar</p>
           </div>
 
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Email
               </label>
               <div className="relative">
@@ -126,7 +126,7 @@ const Login: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
                 Senha
               </label>
               <div className="relative">
@@ -175,7 +175,7 @@ const Login: React.FC = () => {
 
           {/* Usuários de Demonstração */}
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="text-sm font-medium text-gray-700 mb-4 text-center">
+            <h3 className="text-sm font-medium text-white/80 mb-4 text-center">
               Usuários de Demonstração
             </h3>
             <div className="space-y-2">
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-medium text-gray-900 text-sm">{usuario.nivel}</div>
+                      <div className="font-medium text-white text-sm">{usuario.nivel}</div>
                       <div className="text-xs text-gray-600">{usuario.descricao}</div>
                     </div>
                     <div className="text-xs text-gray-500">
@@ -218,33 +218,33 @@ const Login: React.FC = () => {
 
         {/* Recursos do Sistema */}
         <div className="mt-8 bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+          <h3 className="text-lg font-semibold text-white/90 mb-4 text-center">
             Recursos do Sistema
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Gestão Financeira</span>
+              <span className="text-white/80">Gestão Financeira</span>
             </div>
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Controle de Estoque</span>
+              <span className="text-white/80">Controle de Estoque</span>
             </div>
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Recursos Humanos</span>
+              <span className="text-white/80">Recursos Humanos</span>
             </div>
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Gestão de Eventos</span>
+              <span className="text-white/80">Gestão de Eventos</span>
             </div>
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Relatórios Gerenciais</span>
+              <span className="text-white/80">Relatórios Gerenciais</span>
             </div>
             <div className="flex items-center">
               <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-              <span className="text-gray-700">Sistema de Permissões</span>
+              <span className="text-white/80">Sistema de Permissões</span>
             </div>
           </div>
         </div>

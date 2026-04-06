@@ -298,7 +298,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
       case 'extra':
         return 'bg-blue-50 border-blue-200 text-blue-800';
       default:
-        return 'bg-gray-50 border-gray-200 text-gray-800';
+        return 'bg-gray-50 border-gray-200 text-white/90';
     }
   };
 
@@ -307,7 +307,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
       <div className="bg-white rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Conferência de Recebimento com IA</h3>
+            <h3 className="text-xl font-semibold text-white">Conferência de Recebimento com IA</h3>
             <p className="text-sm text-gray-500 mt-1">
               Faça upload da nota fiscal recebida para comparar com o pedido
             </p>
@@ -337,7 +337,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
             <div className="space-y-4">
               {/* Info do Pedido */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 mb-3">Pedido Original</h4>
+                <h4 className="font-medium text-white mb-3">Pedido Original</h4>
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Fornecedor:</span>
@@ -429,13 +429,13 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
                 </div>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
                   <div className="text-2xl font-bold text-gray-600">{resumo.total_itens_pedido}</div>
-                  <div className="text-sm text-gray-800">Total Pedido</div>
+                  <div className="text-sm text-white/90">Total Pedido</div>
                 </div>
               </div>
 
               {/* Comparações */}
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">Comparação Detalhada</h4>
+                <h4 className="font-medium text-white mb-3">Comparação Detalhada</h4>
                 <div className="space-y-3">
                   {comparacoes.map((comp, idx) => (
                     <div
@@ -457,7 +457,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         {/* Pedido */}
                         <div>
-                          <div className="font-medium text-gray-700 mb-1">Pedido:</div>
+                          <div className="font-medium text-white/80 mb-1">Pedido:</div>
                           <div className="space-y-1">
                             <div>{comp.item_pedido.item_nome || comp.item_pedido.descricao}</div>
                             {comp.item_pedido.quantidade_pedida > 0 && (
@@ -472,7 +472,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
 
                         {/* Recebido */}
                         <div>
-                          <div className="font-medium text-gray-700 mb-1 flex items-center justify-between">
+                          <div className="font-medium text-white/80 mb-1 flex items-center justify-between">
                             <span>Recebido:</span>
                             {comp.item_recebido && editandoIdx !== idx && (
                               <button
@@ -520,7 +520,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
                                   </button>
                                   <button
                                     onClick={handleCancelarEdicao}
-                                    className="flex-1 px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400"
+                                    className="flex-1 px-3 py-1 bg-gray-300 text-white/80 text-xs rounded hover:bg-gray-400"
                                   >
                                     Cancelar
                                   </button>
@@ -577,7 +577,7 @@ const ConferenciaRecebimentoModal: React.FC<ConferenciaRecebimentoModalProps> = 
           <div className="p-6 border-t border-gray-200 bg-gray-50 flex justify-between gap-3">
             <button
               onClick={reset}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-white/80 hover:bg-gray-100"
             >
               Nova Conferência
             </button>

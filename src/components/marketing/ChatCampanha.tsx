@@ -191,7 +191,7 @@ const ChatCampanha: React.FC<ChatCampanhaProps> = ({ campanhaId }) => {
             Mensagens Fixadas
           </p>
           {mensagensFixadas.map(msg => (
-            <div key={msg.id} className="text-sm text-gray-700 mb-1">
+            <div key={msg.id} className="text-sm text-white/80 mb-1">
               {msg.mensagem}
             </div>
           ))}
@@ -216,7 +216,7 @@ const ChatCampanha: React.FC<ChatCampanhaProps> = ({ campanhaId }) => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-sm text-gray-900">Usuário</span>
+                  <span className="font-medium text-sm text-white">Usuário</span>
                   <span className="text-xs text-gray-500">
                     {dayjs(mensagem.created_at).format('HH:mm')}
                   </span>
@@ -229,7 +229,7 @@ const ChatCampanha: React.FC<ChatCampanhaProps> = ({ campanhaId }) => {
                     Respondendo...
                   </div>
                 )}
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                <p className="text-sm text-white/80 whitespace-pre-wrap">
                   {mensagem.mensagem}
                 </p>
                 {mensagem.anexos && mensagem.anexos.length > 0 && (
@@ -281,7 +281,7 @@ const ChatCampanha: React.FC<ChatCampanhaProps> = ({ campanhaId }) => {
         <div className="border-t border-b border-gray-200 bg-gray-50 p-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Reply className="w-4 h-4 text-gray-600" />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-white/80">
               Respondendo: {replyTo.mensagem.substring(0, 50)}...
             </span>
           </div>
