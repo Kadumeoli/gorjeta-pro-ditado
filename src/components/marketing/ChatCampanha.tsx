@@ -1,14 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Send,
-  Paperclip,
-  Smile,
-  Pin,
-  MoreVertical,
-  Edit2,
-  Trash2,
-  Reply
-} from 'lucide-react';
+import { Send, Paperclip, Smile, Pin, MoreVertical, CreditCard as Edit2, Trash2, Reply } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import dayjs from '../../lib/dayjs';
 

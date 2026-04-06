@@ -1,26 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Plus,
-  Search,
-  Filter,
-  Edit,
-  Trash2,
-  Eye,
-  EyeOff,
-  Package,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle,
-  Download,
-  FileText,
-  Calculator,
-  ChefHat,
-  Users,
-  Clock,
-  Target,
-  Activity,
-  Printer
-} from 'lucide-react';
+import { Plus, Search, Filter, CreditCard as Edit, Trash2, Eye, EyeOff, Package, DollarSign, AlertTriangle, CheckCircle, Download, FileText, Calculator, ChefHat, Users, Clock, Target, Activity, Printer } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { exportToExcel, ReportGenerator } from '../../utils/reportGenerator';
 import dayjs from 'dayjs';

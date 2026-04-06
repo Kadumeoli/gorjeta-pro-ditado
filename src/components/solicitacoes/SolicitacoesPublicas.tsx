@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Package, Search, Clock, User, MapPin, AlertCircle, CheckCircle,
-  XCircle, Edit, Eye, Link as LinkIcon, Calendar
-} from 'lucide-react';
+import { Package, Search, Clock, User, MapPin, AlertCircle, CheckCircle, XCircle, CreditCard as Edit, Eye, Link as LinkIcon, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import dayjs from 'dayjs';
 

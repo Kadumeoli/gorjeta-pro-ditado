@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { X, Upload, FileSpreadsheet, Sparkles, CheckCircle, AlertCircle, Edit3, Building2, Search } from 'lucide-react';
+import { X, Upload, FileSpreadsheet, Sparkles, CheckCircle, AlertCircle, CreditCard as Edit3, Building2, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface ImportarVendasIAProps {

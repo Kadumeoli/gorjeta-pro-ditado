@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Users, Search, Filter, Eye, Star, Phone, Mail, Calendar,
-  Briefcase, DollarSign, Clock, CheckCircle, XCircle, Edit
-} from 'lucide-react';
+import { Users, Search, Filter, Eye, Star, Phone, Mail, Calendar, Briefcase, DollarSign, Clock, CheckCircle, XCircle, CreditCard as Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import FichaCandidato from './FichaCandidato';
 

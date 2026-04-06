@@ -1,29 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye,
-  User,
-  DollarSign,
-  Calendar,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Download,
-  FileText,
-  Users,
-  Activity,
-  TrendingUp,
-  AlertTriangle,
-  Phone,
-  MapPin,
-  Briefcase,
-  Target,
-  Award
-} from 'lucide-react';
+import { Plus, Search, Filter, CreditCard as Edit, Trash2, Eye, User, DollarSign, Calendar, Clock, CheckCircle, XCircle, Download, FileText, Users, Activity, TrendingUp, AlertTriangle, Phone, MapPin, Briefcase, Target, Award } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { testConnection } from '../../lib/supabase';
 import { exportToExcel } from '../../utils/reportGenerator';

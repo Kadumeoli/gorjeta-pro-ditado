@@ -1,19 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Upload,
-  Plus,
-  Search,
-  Edit2,
-  Trash2,
-  Download,
-  Check,
-  X,
-  AlertCircle,
-  FileSpreadsheet,
-  TrendingUp,
-  Archive,
-  RefreshCw
-} from 'lucide-react';
+import { Upload, Plus, Search, CreditCard as Edit2, Trash2, Download, Check, X, AlertCircle, FileSpreadsheet, TrendingUp, Archive, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import * as XLSX from 'xlsx';
 import { SearchableSelect } from '../common/SearchableSelect';

@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Plus,
-  Briefcase,
-  MapPin,
-  DollarSign,
-  Users,
-  Eye,
-  Edit,
-  Pause,
-  Play,
-  XCircle,
-  Search
-} from 'lucide-react';
+import { Plus, Briefcase, MapPin, DollarSign, Users, Eye, CreditCard as Edit, Pause, Play, XCircle, Search } from 'lucide-react';
 import { vagaService, cargoService, Vaga, Cargo } from '../../services/rhService';
 
 const GestaoVagas: React.FC = () => {

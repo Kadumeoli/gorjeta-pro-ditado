@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  X, FileText, Image as ImageIcon, MessageSquare, Calendar,
-  CheckCircle, Clock, Tag, DollarSign, Users, Edit2, Trash2,
-  Plus, Upload, ExternalLink
-} from 'lucide-react';
+import { X, FileText, Image as ImageIcon, MessageSquare, Calendar, CheckCircle, Clock, Tag, DollarSign, Users, CreditCard as Edit2, Trash2, Plus, Upload, ExternalLink } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import dayjs from '../../lib/dayjs';
 import ChatCampanha from './ChatCampanha';

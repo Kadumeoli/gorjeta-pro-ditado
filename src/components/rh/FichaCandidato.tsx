@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  X, User, Mail, Phone, MapPin, FileText, Calendar, Briefcase,
-  Star, TrendingUp, Brain, MessageSquare, Mic, Edit, Save
-} from 'lucide-react';
+import { X, User, Mail, Phone, MapPin, FileText, Calendar, Briefcase, Star, TrendingUp, Brain, MessageSquare, Mic, CreditCard as Edit, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import PreEntrevistaView from './PreEntrevistaView';
 import EntrevistaPessoal from './EntrevistaPessoal';

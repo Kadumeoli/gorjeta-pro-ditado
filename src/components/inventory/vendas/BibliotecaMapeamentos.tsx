@@ -1,22 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Target,
-  Search,
-  Filter,
-  Edit2,
-  Trash2,
-  Plus,
-  TrendingUp,
-  Clock,
-  Package,
-  CheckCircle,
-  AlertCircle,
-  ArrowLeft,
-  Save,
-  X,
-  Sparkles,
-  BarChart3
-} from 'lucide-react';
+import { Target, Search, Filter, CreditCard as Edit2, Trash2, Plus, TrendingUp, Clock, Package, CheckCircle, AlertCircle, ArrowLeft, Save, X, Sparkles, BarChart3 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import dayjs from '../../../lib/dayjs';
 

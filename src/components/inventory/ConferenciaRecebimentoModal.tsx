@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Upload, Camera, CheckCircle, AlertTriangle, XCircle, Plus, Loader, Edit2, Save } from 'lucide-react';
+import { X, Upload, Camera, CheckCircle, AlertTriangle, XCircle, Plus, Loader, CreditCard as Edit2, Save } from 'lucide-react';
 
 interface ItemPedido {
   id: string;

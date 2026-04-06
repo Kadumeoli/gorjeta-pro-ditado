@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Plus, Search, Edit, Trash2, Eye, Factory, CheckCircle, XCircle, Clock,
-  AlertTriangle, Download, Package, Users, ChefHat, Play, Activity, TrendingUp,
-  DollarSign, FileText, History, ClipboardCheck, BarChart3, Warehouse
-} from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, Eye, Factory, CheckCircle, XCircle, Clock, AlertTriangle, Download, Package, Users, ChefHat, Play, Activity, TrendingUp, DollarSign, FileText, History, ClipboardCheck, BarChart3, Warehouse } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { exportToExcel } from '../../utils/reportGenerator';
 import dayjs from 'dayjs';
