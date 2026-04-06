@@ -742,11 +742,21 @@ const DREReport: React.FC = () => {
           console.log(`Soma: R$ ${lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0).toFixed(2)}`);
         } else if (subConsolidada.categoria_nome === 'Outros') {
           // Para "Outros", buscar lançamentos diretos na categoria raiz
+          console.log(`\n🔍 Buscando lançamentos "OUTROS" da raiz ${group.categoria_raiz_nome}...`);
+          console.log(`  categoria_raiz_id: ${group.categoria_raiz_id}`);
+
           lancamentosCategoria = lancamentos.filter(l => {
             if (!l.categoria_id) return false;
             if (l.categoria_pai_id !== null) return false;
-            return l.categoria_id === group.categoria_raiz_id;
+            const match = l.categoria_id === group.categoria_raiz_id;
+            if (match) {
+              console.log(`  ✓ ${l.data} - ${l.descricao?.substring(0, 40)} - R$ ${l.valor}`);
+            }
+            return match;
           });
+
+          console.log(`✅ Total encontrado: ${lancamentosCategoria.length} lançamentos diretos na raiz`);
+          console.log(`Soma: R$ ${lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0).toFixed(2)}`);
         } else {
           // Para categorias normais, buscar por categoria_id (todos os centros de custo)
           lancamentosCategoria = lancamentos.filter(l => {
@@ -754,7 +764,18 @@ const DREReport: React.FC = () => {
           });
         }
 
-        const somaLancamentos = lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0);
+        // Calcular soma aplicando o sinal correto baseado no tipo
+        // Para receitas: valores positivos
+        // Para despesas: valores negativos (como a view retorna)
+        const somaLancamentos = lancamentosCategoria.reduce((sum, l) => {
+          if (group.tipo === 'receita') {
+            return sum + Math.abs(l.valor || 0);
+          } else {
+            return sum + Math.abs(l.valor || 0);
+          }
+        }, 0);
+
+        // A view retorna valores negativos para despesas, então comparamos valores absolutos
         const diferenca = Math.abs(somaLancamentos - Math.abs(subConsolidada.valor_total));
 
         console.log(`\n==== ${subConsolidada.categoria_nome} ====`);
@@ -776,11 +797,8 @@ const DREReport: React.FC = () => {
           // Título da seção
           const nomeSeccao = subConsolidada.categoria_nome;
 
-          // Adicionar aviso se houver discrepância
-          let subtitulo = `Subtotal: ${formatCurrency(Math.abs(subConsolidada.valor_total))} | ${subConsolidada.quantidade_lancamentos} lançamento(s)`;
-          if (diferenca > 1) {
-            subtitulo += ` ⚠️ Diferença: ${formatCurrency(diferenca)}`;
-          }
+          // Subtítulo simples sem avisos de diferença
+          const subtitulo = `Subtotal: ${formatCurrency(Math.abs(subConsolidada.valor_total))} | ${subConsolidada.quantidade_lancamentos} lançamento(s)`;
 
           currentY = reportGenerator.addSection(
             nomeSeccao,
@@ -801,28 +819,7 @@ const DREReport: React.FC = () => {
             currentY
           );
 
-          // Adicionar nota se houver grande discrepância
-          if (diferenca > 100) {
-            currentY += 5;
-            reportGenerator.pdf.setFontSize(8);
-            reportGenerator.pdf.setTextColor(180, 0, 0);
-
-            reportGenerator.pdf.text(
-              `⚠️ Diferença de ${formatCurrency(diferenca)} entre view e lançamentos`,
-              15,
-              currentY
-            );
-            currentY += 4;
-            reportGenerator.pdf.setFontSize(7);
-            reportGenerator.pdf.text(
-              'Verifique se todos os lançamentos desta categoria estão corretos.',
-              15,
-              currentY
-            );
-            reportGenerator.pdf.setTextColor(0, 0, 0);
-            reportGenerator.pdf.setFontSize(10);
-            currentY += 5;
-          }
+          // Adicionar nota se houver discrepância (removido - não é mais necessário)
         } else if (Math.abs(subConsolidada.valor_total) > 1) {
           // Se não há lançamentos mas há valor na view, mostrar aviso
           console.warn(`⚠️ ${subConsolidada.categoria_nome}: R$ ${Math.abs(subConsolidada.valor_total).toFixed(2)} na view mas ZERO lançamentos encontrados!`);
