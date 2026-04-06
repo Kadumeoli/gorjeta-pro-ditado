@@ -456,6 +456,15 @@ const DREReport: React.FC = () => {
       console.log('  - Com categoria:', lancamentosTransformados.filter(l => l.categoria_id).length);
       console.log('  - SEM categoria:', lancamentosTransformados.filter(l => !l.categoria_id).length);
 
+      // Log de lançamentos grandes para debug
+      const lancamentosGrandesTotal = lancamentosTransformados.filter(l => Math.abs(l.valor) > 60000);
+      if (lancamentosGrandesTotal.length > 0) {
+        console.log('💰 Total de lançamentos > 60.000:', lancamentosGrandesTotal.length);
+        lancamentosGrandesTotal.forEach(l => {
+          console.log(`  ${l.data} - ${l.descricao?.substring(0, 40)} = R$ ${l.valor} [${l.categoria_nome}]`);
+        });
+      }
+
       return lancamentosTransformados;
     } catch (err) {
       console.error('Error fetching detailed transactions:', err);
@@ -762,6 +771,16 @@ const DREReport: React.FC = () => {
           lancamentosCategoria = lancamentos.filter(l => {
             return l.categoria_id === subConsolidada.categoria_id;
           });
+
+          // Log para debug de lançamentos grandes
+          const lancamentosGrandes = lancamentosCategoria.filter(l => Math.abs(l.valor) > 60000);
+          if (lancamentosGrandes.length > 0) {
+            console.log(`💰 Lançamentos grandes em ${subConsolidada.categoria_nome}:`, lancamentosGrandes.map(l => ({
+              data: l.data,
+              valor: l.valor,
+              descricao: l.descricao?.substring(0, 50)
+            })));
+          }
         }
 
         // Calcular soma aplicando o sinal correto baseado no tipo
@@ -806,12 +825,19 @@ const DREReport: React.FC = () => {
             currentY + 8
           );
 
-          const lancamentosData = lancamentosCategoria.map(l => [
+          // Ordenar por data para facilitar verificação
+          const lancamentosOrdenados = [...lancamentosCategoria].sort((a, b) =>
+            new Date(a.data).getTime() - new Date(b.data).getTime()
+          );
+
+          const lancamentosData = lancamentosOrdenados.map(l => [
             dayjs(l.data).format('DD/MM/YYYY'),
             (l.descricao || '').substring(0, 50),
             l.centro_custo || '-',
             formatCurrency(Math.abs(l.valor || 0))
           ]);
+
+          console.log(`📄 Adicionando ${lancamentosData.length} lançamentos ao PDF`);
 
           currentY = reportGenerator.addTable(
             ['Data', 'Descrição', 'Centro Custo', 'Valor'],
