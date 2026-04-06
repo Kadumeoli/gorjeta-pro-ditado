@@ -13,6 +13,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import ChatFinanceiroIA from '../components/financeiro/ChatFinanceiroIA';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -95,140 +96,130 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Visão geral do sistema</p>
-        </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500">
-          <Activity className="w-4 h-4" />
-          <span>Última atualização: agora</span>
-        </div>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Visão geral do sistema"
+        actions={
+          <div className="flex items-center gap-2 text-sm text-text-muted">
+            <Activity className="w-4 h-4" />
+            <span>Última atualização: agora</span>
+          </div>
+        }
+      />
 
-      {/* Cards de Indicadores */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cards.map((card, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">{card.title}</p>
-                <p className={`text-2xl font-bold ${card.textColor} mt-1`}>
-                  {card.value}
-                </p>
-              </div>
-              <div className={`${card.color} p-3 rounded-lg`}>
-                <card.icon className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-        ))}
+        <KPICard
+          label="Colaboradores Ativos"
+          value={indicadores.colaboradoresAtivos}
+          format="number"
+          icon={Users}
+        />
+        <KPICard
+          label="Vendas do Mês"
+          value={indicadores.vendasMes}
+          format="currency"
+          icon={DollarSign}
+          variation={12}
+          trend="up"
+        />
+        <KPICard
+          label="Estoque Baixo"
+          value={indicadores.estoqueBaixo}
+          format="number"
+          icon={Package}
+          trend="neutral"
+        />
+        <KPICard
+          label="Solicitações Pendentes"
+          value={indicadores.solicitacoesPendentes}
+          format="number"
+          icon={Clock}
+        />
       </div>
 
-      {/* Grid de Conteúdo */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Atividades Recentes */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Atividades Recentes</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {atividades.map((atividade: any) => (
-                <div key={atividade.id} className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
-                    {atividade.tipo === 'venda' && (
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <DollarSign className="w-4 h-4 text-green-600" />
-                      </div>
-                    )}
-                    {atividade.tipo === 'estoque' && (
-                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                        <Package className="w-4 h-4 text-orange-600" />
-                      </div>
-                    )}
-                    {atividade.tipo === 'rh' && (
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Users className="w-4 h-4 text-blue-600" />
-                      </div>
-                    )}
-                    {atividade.tipo === 'financeiro' && (
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-4 h-4 text-purple-600" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">{atividade.descricao}</p>
-                    <p className="text-xs text-gray-500">{atividade.tempo}</p>
-                  </div>
+        <SectionCard title="Atividades Recentes" className="lg:col-span-2">
+          <div className="space-y-4">
+            {atividades.map((atividade: any) => (
+              <div key={atividade.id} className="flex items-center gap-3">
+                <div className="flex-shrink-0">
+                  {atividade.tipo === 'venda' && (
+                    <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-success" />
+                    </div>
+                  )}
+                  {atividade.tipo === 'estoque' && (
+                    <div className="w-8 h-8 bg-warning/10 rounded-full flex items-center justify-center">
+                      <Package className="w-4 h-4 text-warning" />
+                    </div>
+                  )}
+                  {atividade.tipo === 'rh' && (
+                    <div className="w-8 h-8 bg-info/10 rounded-full flex items-center justify-center">
+                      <Users className="w-4 h-4 text-info" />
+                    </div>
+                  )}
+                  {atividade.tipo === 'financeiro' && (
+                    <div className="w-8 h-8 bg-wine/10 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-wine" />
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-sm text-text-primary">{atividade.descricao}</p>
+                  <p className="font-sans text-xs text-text-muted">{atividade.tempo}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </SectionCard>
 
-        {/* Resumo Rápido */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Resumo Rápido</h2>
-          </div>
-          <div className="p-6 space-y-4">
+        <SectionCard title="Resumo Rápido">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-gray-600">Tarefas Completas</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-success" />
+                <span className="font-sans text-sm text-text-secondary">Tarefas Completas</span>
               </div>
-              <span className="text-sm font-semibold text-gray-900">84%</span>
+              <span className="font-sans text-sm font-semibold text-text-primary">84%</span>
             </div>
-            
+
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Clock className="w-4 h-4 text-orange-500" />
-                <span className="text-sm text-gray-600">Em Andamento</span>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-warning" />
+                <span className="font-sans text-sm text-text-secondary">Em Andamento</span>
               </div>
-              <span className="text-sm font-semibold text-gray-900">12</span>
+              <span className="font-sans text-sm font-semibold text-text-primary">12</span>
             </div>
-            
+
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="w-4 h-4 text-red-500" />
-                <span className="text-sm text-gray-600">Alertas</span>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-danger" />
+                <span className="font-sans text-sm text-text-secondary">Alertas</span>
               </div>
-              <span className="text-sm font-semibold text-gray-900">3</span>
+              <span className="font-sans text-sm font-semibold text-text-primary">3</span>
             </div>
-            
-            <div className="pt-4 border-t border-gray-200">
+
+            <div className="pt-4 border-t border-gray-100">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Performance Mensal</span>
-                <span className="text-sm font-semibold text-green-600">+12%</span>
+                <span className="font-sans text-sm text-text-secondary">Performance Mensal</span>
+                <span className="font-sans text-sm font-semibold text-success">+12%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{ width: '84%' }}></div>
+              <div className="w-full bg-gray-100 rounded-full h-2">
+                <div className="bg-success h-2 rounded-full transition-all" style={{ width: '84%' }}></div>
               </div>
             </div>
           </div>
-        </div>
+        </SectionCard>
       </div>
 
-      {/* Gráfico de Vendas (Placeholder) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Vendas dos Últimos 7 Dias</h2>
-            <BarChart3 className="w-5 h-5 text-gray-500" />
+      <SectionCard title="Vendas dos Últimos 7 Dias" action={<BarChart3 className="w-5 h-5 text-text-muted" />}>
+        <div className="h-64 flex items-center justify-center text-text-muted">
+          <div className="text-center">
+            <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-200" />
+            <p className="font-sans text-sm">Gráfico de vendas será implementado em breve</p>
           </div>
         </div>
-        <div className="p-6">
-          <div className="h-64 flex items-center justify-center text-gray-500">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-              <p>Gráfico de vendas será implementado em breve</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      </SectionCard>
 
       {/* Botão flutuante do Chat IA */}
       {!showChatIA && (

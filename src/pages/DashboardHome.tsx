@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { KPICard, PageHeader, SectionCard } from '../components/ui';
 
 const COLORS = ['#7D1F2C', '#D4AF37', '#3B82F6', '#10B981'];
 
@@ -27,6 +28,7 @@ const DashboardHome: React.FC = () => {
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [loading, setLoading] = useState(true);
   const [financialData, setFinancialData] = useState<any[]>([]);
+  const [metricsValues, setMetricsValues] = useState({ receita: 0, despesas: 0, saldo: 0, itens: 0 });
 
   useEffect(() => { loadDashboardData(); }, []);
 
@@ -50,6 +52,8 @@ const DashboardHome: React.FC = () => {
       const itensAbaixoMinimo = saldosEstoque?.filter((s: any) =>
         s.quantidade_atual < (s.itens_estoque?.estoque_minimo || 0)
       ).length || 0;
+
+      setMetricsValues({ receita: entradas, despesas: saidas, saldo, itens: itensAbaixoMinimo });
 
       setMetrics([
         { title: 'Receita do Mês',   value: `R$ ${entradas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, change: 12.5,  changeLabel: 'vs mês anterior', icon: DollarSign,    color: 'from-green-500 to-emerald-600', trend: 'up'  },
@@ -89,82 +93,88 @@ const DashboardHome: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Bem-vindo ao Ditado Popular</h1>
-          <p className="text-gray-600 mt-1 flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] rounded-xl text-white shadow-lg">
-          <Brain className="w-5 h-5" />
-          <span className="font-semibold">IA Ativa</span>
-        </div>
-      </div>
+      <PageHeader
+        title="Bem-vindo ao Ditado Popular"
+        subtitle={new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        actions={
+          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-wine to-gold rounded-lg text-white shadow-wine">
+            <Brain className="w-5 h-5" />
+            <span className="font-sans font-semibold text-sm">IA Ativa</span>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((metric, i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
-            <div className={`h-1 bg-gradient-to-r ${metric.color}`} />
-            <div className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">{metric.value}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    {metric.trend === 'up'
-                      ? <ArrowUpRight className="w-4 h-4 text-green-600" />
-                      : <ArrowDownRight className="w-4 h-4 text-red-600" />}
-                    <span className={`text-sm font-semibold ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                      {Math.abs(metric.change)}%
-                    </span>
-                    <span className="text-xs text-gray-500">{metric.changeLabel}</span>
-                  </div>
-                </div>
-                <div className={`p-3 bg-gradient-to-br ${metric.color} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <metric.icon className="w-6 h-6 text-white" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+        <KPICard
+          label="Receita do Mês"
+          value={metricsValues.receita}
+          format="currency"
+          variation={12.5}
+          icon={DollarSign}
+          trend="up"
+        />
+        <KPICard
+          label="Despesas do Mês"
+          value={metricsValues.despesas}
+          format="currency"
+          variation={-8.2}
+          icon={TrendingDown}
+          trend="down"
+        />
+        <KPICard
+          label="Saldo Atual"
+          value={metricsValues.saldo}
+          format="currency"
+          variation={15.3}
+          icon={TrendingUp}
+          trend="up"
+        />
+        <KPICard
+          label="Itens em Falta"
+          value={metricsValues.itens}
+          format="number"
+          variation={-20}
+          icon={AlertTriangle}
+          trend="neutral"
+        />
       </div>
 
       {insights.length > 0 && (
-        <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 shadow-lg border border-purple-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl">
-              <Sparkles className="w-5 h-5 text-white" />
+        <SectionCard
+          title="Insights Inteligentes"
+          action={
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-wine to-gold rounded-lg">
+              <Sparkles className="w-4 h-4 text-white" />
+              <span className="font-sans text-xs font-semibold text-white">IA</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Insights Inteligentes</h2>
-          </div>
+          }
+          className="bg-gradient-to-br from-wine/[0.03] to-gold/[0.03]"
+        >
           <div className="space-y-3">
             {insights.map((insight, i) => (
-              <div key={i} className={`p-4 rounded-xl border-l-4 ${
-                insight.type === 'success' ? 'bg-green-50 border-green-500' :
-                insight.type === 'warning' ? 'bg-orange-50 border-orange-500' :
-                'bg-blue-50 border-blue-500'
+              <div key={i} className={`p-4 rounded-lg border-l-4 ${
+                insight.type === 'success' ? 'bg-success/10 border-success' :
+                insight.type === 'warning' ? 'bg-warning/10 border-warning' :
+                'bg-info/10 border-info'
               }`}>
-                <h3 className="font-semibold text-gray-900 mb-1">{insight.title}</h3>
-                <p className="text-sm text-gray-700">{insight.message}</p>
+                <h3 className="font-sans font-semibold text-text-primary mb-1">{insight.title}</h3>
+                <p className="font-sans text-sm text-text-secondary">{insight.message}</p>
                 {insight.action && (
-                  <button onClick={() => navigate(insight.action!)} className="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+                  <button
+                    onClick={() => navigate(insight.action!)}
+                    className="mt-2 font-sans text-sm font-semibold text-wine hover:text-wine-dark transition-colors"
+                  >
                     Ver Detalhes →
                   </button>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </SectionCard>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Fluxo de Caixa (7 dias)</h3>
-            <BarChart3 className="w-5 h-5 text-gray-400" />
-          </div>
+        <SectionCard title="Fluxo de Caixa (7 dias)">
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={financialData}>
               <defs>
@@ -185,13 +195,9 @@ const DashboardHome: React.FC = () => {
               <Area type="monotone" dataKey="saidas"   stroke="#EF4444" fillOpacity={1} fill="url(#gS)" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </SectionCard>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Saldo Diário</h3>
-            <Activity className="w-5 h-5 text-gray-400" />
-          </div>
+        <SectionCard title="Saldo Diário">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={financialData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -205,28 +211,27 @@ const DashboardHome: React.FC = () => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </SectionCard>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Ações Rápidas</h3>
+      <SectionCard title="Ações Rápidas">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Novo Lançamento',   path: '/finance?tab=0',             color: 'from-green-500 to-emerald-600', icon: DollarSign  },
-            { label: 'Consultar Estoque', path: '/advanced-inventory?tab=2',  color: 'from-blue-500 to-indigo-600',   icon: Package     },
-            { label: 'Movimentações',     path: '/advanced-inventory?tab=8',  color: 'from-purple-500 to-pink-600',   icon: Target      },
-            { label: 'Ver Relatórios',    path: '/finance?tab=10',            color: 'from-orange-500 to-amber-600',  icon: BarChart3   },
+            { label: 'Novo Lançamento',   path: '/finance?tab=0',             color: 'from-success to-success', icon: DollarSign  },
+            { label: 'Consultar Estoque', path: '/advanced-inventory?tab=2',  color: 'from-wine to-wine-dark',  icon: Package     },
+            { label: 'Movimentações',     path: '/advanced-inventory?tab=8',  color: 'from-wine to-gold',       icon: Target      },
+            { label: 'Ver Relatórios',    path: '/finance?tab=10',            color: 'from-gold to-gold-dark',  icon: BarChart3   },
           ].map((a, i) => (
             <button key={i} onClick={() => navigate(a.path)}
-              className="p-4 rounded-xl border-2 border-gray-100 hover:border-gray-300 transition-all duration-300 hover:shadow-lg group text-left">
-              <div className={`p-3 bg-gradient-to-br ${a.color} rounded-xl mb-3 group-hover:scale-110 transition-transform duration-300 w-fit`}>
+              className="p-4 rounded-lg border border-gray-200 hover:border-wine/30 transition-all duration-300 hover:shadow-wine group text-left">
+              <div className={`p-3 bg-gradient-to-br ${a.color} rounded-lg mb-3 group-hover:scale-110 transition-transform duration-300 w-fit`}>
                 <a.icon className="w-6 h-6 text-white" />
               </div>
-              <p className="text-sm font-semibold text-gray-900">{a.label}</p>
+              <p className="font-sans text-sm font-semibold text-text-primary">{a.label}</p>
             </button>
           ))}
         </div>
-      </div>
+      </SectionCard>
     </div>
   );
 };
