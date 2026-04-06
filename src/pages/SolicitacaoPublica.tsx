@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Package, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { PageHeader, SectionCard } from '../components/ui';
 
 export default function SolicitacaoPublica() {
   const [loading, setLoading] = useState(false);

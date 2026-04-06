@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Send, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { SectionCard } from '../components/ui';
 
 interface Message {
   role: 'user' | 'assistant';

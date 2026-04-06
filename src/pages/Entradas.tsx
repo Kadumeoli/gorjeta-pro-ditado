@@ -3,6 +3,7 @@ import { Plus, CheckCircle2, TrendingUp, RefreshCw, AlertTriangle, DollarSign, T
 import { formatCurrency } from '../utils/currency';
 import * as entradasService from '../services/entradasService';
 import * as veService from '../services/visaoEstrategica';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 const Entradas: React.FC = () => {
   const [loading, setLoading] = useState(true);

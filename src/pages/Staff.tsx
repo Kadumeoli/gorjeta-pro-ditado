@@ -28,6 +28,7 @@ import { supabase } from '../lib/supabase';
 import { testConnection } from '../lib/supabase';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FuncoesRH from '../components/hr/FuncoesRH';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 import ColaboradoresRH from '../components/hr/ColaboradoresRH';
 import EscalasTrabalho from '../components/hr/EscalasTrabalho';
 import FeriasColaboradores from '../components/hr/FeriasColaboradores';

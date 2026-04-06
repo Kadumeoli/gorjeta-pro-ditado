@@ -15,6 +15,7 @@ import GestaoCandidaturas from '../components/rh/GestaoCandidaturas';
 import GestaoCargos from '../components/rh/GestaoCargos';
 import DashboardRH from '../components/rh/DashboardRH';
 import BancoTalentos from '../components/rh/BancoTalentos';
+import { PageHeader } from '../components/ui';
 
 type TabType = 'dashboard' | 'vagas' | 'candidaturas' | 'cargos' | 'talentos';
 

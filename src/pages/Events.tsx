@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { testConnection } from '../lib/supabase';
 import dayjs from 'dayjs';
 import ChatFinanceiroIA from '../components/financeiro/ChatFinanceiroIA';
+import { PageHeader, KPICard, SectionCard, Badge } from '../components/ui';
 
 interface EventoFechado {
   id: string;

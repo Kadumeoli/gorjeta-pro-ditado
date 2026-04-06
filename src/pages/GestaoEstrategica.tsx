@@ -6,6 +6,7 @@ import {
   ArrowUp, ArrowDown, Minus
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
 const R   = (v: number) => v.toLocaleString('pt-BR', { style:'currency', currency:'BRL', minimumFractionDigits:0, maximumFractionDigits:0 });

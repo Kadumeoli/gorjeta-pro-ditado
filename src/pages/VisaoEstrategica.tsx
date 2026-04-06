@@ -3,6 +3,7 @@ import { TrendingUp, Settings, FileText, CreditCard, Calendar, History, DollarSi
 import dayjs from '../lib/dayjs';
 import { formatCurrency } from '../utils/currency';
 import * as veService from '../services/visaoEstrategica';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 type TabType = 'dashboard' | 'config' | 'despesas' | 'pagamentos' | 'futuro' | 'historico' | 'relatorios';
 

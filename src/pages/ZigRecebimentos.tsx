@@ -6,6 +6,7 @@ import {
   TrendingUp, RefreshCw, Banknote, Smartphone, Wallet,
   Settings, Building2, Save
 } from 'lucide-react';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 interface ItemPreview {

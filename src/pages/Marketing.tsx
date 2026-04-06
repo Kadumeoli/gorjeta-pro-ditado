@@ -26,6 +26,7 @@ import CalendarioMarketing from '../components/marketing/CalendarioMarketing';
 import SistemaAprovacoes from '../components/marketing/SistemaAprovacoes';
 import AnalyticsMarketing from '../components/marketing/AnalyticsMarketing';
 import ModalBrief from '../components/marketing/ModalBrief';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 interface DashboardStats {
   campanhas_ativas: number;

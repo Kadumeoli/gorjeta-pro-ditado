@@ -5,6 +5,7 @@ import {
   Printer, ClipboardList, Search, X,
   BarChart2, Check
 } from 'lucide-react';
+import { PageHeader, SectionCard, Badge } from '../components/ui';
 
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string;

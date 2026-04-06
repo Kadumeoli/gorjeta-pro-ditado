@@ -36,6 +36,7 @@ import ContagemEstoque from '../components/inventory/contagem/ContagemEstoque';
 import VendasDashboard from '../components/inventory/VendasDashboard';
 import ChatFinanceiroIA from '../components/financeiro/ChatFinanceiroIA';
 import InventarioConsolidado from '../components/inventory/InventarioConsolidado';
+import { PageHeader, KPICard } from '../components/ui';
 
 interface IndicadoresEstoque {
   total_itens: number;

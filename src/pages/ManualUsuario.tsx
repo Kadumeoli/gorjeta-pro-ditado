@@ -18,6 +18,7 @@ import {
   Eye,
   Loader2
 } from 'lucide-react';
+import { PageHeader, SectionCard } from '../components/ui';
 import { supabase } from '../lib/supabase';
 
 interface Categoria {

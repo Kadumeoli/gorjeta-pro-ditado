@@ -4,6 +4,7 @@ import {
   Package, AlertTriangle, Info, Play, Warehouse, Link2, X, Check,
   EyeOff, Eye, Map, ChevronDown, Zap, List
 } from 'lucide-react';
+import { PageHeader, KPICard, SectionCard } from '../components/ui';
 
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string;

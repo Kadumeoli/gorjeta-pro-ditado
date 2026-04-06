@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { AlertCircle, Plus, Search, Filter, FileText, User, Clock, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import dayjs from '../lib/dayjs';
+import { PageHeader, SectionCard, Badge } from '../components/ui';
 
 interface Ocorrencia {
   id: string;

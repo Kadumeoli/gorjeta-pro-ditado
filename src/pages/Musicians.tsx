@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { testConnection } from '../lib/supabase';
 import dayjs from 'dayjs';
 import { SearchableSelect } from '../components/common/SearchableSelect';
+import { PageHeader, KPICard, SectionCard, Badge } from '../components/ui';
 
 interface Musico {
   id: string;

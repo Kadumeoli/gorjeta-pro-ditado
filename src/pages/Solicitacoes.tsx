@@ -11,6 +11,7 @@ import AprovacoesSolicitacoes from '../components/solicitacoes/AprovacoesSolicit
 import RelatoriosSolicitacoes from '../components/solicitacoes/RelatoriosSolicitacoes';
 import SolicitacoesPublicas from '../components/solicitacoes/SolicitacoesPublicas';
 import { ChatSolicitacaoIA } from '../components/solicitacoes/ChatSolicitacaoIA';
+import { PageHeader, KPICard } from '../components/ui';
 
 interface Solicitacao {
   id: string;

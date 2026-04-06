@@ -4,6 +4,7 @@ import { Plus, Search, Filter, CreditCard as Edit, Trash2, Download, Building2, 
 import { supabase } from '../lib/supabase';
 import FinancialCategories from '../components/financeiro/FinancialCategories';
 import DREReport from '../components/diretoria/DREReport';
+import { PageHeader } from '../components/ui';
 
 interface CostCenter {
   id: string;
