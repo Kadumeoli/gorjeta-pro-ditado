@@ -906,70 +906,163 @@ const Musicians: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-[#7D1F2C] to-[#D4AF37] bg-clip-text text-transparent">
-              Cadastro de Músicos
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">Gerencie apresentações e pagamentos de músicos</p>
+    <div className="flex flex-col min-h-screen -m-6 lg:-m-8" style={{ background: '#0d0f1a' }}>
+
+      {/* HERO DA SEÇÃO */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #7D1F2C 0%, #5a1520 60%, #3d0f16 100%)',
+        }}
+      >
+        {/* Ruído decorativo */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        {/* Glow dourado */}
+        <div
+          className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-10"
+          style={{ background: 'radial-gradient(circle, #D4AF37, transparent 70%)' }}
+        />
+
+        <div className="relative px-6 lg:px-8 pt-7 pb-0">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-1.5 mb-4">
+            <span className="text-white/30 text-xs">Músicos</span>
+            <ChevronRight className="text-white/20" style={{width:'12px',height:'12px'}} />
+            <span className="text-white/60 text-xs font-medium">{viewMode === 'table' ? 'Listagem' : 'Calendário'}</span>
           </div>
-          <div className="flex gap-2">
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('table')}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
-                  viewMode === 'table'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
+
+          {/* Título + ações */}
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
               >
-                <List className="w-4 h-4 inline mr-1" />
-                Tabela
-              </button>
-              <button
-                onClick={() => setViewMode('calendar')}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
-                  viewMode === 'calendar'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <CalendarDays className="w-4 h-4 inline mr-1" />
-                Calendário
-              </button>
+                <Music className="text-white/80" style={{width:'18px',height:'18px'}} />
+              </div>
+              <div>
+                <h1 className="text-white text-2xl font-bold leading-none tracking-tight">
+                  Cadastro de Músicos
+                </h1>
+                <p className="text-white/40 text-sm mt-1">Gerencie apresentações e pagamentos de músicos</p>
+              </div>
             </div>
 
-            <button
-              onClick={exportData}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-md"
-            >
-              <Download className="w-4 h-4 inline mr-2" />
-              Excel
-            </button>
+            <div className="flex gap-2 flex-shrink-0">
+              {/* View Mode Toggle */}
+              <div className="flex rounded-lg p-1" style={{ background: 'rgba(255,255,255,0.1)' }}>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    viewMode === 'table'
+                      ? 'bg-white/20 text-white shadow-sm'
+                      : 'text-white/50 hover:text-white/80'
+                  }`}
+                >
+                  <List className="w-3 h-3 inline mr-1" />
+                  Tabela
+                </button>
+                <button
+                  onClick={() => setViewMode('calendar')}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    viewMode === 'calendar'
+                      ? 'bg-white/20 text-white shadow-sm'
+                      : 'text-white/50 hover:text-white/80'
+                  }`}
+                >
+                  <CalendarDays className="w-3 h-3 inline mr-1" />
+                  Calendário
+                </button>
+              </div>
 
-            <button
-              onClick={exportToPDF}
-              className="px-4 py-2 bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-lg hover:from-rose-700 hover:to-rose-800 transition-all shadow-md"
-            >
-              <FileText className="w-4 h-4 inline mr-2" />
-              PDF
-            </button>
+              <button
+                onClick={exportData}
+                className="px-3 py-1.5 text-xs font-medium text-white rounded-lg transition-all"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
+              >
+                <Download className="w-3 h-3 inline mr-1" />
+                Excel
+              </button>
 
-            <button
-              onClick={() => openForm()}
-              className="px-4 py-2 bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white rounded-lg hover:from-[#8B2332] hover:to-[#7D1F2C] transition-all shadow-md"
-            >
-              <Plus className="w-4 h-4 inline mr-2" />
-              Nova Apresentação
-            </button>
+              <button
+                onClick={exportToPDF}
+                className="px-3 py-1.5 text-xs font-medium text-white rounded-lg transition-all"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
+              >
+                <FileText className="w-3 h-3 inline mr-1" />
+                PDF
+              </button>
+
+              <button
+                onClick={() => openForm()}
+                className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all"
+                style={{ background: 'linear-gradient(135deg, #D4AF37, #C5A028)', color: '#000' }}
+              >
+                <Plus className="w-3 h-3 inline mr-1" />
+                Nova Apresentação
+              </button>
+            </div>
           </div>
-        </div>
 
+          {/* SUBNAV - Filtros rápidos */}
+          <nav className="flex items-end gap-2 overflow-x-auto scrollbar-hide pb-0">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
+                statusFilter === 'all'
+                  ? 'border-[#D4AF37] text-white bg-white/5'
+                  : 'border-transparent text-white/35 hover:text-white/60 hover:bg-white/5'
+              }`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setStatusFilter('pendente')}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
+                statusFilter === 'pendente'
+                  ? 'border-[#D4AF37] text-white bg-white/5'
+                  : 'border-transparent text-white/35 hover:text-white/60 hover:bg-white/5'
+              }`}
+            >
+              <Clock style={{width:'12px',height:'12px'}} />
+              Pendentes
+            </button>
+            <button
+              onClick={() => setStatusFilter('pago')}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
+                statusFilter === 'pago'
+                  ? 'border-[#D4AF37] text-white bg-white/5'
+                  : 'border-transparent text-white/35 hover:text-white/60 hover:bg-white/5'
+              }`}
+            >
+              <CheckCircle style={{width:'12px',height:'12px'}} />
+              Pagos
+            </button>
+            <button
+              onClick={() => setStatusFilter('cancelado')}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
+                statusFilter === 'cancelado'
+                  ? 'border-[#D4AF37] text-white bg-white/5'
+                  : 'border-transparent text-white/35 hover:text-white/60 hover:bg-white/5'
+              }`}
+            >
+              <XCircle style={{width:'12px',height:'12px'}} />
+              Cancelados
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {/* CONTEÚDO */}
+      <div className="flex-1 px-6 lg:px-8 py-6" style={{ background: '#0d0f1a' }}>
         {error && (
-          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
+          <div className="mb-6 p-4 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5' }}>
             {error}
           </div>
         )}
@@ -977,51 +1070,51 @@ const Musicians: React.FC = () => {
         {/* Indicadores */}
         {indicadores && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
+            <div className="p-6 rounded-xl hover:scale-[1.02] transition-all" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center">
                 <div className="p-3 bg-gradient-to-br from-[#7D1F2C] to-[#601C28] rounded-lg">
                   <Music className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Apresentações Este Mês</p>
-                  <p className="text-3xl font-bold text-[#7D1F2C]">
+                  <p className="text-sm font-medium text-white/60">Apresentações Este Mês</p>
+                  <p className="text-3xl font-bold text-white">
                     {indicadores.apresentacoes_mes}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-white/40 mt-1">
                     Total: {indicadores.total_apresentacoes}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
+            <div className="p-6 rounded-xl hover:scale-[1.02] transition-all" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center">
                 <div className="p-3 bg-gradient-to-br from-[#D4AF37] to-[#C5A028] rounded-lg">
                   <DollarSign className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Valor Total Mês</p>
+                  <p className="text-sm font-medium text-white/60">Valor Total Mês</p>
                   <p className="text-3xl font-bold text-[#D4AF37]">
                     {formatCurrency(indicadores.valor_total_mes)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-white/40 mt-1">
                     Pago: {formatCurrency(indicadores.valor_pago_mes)}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all">
+            <div className="p-6 rounded-xl hover:scale-[1.02] transition-all" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center">
                 <div className="p-3 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg">
                   <Clock className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pendentes</p>
-                  <p className="text-3xl font-bold text-amber-600">
+                  <p className="text-sm font-medium text-white/60">Pendentes</p>
+                  <p className="text-3xl font-bold text-amber-400">
                     {formatCurrency(indicadores.valor_pendente_mes)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-white/40 mt-1">
                     {indicadores.musicos_ativos} músicos ativos
                   </p>
                 </div>
@@ -1031,53 +1124,42 @@ const Musicians: React.FC = () => {
         )}
 
         {/* Filtros */}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Buscar</label>
+              <label className="block text-xs font-medium text-white/60 mb-2">Buscar</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Buscar músicos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg text-sm text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
-              >
-                <option value="all">Todos os Status</option>
-                <option value="pendente">Pendente</option>
-                <option value="pago">Pago</option>
-                <option value="cancelado">Cancelado</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Data Início</label>
+              <label className="block text-xs font-medium text-white/60 mb-2">Data Início</label>
               <input
                 type="date"
                 value={dataInicio}
                 onChange={(e) => setDataInicio(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
+                className="w-full px-4 py-2 rounded-lg text-sm text-white focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Data Fim</label>
+              <label className="block text-xs font-medium text-white/60 mb-2">Data Fim</label>
               <input
                 type="date"
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]"
+                className="w-full px-4 py-2 rounded-lg text-sm text-white focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}
               />
             </div>
           </div>
@@ -1086,56 +1168,56 @@ const Musicians: React.FC = () => {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7D1F2C]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
           </div>
         ) : (
           <>
             {viewMode === 'table' ? (
-              <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+              <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-left bg-gray-50 border-b">
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <tr className="text-left border-b" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}>
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Músico/Banda
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Data/Hora
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Valor Base
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Consumo
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Adicional
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Total Final
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium text-white/50 uppercase tracking-wider">
                           Ações
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y" style={{ divideColor: 'rgba(255,255,255,0.05)' }}>
                       {filteredMusicos.map((musico) => (
-                        <tr key={musico.id} className="hover:bg-gray-50">
+                        <tr key={musico.id} className="hover:bg-white/5 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
                           <td className="px-6 py-4">
                             <div>
-                              <div className="font-medium text-gray-900">{musico.nome}</div>
+                              <div className="font-medium text-white">{musico.nome}</div>
                               {musico.contato && (
-                                <div className="text-sm text-gray-500 flex items-center">
+                                <div className="text-sm text-white/50 flex items-center">
                                   <Phone className="w-3 h-3 mr-1" />
                                   {musico.contato}
                                 </div>
                               )}
                               {musico.fornecedor_nome && (
-                                <div className="text-sm flex items-center gap-1 mt-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-full w-fit">
+                                <div className="text-sm flex items-center gap-1 mt-1 px-2 py-1 rounded-full w-fit" style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#93c5fd' }}>
                                   <Music className="w-3 h-3" />
                                   <span className="font-medium">{musico.fornecedor_nome}</span>
                                 </div>
@@ -1144,41 +1226,41 @@ const Musicians: React.FC = () => {
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <div className="text-sm text-gray-900">
+                              <div className="text-sm text-white">
                                 {musico.data_evento ? dayjs(musico.data_evento).format('DD/MM/YYYY') : '-'}
                               </div>
                               {musico.horario_inicio && musico.horario_fim && (
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-white/50">
                                   {musico.horario_inicio} - {musico.horario_fim}
                                 </div>
                               )}
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-white">
                               {formatCurrency(musico.valor || 0)}
                             </span>
                           </td>
                           <td className="px-6 py-4">
                             <span className={`font-medium ${
-                              (musico.valor_consumo || 0) > 0 ? 'text-red-600' : 'text-gray-400'
+                              (musico.valor_consumo || 0) > 0 ? 'text-rose-400' : 'text-white/30'
                             }`}>
                               {(musico.valor_consumo || 0) > 0 ? '-' : ''}{formatCurrency(musico.valor_consumo || 0)}
                             </span>
                           </td>
                           <td className="px-6 py-4">
                             <span className={`font-medium ${
-                              (musico.valor_adicional || 0) > 0 ? 'text-green-600' : 'text-gray-400'
+                              (musico.valor_adicional || 0) > 0 ? 'text-emerald-400' : 'text-white/30'
                             }`}>
                               {(musico.valor_adicional || 0) > 0 ? '+' : ''}{formatCurrency(musico.valor_adicional || 0)}
                             </span>
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <span className="font-bold text-lg text-gray-900">
+                              <span className="font-bold text-lg text-[#D4AF37]">
                                 {formatCurrency(Math.max(0, (musico.valor || 0) + (musico.valor_adicional || 0) - (musico.valor_consumo || 0)))}
                               </span>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-white/40">
                                 Base: {formatCurrency(musico.valor || 0)} + Adicional: {formatCurrency(musico.valor_adicional || 0)} - Consumo: {formatCurrency(musico.valor_consumo || 0)}
                               </div>
                             </div>
@@ -1224,9 +1306,9 @@ const Musicians: React.FC = () => {
 
                 {filteredMusicos.length === 0 && (
                   <div className="text-center py-12">
-                    <Music className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma apresentação encontrada</h3>
-                    <p className="text-gray-500">
+                    <Music className="w-16 h-16 text-white/20 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-white mb-2">Nenhuma apresentação encontrada</h3>
+                    <p className="text-white/50">
                       {searchTerm || statusFilter !== 'all'
                         ? 'Nenhuma apresentação corresponde aos filtros aplicados.'
                         : 'Nenhuma apresentação cadastrada.'}
@@ -1239,39 +1321,42 @@ const Musicians: React.FC = () => {
             )}
           </>
         )}
+      </div>
 
-        {/* Modal do Formulário */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+      {/* Modal do Formulário */}
+      {showForm && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1d2e', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+              <h3 className="text-lg font-medium text-white mb-4">
                 {editingMusico ? 'Editar Apresentação' : 'Nova Apresentação'}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Nome do Músico/Banda *
                   </label>
                   <input
                     type="text"
                     value={formData.nome}
                     onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                     required
                     placeholder="Ex: João da Silva, Banda Samba Raiz"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Contato
                   </label>
                   <input
                     type="text"
                     value={formData.contato}
                     onChange={(e) => setFormData({ ...formData, contato: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                     placeholder="Telefone ou email"
                   />
                 </div>
@@ -1315,49 +1400,52 @@ const Musicians: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Data do Evento *
                   </label>
                   <input
                     type="date"
                     value={formData.data_evento}
                     onChange={(e) => setFormData({ ...formData, data_evento: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Horário de Início
                   </label>
                   <input
                     type="time"
                     value={formData.horario_inicio}
                     onChange={(e) => setFormData({ ...formData, horario_inicio: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Horário de Fim
                   </label>
                   <input
                     type="time"
                     value={formData.horario_fim}
                     onChange={(e) => setFormData({ ...formData, horario_fim: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Valor da Apresentação *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">R$</span>
+                      <span className="text-white/60 sm:text-sm">R$</span>
                     </div>
                     <input
                       type="number"
@@ -1372,12 +1460,12 @@ const Musicians: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Desconto de Consumo
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">R$</span>
+                      <span className="text-white/60 sm:text-sm">R$</span>
                     </div>
                     <input
                       type="number"
@@ -1391,12 +1479,12 @@ const Musicians: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Adicional de Extras
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">R$</span>
+                      <span className="text-white/60 sm:text-sm">R$</span>
                     </div>
                     <input
                       type="number"
@@ -1407,19 +1495,20 @@ const Musicians: React.FC = () => {
                       className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-white/40 mt-1">
                     Ex: Extensão de tempo, repertório especial
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Status do Pagamento
                   </label>
                   <select
                     value={formData.status_pagamento}
                     onChange={(e) => setFormData({ ...formData, status_pagamento: e.target.value as any })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                   >
                     <option value="pendente">Pendente</option>
                     <option value="pago">Pago</option>
@@ -1428,56 +1517,58 @@ const Musicians: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Material Promocional
                   </label>
                   <input
                     type="text"
                     value={formData.material_promocional}
                     onChange={(e) => setFormData({ ...formData, material_promocional: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                     placeholder="Links para redes sociais, portfolio, etc."
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/80 mb-1">
                     Observações
                   </label>
                   <textarea
                     value={formData.observacoes}
                     onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#7D1F2C] focus:ring focus:ring-[#7D1F2C] focus:ring-opacity-50"
+                    className="w-full rounded-lg px-4 py-2 text-white placeholder-white/30 focus:ring-2 focus:ring-[#D4AF37] focus:outline-none"
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
                     rows={3}
                     placeholder="Observações sobre a apresentação..."
                   />
                 </div>
 
                 {/* Cálculo do Valor Total */}
-                <div className="md:col-span-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="font-medium text-blue-900 mb-2">Cálculo do Valor Total</h4>
+                <div className="md:col-span-2 p-4 rounded-lg" style={{ background: 'rgba(212, 175, 55, 0.1)', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+                  <h4 className="font-medium text-[#D4AF37] mb-2">Cálculo do Valor Total</h4>
                   <div className="grid grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-blue-700 font-medium">Valor Base:</span>
-                      <div className="text-lg font-bold text-blue-900">
+                      <span className="text-white/60 font-medium">Valor Base:</span>
+                      <div className="text-lg font-bold text-white">
                         {formatCurrency(formData.valor)}
                       </div>
                     </div>
                     <div>
-                      <span className="text-blue-700 font-medium">Consumo (-):</span>
-                      <div className="text-lg font-bold text-red-600">
+                      <span className="text-white/60 font-medium">Consumo (-):</span>
+                      <div className="text-lg font-bold text-rose-400">
                         -{formatCurrency(formData.valor_consumo)}
                       </div>
                     </div>
                     <div>
-                      <span className="text-blue-700 font-medium">Adicional (+):</span>
-                      <div className="text-lg font-bold text-green-600">
+                      <span className="text-white/60 font-medium">Adicional (+):</span>
+                      <div className="text-lg font-bold text-emerald-400">
                         +{formatCurrency(formData.valor_adicional)}
                       </div>
                     </div>
                     <div>
-                      <span className="text-blue-700 font-medium">Total Final:</span>
-                      <div className="text-lg font-bold text-blue-900">
+                      <span className="text-white/60 font-medium">Total Final:</span>
+                      <div className="text-lg font-bold text-[#D4AF37]">
                         {formatCurrency(calcularValorTotal())}
                       </div>
                     </div>
@@ -1492,14 +1583,16 @@ const Musicians: React.FC = () => {
                     setEditingMusico(null);
                     resetForm();
                   }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all"
+                  className="px-6 py-2 rounded-lg text-white/80 hover:bg-white/10 transition-all"
+                  style={{ border: '1px solid rgba(255,255,255,0.2)' }}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={loading || !formData.nome || !formData.data_evento || formData.valor <= 0}
-                  className="px-6 py-2 bg-gradient-to-r from-[#7D1F2C] to-[#601C28] text-white rounded-lg hover:from-[#8B2332] hover:to-[#7D1F2C] transition-all shadow-md disabled:opacity-50"
+                  className="px-6 py-2 rounded-lg text-black font-medium hover:scale-105 transition-all shadow-md disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #D4AF37, #C5A028)' }}
                 >
                   {loading ? 'Salvando...' : 'Salvar'}
                 </button>
@@ -1507,7 +1600,6 @@ const Musicians: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };
