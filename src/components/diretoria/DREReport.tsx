@@ -1176,7 +1176,7 @@ const DREReport: React.FC = () => {
                     .map(group => {
                       const subcategoriasConsolidadas = consolidarSubcategorias(group.subcategorias);
                       return (
-                        <div key={group.categoria_raiz_id} className="mb-4">
+                        <div key={`receita_${group.categoria_raiz_id}`} className="mb-4">
                           <div className="flex justify-between items-center py-2 px-4 bg-green-50 border-l-4 border-green-500">
                             <span className="font-bold text-white uppercase text-sm">
                               {group.categoria_raiz_nome}
@@ -1187,8 +1187,8 @@ const DREReport: React.FC = () => {
                           </div>
                           {subcategoriasConsolidadas.length > 0 && (
                             <div className="ml-4 mt-1">
-                              {subcategoriasConsolidadas.map(sub => (
-                                <div key={sub.categoria_id} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
+                              {subcategoriasConsolidadas.map((sub, idx) => (
+                                <div key={`${group.categoria_raiz_id}_${sub.categoria_id}_${idx}`} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
                                   <span className="text-white/80 text-sm">
                                     ↳ {sub.categoria_nome}
                                   </span>
@@ -1224,7 +1224,7 @@ const DREReport: React.FC = () => {
                     .map(group => {
                       const subcategoriasConsolidadas = consolidarSubcategorias(group.subcategorias);
                       return (
-                        <div key={group.categoria_raiz_id} className="mb-4">
+                        <div key={`despesa_${group.categoria_raiz_id}`} className="mb-4">
                           <div className="flex justify-between items-center py-2 px-4 bg-red-50 border-l-4 border-red-500">
                             <span className="font-bold text-white uppercase text-sm">
                               {group.categoria_raiz_nome}
@@ -1235,8 +1235,8 @@ const DREReport: React.FC = () => {
                           </div>
                           {subcategoriasConsolidadas.length > 0 && (
                             <div className="ml-4 mt-1">
-                              {subcategoriasConsolidadas.map(sub => (
-                                <div key={sub.categoria_id} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
+                              {subcategoriasConsolidadas.map((sub, idx) => (
+                                <div key={`${group.categoria_raiz_id}_${sub.categoria_id}_${idx}`} className="flex justify-between items-center py-1.5 px-4 border-l-2 border-gray-200 hover:bg-gray-50">
                                   <span className="text-white/80 text-sm">
                                     ↳ {sub.categoria_nome}
                                   </span>
