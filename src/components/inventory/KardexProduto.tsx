@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   ArrowLeft,
   Search,
   Filter,
@@ -19,7 +19,9 @@ import {
   ArrowLeftRight,
   RotateCcw,
   Warehouse,
-  Eye
+  Eye,
+  AlertCircle,
+  Info
 } from 'lucide-react';
 import { 
   LineChart,
@@ -36,6 +38,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import { ReportGenerator, exportToExcel } from '../../utils/reportGenerator';
 import dayjs from 'dayjs';
+import { buscarAlertasNegativos, buscarAuditoriaItem } from '../../services/movimentacoesService';
 
 interface ItemEstoque {
   id: string;
@@ -105,16 +108,20 @@ const KardexProduto: React.FC = () => {
   const [dadosGrafico, setDadosGrafico] = useState<MovimentacaoGrafico[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [dataInicial, setDataInicial] = useState(dayjs().subtract(3, 'month').format('YYYY-MM-DD'));
   const [dataFinal, setDataFinal] = useState(dayjs().format('YYYY-MM-DD'));
   const [tipoFilter, setTipoFilter] = useState('all');
   const [estoqueFilter, setEstoqueFilter] = useState('all');
-  
+
   // Dados para filtros
   const [estoques, setEstoques] = useState<any[]>([]);
+
+  // Alertas e auditoria
+  const [alertasAtivos, setAlertasAtivos] = useState<any[]>([]);
+  const [auditoria, setAuditoria] = useState<any[]>([]);
 
   useEffect(() => {
     fetchItensEstoque();
@@ -206,17 +213,21 @@ const KardexProduto: React.FC = () => {
       })));
       setMovimentacoes(movimentacoesProcessadas);
 
-      // Buscar saldos atuais por estoque
+      // Buscar saldos atuais por estoque (incluir negativos agora!)
       const { data: saldosData, error: saldosError } = await supabase
         .from('saldos_estoque')
         .select(`
           *,
           estoques!inner(nome)
         `)
-        .eq('item_id', itemSelecionado.id)
-        .gt('quantidade_atual', 0);
+        .eq('item_id', itemSelecionado.id);
 
       if (saldosError) throw saldosError;
+
+      // Buscar alertas ativos para este item
+      const alertasData = await buscarAlertasNegativos();
+      const alertasItem = alertasData.filter((a: any) => a.item_id === itemSelecionado.id);
+      setAlertasAtivos(alertasItem);
 
       const saldosProcessados: SaldoEstoque[] = (saldosData || []).map(saldo => ({
         estoque_id: saldo.estoque_id,
@@ -267,18 +278,15 @@ const KardexProduto: React.FC = () => {
         // Calcular novo custo médio ponderado
         custoMedioPonderado = saldoQuantidade > 0 ? saldoValor / saldoQuantidade : custoUnitario;
         
-      } else if (mov.tipo_movimentacao === 'saida' || 
+      } else if (mov.tipo_movimentacao === 'saida' ||
                 (mov.tipo_movimentacao === 'transferencia' && mov.estoque_origem_id === estoqueFilter)) {
         // Saída ou transferência do estoque filtrado
         saldoQuantidade -= quantidade;
         saldoValor -= (quantidade * custoMedioPonderado);
-        
-        // Garantir que não fique negativo
-        saldoQuantidade = Math.max(0, saldoQuantidade);
-        saldoValor = Math.max(0, saldoValor);
-        
-        custoMedioPonderado = saldoQuantidade > 0 ? saldoValor / saldoQuantidade : 0;
-        
+
+        // PERMITIR SALDO NEGATIVO - não forçar a zero
+        custoMedioPonderado = saldoQuantidade !== 0 ? saldoValor / saldoQuantidade : custoMedioPonderado;
+
       } else if (mov.tipo_movimentacao === 'ajuste') {
         // Ajuste (pode ser positivo ou negativo)
         if (quantidade > 0) {
@@ -288,10 +296,9 @@ const KardexProduto: React.FC = () => {
           saldoQuantidade += quantidade; // quantidade já é negativa em ajustes de redução
           saldoValor += custoTotal; // custoTotal já considera o sinal
         }
-        
-        saldoQuantidade = Math.max(0, saldoQuantidade);
-        saldoValor = Math.max(0, saldoValor);
-        custoMedioPonderado = saldoQuantidade > 0 ? saldoValor / saldoQuantidade : 0;
+
+        // PERMITIR SALDO NEGATIVO - não forçar a zero
+        custoMedioPonderado = saldoQuantidade !== 0 ? saldoValor / saldoQuantidade : custoMedioPonderado;
       }
 
       return {
@@ -797,6 +804,39 @@ const KardexProduto: React.FC = () => {
         </div>
       </div>
 
+      {/* Alerta de Saldos Negativos */}
+      {alertasAtivos.length > 0 && (
+        <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-lg p-6 shadow-lg">
+          <div className="flex items-start gap-4">
+            <div className="bg-red-100 p-3 rounded-full">
+              <AlertTriangle className="h-8 w-8 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-red-900 mb-1">
+                Este item tem {alertasAtivos.length} {alertasAtivos.length === 1 ? 'estoque' : 'estoques'} com saldo NEGATIVO
+              </h3>
+              <div className="space-y-2 mt-3">
+                {alertasAtivos.map((alerta: any) => (
+                  <div key={alerta.id} className="flex items-center gap-2 text-sm">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <span className="font-medium text-red-800">{alerta.estoque.nome}:</span>
+                    <span className="text-red-700">
+                      {alerta.quantidade_negativa.toFixed(2)} {itemSelecionado.unidade_medida}
+                    </span>
+                    <span className="text-red-600">
+                      (há {dayjs().diff(dayjs(alerta.data_ficou_negativo), 'day')} {dayjs().diff(dayjs(alerta.data_ficou_negativo), 'day') === 1 ? 'dia' : 'dias'})
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-red-600 mt-3">
+                Registre a entrada correspondente para regularizar o estoque.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Indicadores */}
       {indicadores && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1055,8 +1095,10 @@ const KardexProduto: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {movimentacoes.map((mov) => (
-                        <tr key={mov.id} className="hover:bg-gray-50">
+                      {movimentacoes.map((mov) => {
+                        const saldoNegativo = mov.saldo_quantidade < 0;
+                        return (
+                        <tr key={mov.id} className={`hover:bg-gray-50 ${saldoNegativo ? 'bg-red-50 border-l-4 border-red-500' : ''}`}>
                           <td className="px-4 py-3 whitespace-nowrap">
                             {dayjs(mov.data_movimentacao).format('DD/MM/YYYY')}
                           </td>
@@ -1084,7 +1126,8 @@ const KardexProduto: React.FC = () => {
                              (mov.tipo_movimentacao === 'ajuste' && mov.quantidade < 0)) 
                               ? `-${Math.abs(mov.quantidade).toFixed(3)}` : '-'}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                          <td className={`px-4 py-3 whitespace-nowrap text-sm font-bold ${saldoNegativo ? 'text-red-600' : 'text-gray-900'}`}>
+                            {saldoNegativo && <AlertTriangle className="inline h-4 w-4 mr-1" />}
                             {mov.saldo_quantidade.toFixed(3)}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm">
@@ -1093,14 +1136,15 @@ const KardexProduto: React.FC = () => {
                           <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-600">
                             {formatCurrency(mov.custo_medio_ponderado)}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">
+                          <td className={`px-4 py-3 whitespace-nowrap text-sm font-medium ${saldoNegativo ? 'text-red-600' : 'text-green-600'}`}>
                             {formatCurrency(mov.saldo_valor)}
                           </td>
                           <td className="px-4 py-3 text-sm">
                             {mov.motivo || '-'}
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

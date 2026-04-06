@@ -37,6 +37,7 @@ import ContagemEstoque from '../components/inventory/contagem/ContagemEstoque';
 import VendasDashboard from '../components/inventory/VendasDashboard';
 import ChatFinanceiroIA from '../components/financeiro/ChatFinanceiroIA';
 import InventarioConsolidado from '../components/inventory/InventarioConsolidado';
+import DashboardEstoque from '../components/inventory/DashboardEstoque';
 import { PageHeader, KPICard } from '../components/ui';
 
 interface IndicadoresEstoque {
@@ -279,6 +280,9 @@ const AdvancedInventory: React.FC = () => {
   const renderTabContent = () => {
     switch (selectedTab) {
       case 0:
+        // Dashboard Unificado com Sistema de Alertas de Negativos
+        return <DashboardEstoque />;
+      case -1:
         return (
           <div className="space-y-6" style={{ minHeight: '400px' }}>
             {/* Indicadores */}
