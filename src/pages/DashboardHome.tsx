@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { KPICard, PageHeader, SectionCard } from '../components/ui';
+import { KPICard, SectionCard } from '../components/ui';
+import { PageLayout } from '../components/layout';
 
 const COLORS = ['#7D1F2C', '#D4AF37', '#3B82F6', '#10B981'];
 
@@ -92,17 +93,20 @@ const DashboardHome: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Bem-vindo ao Ditado Popular"
-        subtitle={new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-        actions={
-          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-wine to-gold rounded-lg text-white shadow-wine">
-            <Brain className="w-5 h-5" />
-            <span className="font-sans font-semibold text-sm">IA Ativa</span>
-          </div>
-        }
-      />
+    <PageLayout
+      title="Dashboard Principal"
+      description="Visão geral do negócio em tempo real"
+      icon={BarChart3}
+      breadcrumb={['Início', 'Dashboard']}
+      variant="wine"
+      actions={
+        <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-white" style={{ background: 'rgba(255,255,255,0.15)' }}>
+          <Brain className="w-4 h-4" />
+          <span className="font-sans font-semibold text-sm">IA Ativa</span>
+        </div>
+      }
+    >
+      <div className="space-y-6">
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
@@ -232,7 +236,8 @@ const DashboardHome: React.FC = () => {
           ))}
         </div>
       </SectionCard>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

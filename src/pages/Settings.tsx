@@ -16,8 +16,10 @@ import {
   Eye,
   EyeOff,
   Save,
-  CheckCircle
+  CheckCircle,
+  Settings as SettingsIcon
 } from 'lucide-react';
+import { PageLayout } from '../components/layout';
 
 const Settings: React.FC = () => {
   const { isMaster, isAdmin } = useAuth();
@@ -98,9 +100,13 @@ const Settings: React.FC = () => {
   };
   
   return (
-    <div>
-      <h2 className="my-6 text-2xl font-semibold text-gray-700">Configurações</h2>
-      
+    <PageLayout
+      title="Configurações do Sistema"
+      description="Gerencie preferências, segurança e integrações"
+      icon={SettingsIcon}
+      breadcrumb={['Sistema', 'Configurações']}
+      variant="wine"
+    >
       <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
         <div className="md:w-64 flex-shrink-0">
@@ -598,7 +604,7 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

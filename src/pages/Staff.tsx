@@ -28,7 +28,8 @@ import { supabase } from '../lib/supabase';
 import { testConnection } from '../lib/supabase';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FuncoesRH from '../components/hr/FuncoesRH';
-import { PageHeader, KPICard, SectionCard } from '../components/ui';
+import { KPICard, SectionCard } from '../components/ui';
+import { PageLayout } from '../components/layout';
 import ColaboradoresRH from '../components/hr/ColaboradoresRH';
 import EscalasTrabalho from '../components/hr/EscalasTrabalho';
 import FeriasColaboradores from '../components/hr/FeriasColaboradores';
@@ -170,36 +171,26 @@ const Staff: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Recursos Humanos</h2>
-          <div className="flex gap-2">
-            <button
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 flex items-center gap-2"
-              onClick={() => setShowProcessarConsumo(true)}
-            >
-              <Brain className="w-4 h-4" />
-              Processar Consumo (IA)
-            </button>
-            <button
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-              onClick={() => {/* TODO: Generate report */}}
-            >
-              <FileText className="w-4 h-4 inline mr-2" />
-              Relatórios
-            </button>
-            {selectedTab === 0 && (
-              <button
-                className="px-4 py-2 bg-[#7D1F2C] text-white rounded-lg hover:bg-[#6a1a25]"
-                onClick={() => {/* TODO: Add new employee */}}
-              >
-                <Plus className="w-4 h-4 inline mr-2" />
-                Novo Colaborador
-              </button>
-            )}
-          </div>
+    <PageLayout
+      title="Recursos Humanos"
+      description="Gestão completa de colaboradores e escalas"
+      icon={Users}
+      breadcrumb={['RH', 'Gestão de Pessoas']}
+      variant="wine"
+      actions={
+        <div className="flex gap-2">
+          <button
+            className="px-4 py-2 rounded-lg text-white flex items-center gap-2 transition-all hover:scale-105"
+            style={{ background: 'rgba(255,255,255,0.15)' }}
+            onClick={() => setShowProcessarConsumo(true)}
+          >
+            <Brain className="w-4 h-4" />
+            <span className="text-sm font-semibold">Processar Consumo IA</span>
+          </button>
         </div>
+      }
+    >
+      <div className="space-y-6">
 
         {error && (
           <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
@@ -207,60 +198,36 @@ const Staff: React.FC = () => {
           </div>
         )}
 
-        {/* Summary Cards */}
         {indicadores && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-gray-500">Colaboradores Ativos</h3>
-                <Users className="w-5 h-5 text-[#7D1F2C]" />
-              </div>
-              <p className="text-2xl font-semibold mt-2 text-green-600">
-                {indicadores.colaboradores_ativos}
-              </p>
-              <p className="text-sm text-gray-600">
-                Total: {indicadores.total_colaboradores}
-              </p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-gray-500">Escalas Este Mês</h3>
-                <Calendar className="w-5 h-5 text-blue-500" />
-              </div>
-              <p className="text-2xl font-semibold mt-2 text-blue-600">
-                {indicadores.escalas_mes_atual}
-              </p>
-              <p className="text-sm text-gray-600">
-                {indicadores.setores_ativos} setores ativos
-              </p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-gray-500">Colaboradores em Férias</h3>
-                <CalendarDays className="w-5 h-5 text-purple-500" />
-              </div>
-              <p className="text-2xl font-semibold mt-2 text-purple-600">
-                {indicadores.colaboradores_ferias}
-              </p>
-              <p className="text-sm text-gray-600">
-                Atualmente
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-gray-500">Ocorrências Este Mês</h3>
-                <AlertTriangle className="w-5 h-5 text-orange-500" />
-              </div>
-              <p className="text-2xl font-semibold mt-2 text-orange-600">
-                {indicadores.ocorrencias_mes}
-              </p>
-              <p className="text-sm text-gray-600">
-                Registradas
-              </p>
-            </div>
+            <KPICard
+              label="Colaboradores Ativos"
+              value={indicadores.colaboradores_ativos}
+              format="number"
+              icon={Users}
+              subtitle={`Total: ${indicadores.total_colaboradores}`}
+            />
+            <KPICard
+              label="Escalas Este Mês"
+              value={indicadores.escalas_mes_atual}
+              format="number"
+              icon={Calendar}
+              subtitle={`${indicadores.setores_ativos} setores ativos`}
+            />
+            <KPICard
+              label="Colaboradores em Férias"
+              value={indicadores.colaboradores_ferias}
+              format="number"
+              icon={CalendarDays}
+              subtitle="Atualmente"
+            />
+            <KPICard
+              label="Ocorrências Este Mês"
+              value={indicadores.ocorrencias_mes}
+              format="number"
+              icon={AlertTriangle}
+              subtitle="Registradas"
+            />
           </div>
         )}
 
@@ -327,7 +294,7 @@ const Staff: React.FC = () => {
       {showProcessarConsumo && (
         <ProcessarConsumoExcel onClose={() => setShowProcessarConsumo(false)} />
       )}
-    </div>
+    </PageLayout>
   );
 };
 
