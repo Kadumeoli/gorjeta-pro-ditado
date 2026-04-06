@@ -168,8 +168,8 @@ const DREReport: React.FC = () => {
     setGroupedData(sortedGroups);
   };
 
-  // Função auxiliar para consolidar subcategorias por categoria_id + centro_custo_id
-  // IMPORTANTE: Mantemos a separação por centro de custo para evitar diferenças
+  // Função auxiliar para consolidar subcategorias
+  // A view já consolida por categoria (sem separar centro de custo)
   const consolidarSubcategorias = (subcategorias: DREData[]) => {
     const consolidadas = new Map<string, DREData>();
 
@@ -179,12 +179,10 @@ const DREReport: React.FC = () => {
       const isVirtualCategory = sub.categoria_nome === 'Outros' ||
                                 sub.categoria_nome === 'Lançamentos Não Classificados';
 
-      // Chave única:
-      // - Para categorias virtuais: nome + centro_custo_id
-      // - Para categorias reais: categoria_id + centro_custo_id
+      // Chave única por categoria (ignorando centro de custo)
       const key = isVirtualCategory
-        ? `${sub.categoria_nome}_${sub.centro_custo_id || 'NULL'}`
-        : `${sub.categoria_id}_${sub.centro_custo_id || 'NULL'}`;
+        ? `${sub.categoria_raiz_id}_${sub.categoria_nome}`
+        : sub.categoria_id;
 
       if (consolidadas.has(key)) {
         const existing = consolidadas.get(key)!;
@@ -195,23 +193,15 @@ const DREReport: React.FC = () => {
       }
     });
 
-    // Ordenar por nome de categoria, depois por centro de custo
+    // Ordenar por nome de categoria
     const resultado = Array.from(consolidadas.values())
-      .sort((a, b) => {
-        const cmpNome = a.categoria_nome.localeCompare(b.categoria_nome);
-        if (cmpNome !== 0) return cmpNome;
-        // Se mesmo nome, ordenar por centro de custo
-        const ccA = a.centro_custo_id || 'ZZZZ'; // NULL vai pro final
-        const ccB = b.centro_custo_id || 'ZZZZ';
-        return ccA.localeCompare(ccB);
-      });
+      .sort((a, b) => a.categoria_nome.localeCompare(b.categoria_nome));
 
     // Log detalhado da consolidação
     if (resultado.length > 0) {
       console.log('Subcategorias consolidadas:', resultado.map(r => ({
         nome: r.categoria_nome,
         id: r.categoria_id.substring(0, 8),
-        centro_custo: r.centro_custo_id?.substring(0, 8) || 'NULL',
         valor: r.valor_total.toFixed(2),
         qtd: r.quantidade_lancamentos
       })));
@@ -752,35 +742,15 @@ const DREReport: React.FC = () => {
           console.log(`Soma: R$ ${lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0).toFixed(2)}`);
         } else if (subConsolidada.categoria_nome === 'Outros') {
           // Para "Outros", buscar lançamentos diretos na categoria raiz
-          // Lançamentos com categoria_id = categoria_raiz_id e categoria_pai_id = null
           lancamentosCategoria = lancamentos.filter(l => {
-            // Deve ter categoria
             if (!l.categoria_id) return false;
-
-            // Categoria deve ser raiz (sem pai) e corresponder à categoria raiz atual
             if (l.categoria_pai_id !== null) return false;
-            if (l.categoria_id !== group.categoria_raiz_id) return false;
-
-            // Filtrar por centro de custo
-            if (subConsolidada.centro_custo_id) {
-              return l.centro_custo_id === subConsolidada.centro_custo_id;
-            } else {
-              return l.centro_custo_id === null || l.centro_custo_id === undefined;
-            }
+            return l.categoria_id === group.categoria_raiz_id;
           });
         } else {
-          // Para categorias normais, buscar por categoria_id E centro_custo_id
+          // Para categorias normais, buscar por categoria_id (todos os centros de custo)
           lancamentosCategoria = lancamentos.filter(l => {
-            // Deve ter a mesma categoria
-            if (l.categoria_id !== subConsolidada.categoria_id) return false;
-
-            // Se a subcategoria tem centro_custo_id definido, deve bater
-            if (subConsolidada.centro_custo_id) {
-              return l.centro_custo_id === subConsolidada.centro_custo_id;
-            } else {
-              // Se subcategoria não tem centro_custo_id, buscar apenas os NULL
-              return l.centro_custo_id === null || l.centro_custo_id === undefined;
-            }
+            return l.categoria_id === subConsolidada.categoria_id;
           });
         }
 
@@ -793,26 +763,6 @@ const DREReport: React.FC = () => {
         console.log(`  Diferença: R$ ${diferenca.toFixed(2)} ${diferenca > 1 ? '⚠️' : '✓'}`);
         console.log(`  Qtd esperada: ${subConsolidada.quantidade_lancamentos} | Qtd encontrada: ${lancamentosCategoria.length}`);
 
-        // Diagnóstico detalhado quando há diferença
-        if (diferenca > 1) {
-          console.log(`\n  🔍 DIAGNÓSTICO DA DIFERENÇA:`);
-          console.log(`  - Centro de custo da subcategoria: ${subConsolidada.centro_custo_id || 'NULL'}`);
-
-          // Agrupar lançamentos por centro de custo
-          const porCentro = lancamentosCategoria.reduce((acc: any, l: any) => {
-            const cc = l.centro_custo_id || 'SEM CENTRO';
-            if (!acc[cc]) acc[cc] = { qtd: 0, valor: 0 };
-            acc[cc].qtd++;
-            acc[cc].valor += Math.abs(l.valor || 0);
-            return acc;
-          }, {});
-
-          console.log(`  - Lançamentos por centro de custo:`);
-          Object.entries(porCentro).forEach(([cc, info]: [string, any]) => {
-            console.log(`    ${cc}: ${info.qtd} lançamentos = R$ ${info.valor.toFixed(2)}`);
-          });
-        }
-
         if (lancamentosCategoria.length > 0) {
           // Verificar se precisa de nova página
           const pageHeight = reportGenerator.pdf.internal.pageSize.getHeight();
@@ -823,19 +773,8 @@ const DREReport: React.FC = () => {
             currentY = 20;
           }
 
-          // Adicionar centro de custo no título se existir
-          let nomeSeccao = subConsolidada.categoria_nome;
-
-          // Buscar nome do centro de custo se houver
-          if (subConsolidada.centro_custo_id) {
-            const centroCusto = costCenters.find(cc => cc.id === subConsolidada.centro_custo_id);
-            if (centroCusto) {
-              nomeSeccao += ` - ${centroCusto.nome}`;
-            }
-          } else if (lancamentosCategoria.some(l => l.centro_custo_id)) {
-            // Se a subcategoria é NULL mas há lançamentos com centro, indicar
-            nomeSeccao += ' - SEM CENTRO DE CUSTO';
-          }
+          // Título da seção
+          const nomeSeccao = subConsolidada.categoria_nome;
 
           // Adicionar aviso se houver discrepância
           let subtitulo = `Subtotal: ${formatCurrency(Math.abs(subConsolidada.valor_total))} | ${subConsolidada.quantidade_lancamentos} lançamento(s)`;
@@ -868,26 +807,15 @@ const DREReport: React.FC = () => {
             reportGenerator.pdf.setFontSize(8);
             reportGenerator.pdf.setTextColor(180, 0, 0);
 
-            // Descobrir o motivo da diferença
-            const lancamentosSemCentro = lancamentosCategoria.filter(l => !l.centro_custo_id).length;
-            const totalSemCentro = lancamentosCategoria
-              .filter(l => !l.centro_custo_id)
-              .reduce((sum, l) => sum + Math.abs(l.valor || 0), 0);
-
-            let explicacao = `Diferença de ${formatCurrency(diferenca)}`;
-            if (lancamentosSemCentro > 0) {
-              explicacao += ` | ${lancamentosSemCentro} lançamento(s) sem centro de custo (${formatCurrency(totalSemCentro)})`;
-            }
-
             reportGenerator.pdf.text(
-              `⚠️ ${explicacao}`,
+              `⚠️ Diferença de ${formatCurrency(diferenca)} entre view e lançamentos`,
               15,
               currentY
             );
             currentY += 4;
             reportGenerator.pdf.setFontSize(7);
             reportGenerator.pdf.text(
-              'Possível causa: Lançamentos agregados por múltiplos centros de custo na view consolidada.',
+              'Verifique se todos os lançamentos desta categoria estão corretos.',
               15,
               currentY
             );
