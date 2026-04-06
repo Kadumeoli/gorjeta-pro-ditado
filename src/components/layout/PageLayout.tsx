@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { ChevronRight, Video as LucideIcon } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
 
