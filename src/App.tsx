@@ -30,6 +30,7 @@ const ZigVendasSync       = lazy(() => import('./pages/ZigVendasSync'));
 const ZigRecebimentos     = lazy(() => import('./pages/ZigRecebimentos'));
 const ListaCompras        = lazy(() => import('./pages/ListaCompras'));
 const ContagemMobile      = lazy(() => import('./components/inventory/contagem/ContagemMobile'));
+const DRESimplificado     = lazy(() => import('./pages/DRESimplificado'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -124,6 +125,7 @@ function AppContent() {
                 <Route path="/zig-vendas"          element={<ProtectedRoute moduloSlug="estoque">       <ZigVendasSync />       </ProtectedRoute>} />
                 <Route path="/zig-recebimentos"    element={<ProtectedRoute moduloSlug="financeiro">    <ZigRecebimentos />     </ProtectedRoute>} />
                 <Route path="/lista-compras"       element={<ProtectedRoute moduloSlug="estoque">       <ListaCompras />        </ProtectedRoute>} />
+                <Route path="/dre-simplificado"    element={<ProtectedRoute moduloSlug="financeiro">    <DRESimplificado />     </ProtectedRoute>} />
                 <Route path="/manual"              element={<ManualUsuario />} />
                 <Route path="/settings"            element={<ProtectedRoute moduloSlug="configuracoes"> <Settings />            </ProtectedRoute>} />
                 <Route path="*" element={

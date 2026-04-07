@@ -51,6 +51,7 @@ const MODULES: Module[] = [
       { name: 'Visão Estratégica',        path: '/visao-estrategica' },
       { name: 'Entradas Previsto x Real', path: '/entradas' },
       { name: 'ZIG Recebimentos',         path: '/zig-recebimentos' },
+      { name: 'DRE Simplificado',         path: '/dre-simplificado' },
     ],
   },
   { name: 'Estoque',        path: '/advanced-inventory', icon: Warehouse,     slug: 'estoque',         group: 'gestao',
