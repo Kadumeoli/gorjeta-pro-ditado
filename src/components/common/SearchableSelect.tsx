@@ -127,9 +127,9 @@ export function SearchableSelect({
   return (
     <div className={className}>
       {label && (
-        <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-white/80'}`}>
+        <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
           {label}
-          {required && <span className="text-red-400 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
 
@@ -151,19 +151,19 @@ export function SearchableSelect({
         >
           <Search className={`w-4 h-4 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
 
-          <span className={`flex-1 truncate ${selectedOption ? (isDark ? 'text-white' : 'text-white') : 'text-gray-400'}`}>
+          <span className={`flex-1 truncate ${selectedOption ? (isDark ? 'text-white' : 'text-gray-900') : 'text-gray-400'}`}>
             {selectedOption?.label || placeholder}
           </span>
 
           <div className="flex items-center gap-2 flex-shrink-0">
             {value && !disabled && (
               <X
-                className={`w-4 h-4 transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-400 hover:text-white/80'}`}
+                className={`w-4 h-4 transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                 onClick={handleClear}
               />
             )}
             <ChevronDown
-              className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             />
           </div>
         </button>
@@ -187,7 +187,7 @@ export function SearchableSelect({
                   className={`w-full pl-10 pr-3 py-2.5 border-2 rounded-lg text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 ${
                     isDark
                       ? 'bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500'
-                      : 'bg-white border-gray-300 text-white focus:ring-[#7D1F2C] focus:border-[#7D1F2C]'
+                      : 'bg-white border-gray-300 text-gray-900 focus:ring-[#7D1F2C] focus:border-[#7D1F2C]'
                   }`}
                 />
               </div>
@@ -212,7 +212,7 @@ export function SearchableSelect({
                       transition-all duration-150
                       ${highlightedIndex === index
                         ? isDark ? 'bg-blue-600 text-white border-blue-700' : 'bg-[#7D1F2C] text-white border-[#6a1a25]'
-                        : isDark ? 'text-gray-300 hover:bg-gray-700 border-gray-700' : 'text-white hover:bg-gray-50 border-gray-100'
+                        : isDark ? 'text-gray-300 hover:bg-gray-700 border-gray-700' : 'text-gray-900 hover:bg-gray-50 border-gray-100'
                       }
                       ${option.value === value ? isDark ? 'bg-blue-600/30 font-semibold' : 'bg-[#7D1F2C]/20 font-semibold' : ''}
                     `}
@@ -220,7 +220,7 @@ export function SearchableSelect({
                     <div className="flex flex-col">
                       <span className="font-medium">{option.label}</span>
                       {option.sublabel && (
-                        <span className={`text-xs mt-0.5 ${highlightedIndex === index ? isDark ? 'text-blue-100' : 'text-white/90' : 'text-gray-500'}`}>
+                        <span className={`text-xs mt-0.5 ${highlightedIndex === index ? isDark ? 'text-blue-100' : 'text-white/90' : 'text-gray-600'}`}>
                           {option.sublabel}
                         </span>
                       )}

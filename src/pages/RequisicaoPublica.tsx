@@ -78,31 +78,38 @@ export default function RequisicaoPublica() {
     if (!estoqueOrigemId) return;
 
     try {
+      // Buscar todos os itens ativos
+      const { data: itens } = await supabase
+        .from('itens_estoque')
+        .select('id, nome, unidade_medida')
+        .eq('status', 'ativo')
+        .order('nome');
+
+      if (!itens) {
+        setItensDisponiveis([]);
+        return;
+      }
+
+      // Buscar saldos do estoque
       const { data: saldos } = await supabase
         .from('saldos_estoque')
-        .select(`
-          item_id,
-          quantidade_atual,
-          itens_estoque!inner(
-            id,
-            nome,
-            unidade_medida,
-            status
-          )
-        `)
-        .eq('estoque_id', estoqueOrigemId)
-        .gt('quantidade_atual', 0);
+        .select('item_id, quantidade_atual')
+        .eq('estoque_id', estoqueOrigemId);
 
-      if (saldos) {
-        const itensComSaldo = saldos.map(saldo => ({
-          id: saldo.itens_estoque.id,
-          nome: saldo.itens_estoque.nome,
-          unidade_medida: saldo.itens_estoque.unidade_medida,
-          quantidade_disponivel: saldo.quantidade_atual
-        }));
+      // Criar mapa de saldos
+      const saldosMap = new Map(
+        saldos?.map(s => [s.item_id, s.quantidade_atual]) || []
+      );
 
-        setItensDisponiveis(itensComSaldo);
-      }
+      // Combinar itens com saldos (mesmo que seja zero ou inexistente)
+      const itensComSaldo = itens.map(item => ({
+        id: item.id,
+        nome: item.nome,
+        unidade_medida: item.unidade_medida,
+        quantidade_disponivel: saldosMap.get(item.id) || 0
+      }));
+
+      setItensDisponiveis(itensComSaldo);
     } catch (error) {
       console.error('Erro ao carregar itens:', error);
     }
