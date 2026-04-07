@@ -3,7 +3,7 @@ import { Tab } from '@headlessui/react';
 import { Plus, Search, Filter, CreditCard as Edit, Trash2, Download, Building2, Users, CreditCard, Tag, Banknote, Building, Eye, EyeOff, FileText, CheckCircle, XCircle, Settings, BarChart3, Vault } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import FinancialCategories from '../components/financeiro/FinancialCategories';
-import DREReport from '../components/diretoria/DREReport';
+import DRESimplificado from '../components/diretoria/DRESimplificado';
 import { PageHeader } from '../components/ui';
 
 interface CostCenter {
@@ -798,7 +798,7 @@ const GeneralRegistrations: React.FC = () => {
                   {index === 3 ? (
                     <FinancialCategories />
                   ) : index === 6 ? (
-                    <DREReport />
+                    <DRESimplificado />
                   ) : (
                     <div className="text-center py-8">
                       <p className="text-gray-500">Conteúdo em desenvolvimento</p>
@@ -813,7 +813,7 @@ const GeneralRegistrations: React.FC = () => {
     );
   }
 
-  // If DRE Report tab is selected, render the DREReport component
+  // If DRE Report tab is selected, render the DRESimplificado component
   if (selectedTab === 6) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -850,7 +850,7 @@ const GeneralRegistrations: React.FC = () => {
                   {index === 3 ? (
                     <FinancialCategories />
                   ) : index === 6 ? (
-                    <DREReport />
+                    <DRESimplificado />
                   ) : (
                     <div className="text-center py-8">
                       <p className="text-gray-500">Conteúdo em desenvolvimento</p>
@@ -924,7 +924,7 @@ const GeneralRegistrations: React.FC = () => {
                 {index === 3 ? (
                   <FinancialCategories />
                 ) : index === 6 ? (
-                  <DREReport />
+                  <DRESimplificado />
                 ) : (
                   <>
                     {/* Filters */}
