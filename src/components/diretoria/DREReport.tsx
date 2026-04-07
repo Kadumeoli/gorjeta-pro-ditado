@@ -357,34 +357,56 @@ export default function DREReport() {
       console.log('✅ Entrando no modo DETALHADO');
       console.log('📋 Processando', lancamentos.length, 'lançamentos');
 
-      // Agrupar lançamentos por tipo (receita/despesa) e categoria
-      const lancamentosPorCategoria = lancamentos.reduce((acc, l) => {
+      // Estrutura hierárquica: tipo -> categoria principal -> subcategorias -> lançamentos
+      const estruturaHierarquica = lancamentos.reduce((acc, l) => {
         // Converter tipo: entrada = receita, saida = despesa
         const tipoLancamento = l.tipo === 'entrada' ? 'receita' : 'despesa';
         const categoriaPrincipal = l.categoria?.categoria_pai?.nome || l.categoria?.nome || 'SEM CATEGORIA';
         const subcategoria = l.categoria?.categoria_pai?.nome ? l.categoria.nome : null;
-        const chave = `${tipoLancamento}_${categoriaPrincipal}${subcategoria ? `_${subcategoria}` : ''}`;
 
-        if (!acc[chave]) {
-          acc[chave] = {
-            tipo: tipoLancamento,
-            categoriaPrincipal,
-            subcategoria,
+        // Criar estrutura se não existir
+        if (!acc[tipoLancamento]) {
+          acc[tipoLancamento] = {};
+        }
+        if (!acc[tipoLancamento][categoriaPrincipal]) {
+          acc[tipoLancamento][categoriaPrincipal] = {};
+        }
+
+        const nomeSubcategoria = subcategoria || '_sem_subcategoria';
+        if (!acc[tipoLancamento][categoriaPrincipal][nomeSubcategoria]) {
+          acc[tipoLancamento][categoriaPrincipal][nomeSubcategoria] = {
+            nome: subcategoria,
             lancamentos: []
           };
         }
-        acc[chave].lancamentos.push(l);
+
+        acc[tipoLancamento][categoriaPrincipal][nomeSubcategoria].lancamentos.push(l);
         return acc;
       }, {} as Record<string, any>);
 
-      console.log('🔢 Grupos criados:', Object.keys(lancamentosPorCategoria).length);
+      // Converter estrutura para arrays ordenados
+      const receitasDetalhadas = estruturaHierarquica.receita
+        ? Object.entries(estruturaHierarquica.receita)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([categoriaPrincipal, subcategorias]) => ({
+              categoriaPrincipal,
+              subcategorias: Object.values(subcategorias as Record<string, any>)
+                .sort((a, b) => (a.nome || '').localeCompare(b.nome || ''))
+            }))
+        : [];
 
-      // Separar receitas e despesas
-      const receitasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'receita');
-      const despesasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'despesa');
+      const despesasDetalhadas = estruturaHierarquica.despesa
+        ? Object.entries(estruturaHierarquica.despesa)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([categoriaPrincipal, subcategorias]) => ({
+              categoriaPrincipal,
+              subcategorias: Object.values(subcategorias as Record<string, any>)
+                .sort((a, b) => (a.nome || '').localeCompare(b.nome || ''))
+            }))
+        : [];
 
-      console.log('💰 Grupos de receitas:', receitasDetalhadas.length);
-      console.log('💸 Grupos de despesas:', despesasDetalhadas.length);
+      console.log('💰 Categorias de receitas:', receitasDetalhadas.length);
+      console.log('💸 Categorias de despesas:', despesasDetalhadas.length);
 
       // Adicionar lançamentos de RECEITAS
       if (receitasDetalhadas.length > 0) {
@@ -397,8 +419,9 @@ export default function DREReport() {
         doc.text('LANÇAMENTOS DE RECEITAS', margin, yPos);
         yPos += 10;
 
-        receitasDetalhadas.forEach(grupo => {
-          console.log(`  - ${grupo.categoriaPrincipal}${grupo.subcategoria ? ' > ' + grupo.subcategoria : ''}: ${grupo.lancamentos.length} lançamentos`);
+        receitasDetalhadas.forEach(categoria => {
+          console.log(`  📁 ${categoria.categoriaPrincipal} (${categoria.subcategorias.length} subcategorias)`);
+
           // Verifica se precisa adicionar nova página
           if (yPos > 270) {
             doc.addPage();
@@ -406,39 +429,49 @@ export default function DREReport() {
           }
 
           // Categoria principal
-          doc.setFontSize(12);
+          doc.setFontSize(13);
           doc.setFont('helvetica', 'bold');
           doc.setTextColor(0, 0, 0);
-          doc.text(grupo.categoriaPrincipal, margin, yPos);
-          yPos += 7;
+          doc.text(categoria.categoriaPrincipal, margin, yPos);
+          yPos += 8;
 
-          // Subcategoria (se existir)
-          if (grupo.subcategoria) {
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(60, 60, 60);
-            doc.text(`  ${grupo.subcategoria}`, margin + 5, yPos);
-            yPos += 6;
-          }
-
-          // Lançamentos
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor(80, 80, 80);
-
-          grupo.lancamentos.forEach((l: Lancamento) => {
-            if (yPos > 280) {
-              doc.addPage();
-              yPos = 20;
+          // Iterar por todas as subcategorias
+          categoria.subcategorias.forEach((sub: any) => {
+            // Subcategoria (se existir)
+            if (sub.nome) {
+              if (yPos > 270) {
+                doc.addPage();
+                yPos = 20;
+              }
+              doc.setFontSize(11);
+              doc.setFont('helvetica', 'bold');
+              doc.setTextColor(60, 60, 60);
+              doc.text(`  ${sub.nome}`, margin + 5, yPos);
+              yPos += 6;
+              console.log(`    📂 ${sub.nome} (${sub.lancamentos.length} lançamentos)`);
             }
 
-            const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
-            const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+            // Lançamentos
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
 
-            doc.text(`    ${data}`, margin + 10, yPos);
-            doc.text(descricao, margin + 35, yPos);
-            doc.text(formatCurrency(l.valor), pageWidth - margin, yPos, { align: 'right' });
-            yPos += 5;
+            sub.lancamentos.forEach((l: Lancamento) => {
+              if (yPos > 280) {
+                doc.addPage();
+                yPos = 20;
+              }
+
+              const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
+              const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+
+              doc.text(`    ${data}`, margin + 10, yPos);
+              doc.text(descricao, margin + 35, yPos);
+              doc.text(formatCurrency(l.valor), pageWidth - margin, yPos, { align: 'right' });
+              yPos += 5;
+            });
+
+            yPos += 2;
           });
 
           yPos += 3;
@@ -456,8 +489,9 @@ export default function DREReport() {
         doc.text('LANÇAMENTOS DE DESPESAS', margin, yPos);
         yPos += 10;
 
-        despesasDetalhadas.forEach(grupo => {
-          console.log(`  - ${grupo.categoriaPrincipal}${grupo.subcategoria ? ' > ' + grupo.subcategoria : ''}: ${grupo.lancamentos.length} lançamentos`);
+        despesasDetalhadas.forEach(categoria => {
+          console.log(`  📁 ${categoria.categoriaPrincipal} (${categoria.subcategorias.length} subcategorias)`);
+
           // Verifica se precisa adicionar nova página
           if (yPos > 270) {
             doc.addPage();
@@ -465,39 +499,49 @@ export default function DREReport() {
           }
 
           // Categoria principal
-          doc.setFontSize(12);
+          doc.setFontSize(13);
           doc.setFont('helvetica', 'bold');
           doc.setTextColor(0, 0, 0);
-          doc.text(grupo.categoriaPrincipal, margin, yPos);
-          yPos += 7;
+          doc.text(categoria.categoriaPrincipal, margin, yPos);
+          yPos += 8;
 
-          // Subcategoria (se existir)
-          if (grupo.subcategoria) {
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(60, 60, 60);
-            doc.text(`  ${grupo.subcategoria}`, margin + 5, yPos);
-            yPos += 6;
-          }
-
-          // Lançamentos
-          doc.setFontSize(9);
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor(80, 80, 80);
-
-          grupo.lancamentos.forEach((l: Lancamento) => {
-            if (yPos > 280) {
-              doc.addPage();
-              yPos = 20;
+          // Iterar por todas as subcategorias
+          categoria.subcategorias.forEach((sub: any) => {
+            // Subcategoria (se existir)
+            if (sub.nome) {
+              if (yPos > 270) {
+                doc.addPage();
+                yPos = 20;
+              }
+              doc.setFontSize(11);
+              doc.setFont('helvetica', 'bold');
+              doc.setTextColor(60, 60, 60);
+              doc.text(`  ${sub.nome}`, margin + 5, yPos);
+              yPos += 6;
+              console.log(`    📂 ${sub.nome} (${sub.lancamentos.length} lançamentos)`);
             }
 
-            const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
-            const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+            // Lançamentos
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
 
-            doc.text(`    ${data}`, margin + 10, yPos);
-            doc.text(descricao, margin + 35, yPos);
-            doc.text(formatCurrency(l.valor), pageWidth - margin, yPos, { align: 'right' });
-            yPos += 5;
+            sub.lancamentos.forEach((l: Lancamento) => {
+              if (yPos > 280) {
+                doc.addPage();
+                yPos = 20;
+              }
+
+              const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
+              const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+
+              doc.text(`    ${data}`, margin + 10, yPos);
+              doc.text(descricao, margin + 35, yPos);
+              doc.text(formatCurrency(Math.abs(l.valor)), pageWidth - margin, yPos, { align: 'right' });
+              yPos += 5;
+            });
+
+            yPos += 2;
           });
 
           yPos += 3;
