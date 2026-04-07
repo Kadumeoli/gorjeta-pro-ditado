@@ -256,6 +256,9 @@ export default function DREReport() {
     const receitas = consolidarPorCategoria('receita');
     const despesas = consolidarPorCategoria('despesa');
 
+    console.log('🎯 Gerando PDF - Modo:', modo);
+    console.log('📊 Total de lançamentos:', lancamentos.length);
+
     let yPos = 20;
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20;
@@ -351,15 +354,20 @@ export default function DREReport() {
 
     // Modo detalhado: adicionar todos os lançamentos agrupados por categoria
     if (modo === 'detalhado') {
+      console.log('✅ Entrando no modo DETALHADO');
+      console.log('📋 Processando', lancamentos.length, 'lançamentos');
+
       // Agrupar lançamentos por tipo (receita/despesa) e categoria
       const lancamentosPorCategoria = lancamentos.reduce((acc, l) => {
+        // Converter tipo: entrada = receita, saida = despesa
+        const tipoLancamento = l.tipo === 'entrada' ? 'receita' : 'despesa';
         const categoriaPrincipal = l.categoria?.categoria_pai?.nome || l.categoria?.nome || 'SEM CATEGORIA';
         const subcategoria = l.categoria?.categoria_pai?.nome ? l.categoria.nome : null;
-        const chave = `${l.tipo}_${categoriaPrincipal}${subcategoria ? `_${subcategoria}` : ''}`;
+        const chave = `${tipoLancamento}_${categoriaPrincipal}${subcategoria ? `_${subcategoria}` : ''}`;
 
         if (!acc[chave]) {
           acc[chave] = {
-            tipo: l.tipo,
+            tipo: tipoLancamento,
             categoriaPrincipal,
             subcategoria,
             lancamentos: []
@@ -369,12 +377,18 @@ export default function DREReport() {
         return acc;
       }, {} as Record<string, any>);
 
+      console.log('🔢 Grupos criados:', Object.keys(lancamentosPorCategoria).length);
+
       // Separar receitas e despesas
       const receitasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'receita');
       const despesasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'despesa');
 
+      console.log('💰 Grupos de receitas:', receitasDetalhadas.length);
+      console.log('💸 Grupos de despesas:', despesasDetalhadas.length);
+
       // Adicionar lançamentos de RECEITAS
       if (receitasDetalhadas.length > 0) {
+        console.log('📄 Adicionando página de RECEITAS');
         doc.addPage();
         yPos = 20;
         doc.setFontSize(16);
@@ -384,6 +398,7 @@ export default function DREReport() {
         yPos += 10;
 
         receitasDetalhadas.forEach(grupo => {
+          console.log(`  - ${grupo.categoriaPrincipal}${grupo.subcategoria ? ' > ' + grupo.subcategoria : ''}: ${grupo.lancamentos.length} lançamentos`);
           // Verifica se precisa adicionar nova página
           if (yPos > 270) {
             doc.addPage();
@@ -432,6 +447,7 @@ export default function DREReport() {
 
       // Adicionar lançamentos de DESPESAS
       if (despesasDetalhadas.length > 0) {
+        console.log('📄 Adicionando página de DESPESAS');
         doc.addPage();
         yPos = 20;
         doc.setFontSize(16);
@@ -441,6 +457,7 @@ export default function DREReport() {
         yPos += 10;
 
         despesasDetalhadas.forEach(grupo => {
+          console.log(`  - ${grupo.categoriaPrincipal}${grupo.subcategoria ? ' > ' + grupo.subcategoria : ''}: ${grupo.lancamentos.length} lançamentos`);
           // Verifica se precisa adicionar nova página
           if (yPos > 270) {
             doc.addPage();
