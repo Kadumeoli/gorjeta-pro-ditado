@@ -110,24 +110,9 @@ export default function DREReport() {
       let hasMore = true;
 
       while (hasMore) {
-        const { data, error, count } = await supabase
+        const { data, error } = await supabase
           .from('fluxo_caixa')
-          .select(`
-            id,
-            data,
-            descricao,
-            valor,
-            tipo,
-            categoria_id,
-            centro_custo_id,
-            origem,
-            categorias_financeiras!categoria_id (
-              nome,
-              categoria_pai:categorias_financeiras!categoria_pai_id (
-                nome
-              )
-            )
-          `, { count: 'exact' })
+          .select('*')
           .neq('origem', 'transferencia')
           .gte('data', startDate)
           .lte('data', endDate)
@@ -138,20 +123,7 @@ export default function DREReport() {
         if (error) throw error;
 
         if (data && data.length > 0) {
-          // Transformar o resultado
-          const transformedData = data.map((item: any) => ({
-            id: item.id,
-            data: item.data,
-            descricao: item.descricao,
-            valor: item.valor,
-            tipo: item.tipo,
-            categoria_id: item.categoria_id,
-            centro_custo_id: item.centro_custo_id,
-            origem: item.origem,
-            categoria: item.categorias_financeiras
-          }));
-
-          allLancamentos = [...allLancamentos, ...transformedData];
+          allLancamentos = [...allLancamentos, ...data];
           console.log(`📦 Lote ${Math.floor(from / batchSize) + 1}: ${data.length} lançamentos (Total: ${allLancamentos.length})`);
 
           if (data.length < batchSize) {
@@ -161,6 +133,55 @@ export default function DREReport() {
           }
         } else {
           hasMore = false;
+        }
+      }
+
+      // Buscar categorias para enriquecer os dados
+      if (allLancamentos.length > 0) {
+        const categoriaIds = [...new Set(allLancamentos.map(l => l.categoria_id).filter(Boolean))];
+
+        if (categoriaIds.length > 0) {
+          const { data: categorias } = await supabase
+            .from('categorias_financeiras')
+            .select('id, nome, categoria_pai_id')
+            .in('id', categoriaIds);
+
+          if (categorias) {
+            const categoriasMap = new Map(categorias.map(c => [c.id, c]));
+
+            // Buscar categorias pai
+            const paiIds = [...new Set(categorias.map(c => c.categoria_pai_id).filter(Boolean))];
+            let paiMap = new Map();
+
+            if (paiIds.length > 0) {
+              const { data: pais } = await supabase
+                .from('categorias_financeiras')
+                .select('id, nome')
+                .in('id', paiIds);
+
+              if (pais) {
+                paiMap = new Map(pais.map(p => [p.id, p]));
+              }
+            }
+
+            // Enriquecer lançamentos com categorias
+            allLancamentos = allLancamentos.map(l => {
+              if (l.categoria_id) {
+                const cat = categoriasMap.get(l.categoria_id);
+                if (cat) {
+                  const pai = cat.categoria_pai_id ? paiMap.get(cat.categoria_pai_id) : null;
+                  return {
+                    ...l,
+                    categoria: {
+                      nome: cat.nome,
+                      categoria_pai: pai ? { nome: pai.nome } : undefined
+                    }
+                  };
+                }
+              }
+              return l;
+            });
+          }
         }
       }
 
