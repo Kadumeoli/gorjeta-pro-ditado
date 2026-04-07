@@ -471,7 +471,18 @@ export default function DREReport() {
               yPos += 5;
             });
 
-            yPos += 2;
+            // Total da subcategoria
+            const totalSubcategoria = sub.lancamentos.reduce((sum: number, l: Lancamento) => sum + l.valor, 0);
+            if (yPos > 280) {
+              doc.addPage();
+              yPos = 20;
+            }
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(5, 150, 105);
+            doc.text(`  Subtotal ${sub.nome || categoria.categoriaPrincipal}:`, margin + 10, yPos);
+            doc.text(formatCurrency(totalSubcategoria), pageWidth - margin, yPos, { align: 'right' });
+            yPos += 6;
           });
 
           yPos += 3;
@@ -541,7 +552,18 @@ export default function DREReport() {
               yPos += 5;
             });
 
-            yPos += 2;
+            // Total da subcategoria
+            const totalSubcategoria = sub.lancamentos.reduce((sum: number, l: Lancamento) => sum + Math.abs(l.valor), 0);
+            if (yPos > 280) {
+              doc.addPage();
+              yPos = 20;
+            }
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(220, 38, 38);
+            doc.text(`  Subtotal ${sub.nome || categoria.categoriaPrincipal}:`, margin + 10, yPos);
+            doc.text(formatCurrency(totalSubcategoria), pageWidth - margin, yPos, { align: 'right' });
+            yPos += 6;
           });
 
           yPos += 3;
