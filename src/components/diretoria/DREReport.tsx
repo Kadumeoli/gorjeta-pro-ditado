@@ -138,6 +138,8 @@ const DREReport: React.FC = () => {
   const groupDREData = () => {
     const groups: { [key: string]: DREGroup } = {};
 
+    console.log('📊 Iniciando agrupamento do DRE com', dreData.length, 'registros');
+
     dreData.forEach(item => {
       const key = `${item.categoria_raiz_id}_${item.tipo}`;
 
@@ -155,6 +157,7 @@ const DREReport: React.FC = () => {
       groups[key].total += item.valor_total;
 
       // Adicionar subcategorias para exibição detalhada
+      // A view retorna nivel >= 1 para subcategorias
       if (item.nivel > 0) {
         groups[key].subcategorias.push(item);
       }
@@ -167,47 +170,40 @@ const DREReport: React.FC = () => {
       return a.categoria_raiz_nome.localeCompare(b.categoria_raiz_nome);
     });
 
+    console.log('📊 Resultado do agrupamento:', {
+      totalGrupos: sortedGroups.length,
+      receitas: sortedGroups.filter(g => g.tipo === 'receita').map(g => ({
+        nome: g.categoria_raiz_nome,
+        total: g.total,
+        subcategorias: g.subcategorias.length
+      })),
+      despesas: sortedGroups.filter(g => g.tipo === 'despesa').map(g => ({
+        nome: g.categoria_raiz_nome,
+        total: g.total,
+        subcategorias: g.subcategorias.length
+      }))
+    });
+
     setGroupedData(sortedGroups);
   };
 
   // Função auxiliar para consolidar subcategorias
   // A view já consolida por categoria (sem separar centro de custo)
   const consolidarSubcategorias = (subcategorias: DREData[]) => {
-    const consolidadas = new Map<string, DREData>();
+    console.log('🔄 Consolidando subcategorias. Total recebido:', subcategorias.length);
 
-    subcategorias.forEach(sub => {
-      // Para "Outros" e "Lançamentos Não Classificados", usar o nome como chave
-      // porque a view gera UUIDs aleatórios para essas categorias virtuais
-      const isVirtualCategory = sub.categoria_nome === 'Outros' ||
-                                sub.categoria_nome === 'Lançamentos Não Classificados';
-
-      // Chave única por categoria (ignorando centro de custo)
-      const key = isVirtualCategory
-        ? `${sub.categoria_raiz_id}_${sub.categoria_nome}`
-        : sub.categoria_id;
-
-      if (consolidadas.has(key)) {
-        const existing = consolidadas.get(key)!;
-        existing.valor_total += sub.valor_total;
-        existing.quantidade_lancamentos += sub.quantidade_lancamentos;
-      } else {
-        consolidadas.set(key, { ...sub });
-      }
-    });
-
-    // Ordenar por nome de categoria
-    const resultado = Array.from(consolidadas.values())
+    // A view JÁ retorna dados consolidados (1 registro por categoria)
+    // Então apenas ordenamos por nome
+    const resultado = [...subcategorias]
       .sort((a, b) => a.categoria_nome.localeCompare(b.categoria_nome));
 
-    // Log detalhado da consolidação
-    if (resultado.length > 0) {
-      console.log('Subcategorias consolidadas:', resultado.map(r => ({
-        nome: r.categoria_nome,
-        id: r.categoria_id.substring(0, 8),
-        valor: r.valor_total.toFixed(2),
-        qtd: r.quantidade_lancamentos
-      })));
-    }
+    console.log('✅ Subcategorias após consolidação:', resultado.map(r => ({
+      nome: r.categoria_nome,
+      id: r.categoria_id.substring(0, 8),
+      valor: r.valor_total.toFixed(2),
+      qtd: r.quantidade_lancamentos,
+      nivel: r.nivel
+    })));
 
     return resultado;
   };
