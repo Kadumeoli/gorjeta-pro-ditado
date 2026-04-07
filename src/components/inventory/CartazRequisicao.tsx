@@ -1,5 +1,6 @@
 import React from 'react';
 import { Package, Smartphone, CheckCircle, Clock } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function CartazRequisicao() {
   const linkRequisicao = window.location.origin + '/requisicao-estoque';
@@ -38,17 +39,15 @@ export default function CartazRequisicao() {
           </p>
         </div>
 
-        {/* QR Code - você pode usar uma biblioteca como qrcode.react */}
+        {/* QR Code */}
         <div className="flex flex-col items-center mb-10 p-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
           <div className="bg-white p-6 rounded-xl shadow-lg mb-4">
-            <div className="w-64 h-64 flex items-center justify-center border-4 border-dashed border-gray-300">
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-2">QR Code</p>
-                <p className="text-xs text-gray-400">
-                  Use uma biblioteca como<br />qrcode.react para gerar
-                </p>
-              </div>
-            </div>
+            <QRCodeSVG
+              value={linkRequisicao}
+              size={256}
+              level="H"
+              includeMargin={true}
+            />
           </div>
           <p className="text-lg font-medium text-gray-700 mb-2">
             Aponte a câmera do celular para o QR Code

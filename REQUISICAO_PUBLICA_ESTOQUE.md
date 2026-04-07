@@ -2,110 +2,124 @@
 
 ## Visão Geral
 
-Sistema que permite colaboradores solicitarem materiais do estoque através de um link público, sem necessidade de login, facilitando e agilizando o processo de requisição interna.
-
-## Como Funciona
-
-### Para o Colaborador
-
-1. **Acesse o link público**: `https://seu-dominio.com/requisicao-estoque`
-
-2. **Preencha seus dados**:
-   - Nome completo
-   - WhatsApp para contato
-   - Setor onde trabalha
-
-3. **Selecione os estoques**:
-   - De qual estoque deseja retirar os itens
-   - Para qual estoque/setor os itens serão entregues
-
-4. **Adicione os itens necessários**:
-   - Selecione o item da lista
-   - Informe a quantidade
-   - Adicione observações se necessário
-   - Clique em "Adicionar"
-
-5. **Envie a requisição**:
-   - Clique em "Enviar Requisição"
-   - Anote o número da requisição gerado
-   - Aguarde contato do estoquista via WhatsApp
-
-### Para o Estoquista
-
-1. **Visualize as requisições**:
-   - Acesse: Menu Estoque → Requisições Internas
-   - Requisições públicas aparecem com badge "Público"
-
-2. **Veja os detalhes**:
-   - Clique no ícone de olho para ver detalhes
-   - WhatsApp do solicitante aparece como link clicável
-   - Lista de todos os itens solicitados
-
-3. **Entre em contato**:
-   - Clique no WhatsApp para abrir conversa
-   - Confirme disponibilidade dos itens
-   - Combine horário de entrega
-
-4. **Conclua a transferência**:
-   - Clique no ícone de check verde
-   - Confirme a conclusão
-   - Sistema automaticamente move os itens entre estoques
-
-## Vantagens
-
-### Para o Colaborador
-- Não precisa parar o trabalho para ir até o estoque
-- Não precisa fazer login no sistema
-- Pode solicitar a qualquer momento
-- Recebe confirmação imediata via WhatsApp
-
-### Para o Estoquista
-- Recebe solicitações organizadas
-- Pode preparar os itens com antecedência
-- Tem o WhatsApp direto para contato
-- Sistema registra tudo automaticamente
-
-### Para a Empresa
-- Processo mais ágil e eficiente
-- Reduz tempo de espera dos colaboradores
-- Mantém histórico de todas as requisições
-- Controle de estoque automatizado
-
-## Link de Acesso
-
-**URL Pública**: `/requisicao-estoque`
-
-Exemplo completo: `https://seu-dominio.com/requisicao-estoque`
-
-## Dicas de Uso
-
-1. **Salve o link nos favoritos** do celular para acesso rápido
-
-2. **Compartilhe o link** com toda a equipe via WhatsApp ou mural
-
-3. **Oriente os colaboradores** a sempre informar o WhatsApp correto
-
-4. **Estoquista deve** verificar requisições regularmente (filtro "Pendente")
+Sistema que permite aos colaboradores solicitarem materiais do estoque através de um link público, sem necessidade de login. O estoquista recebe a requisição no sistema interno e entra em contato via WhatsApp.
 
 ## Fluxo Completo
 
+### 1. Colaborador (Link Público)
+
+**Acesso:** `https://seu-dominio.com/requisicao-estoque`
+
+#### Passo a Passo:
+1. Abre o link no celular ou computador
+2. Preenche os dados:
+   - Nome completo
+   - WhatsApp para contato
+   - Setor de trabalho
+3. Seleciona:
+   - Estoque de origem (de onde pegar)
+   - Estoque de destino (para onde vai)
+4. Adiciona itens:
+   - Escolhe o item da lista
+   - Sistema mostra quantidade disponível
+   - Informa quantidade necessária
+   - Pode adicionar observação
+5. Clica em "Enviar Requisição"
+6. Recebe número da requisição
+7. Aguarda contato do estoquista
+
+### 2. Estoquista (Sistema Interno)
+
+**Acesso:** Menu Estoque → Requisições Internas
+
+#### Gestão de Requisições:
+1. Visualiza todas as requisições
+   - Requisições públicas têm badge "Público"
+   - Mostra WhatsApp clicável do solicitante
+2. Clica no WhatsApp para contatar
+3. Separa os itens solicitados
+4. Confirma disponibilidade via WhatsApp
+5. Clica em "Concluir Transferência"
+   - Sistema automaticamente:
+     - Movimenta itens entre estoques
+     - Atualiza saldos
+     - Registra histórico
+
+## Vantagens do Sistema
+
+### Para Colaboradores:
+- **Sem interrupção:** Solicita sem sair do posto de trabalho
+- **Rápido:** 2-3 minutos para fazer a requisição
+- **Sem burocracia:** Não precisa login ou senha
+- **Rastreável:** Número da requisição para acompanhamento
+
+### Para Estoquistas:
+- **Organizado:** Todas as requisições em um só lugar
+- **Eficiente:** Prepara com antecedência
+- **Comunicação direta:** WhatsApp integrado
+- **Automático:** Sistema movimenta estoque sozinho
+
+### Para Gestão:
+- **Histórico completo:** Registra todas as movimentações
+- **Relatórios:** Sabe quem pediu o quê e quando
+- **Controle:** Estoquista precisa aprovar
+- **Rastreabilidade:** Auditoria completa
+
+## Como Divulgar
+
+### 1. Cartaz Impresso
+
+Acesse: `https://seu-dominio.com/cartaz-requisicao`
+
+Ou no sistema interno:
+1. Vá em Estoque → Requisições Internas
+2. Clique em "Gerar Cartaz"
+3. Imprima o cartaz com QR Code
+4. Cole no mural da empresa
+
+### 2. WhatsApp
+
+Envie para os grupos da equipe:
+
 ```
-Colaborador → Acessa link → Preenche formulário → Envia requisição
-                                                          ↓
-Estoquista ← Recebe notificação ← Sistema registra ← Número gerado
-     ↓
-Visualiza detalhes → Entra em contato via WhatsApp → Separa itens
-     ↓
-Confirma entrega → Sistema movimenta estoque automaticamente
+🎯 NOVIDADE: Requisição de Material Online!
+
+Agora você pode solicitar materiais do estoque pelo celular!
+
+📱 Acesse: https://seu-dominio.com/requisicao-estoque
+
+✅ Rápido e sem burocracia
+✅ Sem necessidade de login
+✅ O estoquista te avisa quando estiver pronto
+
+Salve o link nos favoritos! 🔖
 ```
 
-## Segurança
+## Suporte Técnico
 
-- Usuários anônimos podem apenas **criar** requisições
-- Usuários anônimos **não podem** editar ou excluir
-- Apenas estoquistas autenticados podem processar requisições
-- Todas as movimentações ficam registradas no sistema
+### Problemas Comuns
 
-## Suporte
+**Link não abre:**
+- Verifique a conexão com internet
+- Tente em outro navegador
+- Limpe o cache do navegador
 
-Para dúvidas ou problemas, contate o administrador do sistema.
+**Não aparece o estoque:**
+- Verifique se há estoques ativos no sistema
+- Contate o administrador
+
+**Erro ao enviar:**
+- Verifique se preencheu todos os campos obrigatórios
+- Verifique se adicionou pelo menos um item
+- Tente novamente em alguns minutos
+
+## Conclusão
+
+O sistema de Requisição Pública de Estoque foi criado para otimizar o fluxo de trabalho, reduzir interrupções e manter um controle organizado das movimentações.
+
+**Resultado esperado:**
+- ⏱️ Redução de 70% no tempo de requisição
+- 📉 Diminuição de idas ao estoque
+- 📊 Histórico completo e rastreável
+- 🎯 Melhor gestão de estoque
+- 😊 Satisfação da equipe
