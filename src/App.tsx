@@ -21,6 +21,8 @@ const ManualUsuario       = lazy(() => import('./pages/ManualUsuario'));
 const Recruitment         = lazy(() => import('./pages/Recruitment'));
 const PreEntrevista       = lazy(() => import('./pages/PreEntrevista'));
 const SolicitacaoPublica  = lazy(() => import('./pages/SolicitacaoPublica'));
+const RequisicaoPublica   = lazy(() => import('./pages/RequisicaoPublica'));
+const CartazRequisicao    = lazy(() => import('./components/inventory/CartazRequisicao'));
 const Marketing           = lazy(() => import('./pages/Marketing'));
 const GestaoEstrategica   = lazy(() => import('./pages/GestaoEstrategica'));
 const VisaoEstrategica    = lazy(() => import('./pages/VisaoEstrategica'));
@@ -44,7 +46,7 @@ function AppContent() {
 
   useEffect(() => { testConnection(); }, []);
 
-  const rotasPublicas = ['/pre-entrevista', '/solicitacao', '/contagem-mobile'];
+  const rotasPublicas = ['/pre-entrevista', '/solicitacao', '/requisicao-estoque', '/cartaz-requisicao', '/contagem-mobile'];
   const isRotaPublica = rotasPublicas.some(r => window.location.pathname.startsWith(r));
 
   if (!usuario && !isRotaPublica) return <Login />;
@@ -55,6 +57,8 @@ function AppContent() {
         <Routes>
           <Route path="/pre-entrevista"         element={<PreEntrevista />} />
           <Route path="/solicitacao"            element={<SolicitacaoPublica />} />
+          <Route path="/requisicao-estoque"     element={<RequisicaoPublica />} />
+          <Route path="/cartaz-requisicao"      element={<CartazRequisicao />} />
           <Route path="/contagem-mobile/:token" element={<ContagemMobile />} />
         </Routes>
       </Suspense>

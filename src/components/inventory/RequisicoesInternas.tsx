@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FileText, Printer, Search, Filter, X, Trash2, CheckCircle, XCircle, Eye, Download } from 'lucide-react';
+import { Plus, FileText, Printer, Search, Filter, X, Trash2, CheckCircle, XCircle, Eye, Download, QrCode } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { gerarImpressaoTermicaRequisicao } from '../../utils/impressaoTermica';
 import { SearchableSelect } from '../common/SearchableSelect';
@@ -35,6 +35,8 @@ interface Requisicao {
   estoque_destino_id: string;
   status: 'pendente' | 'aprovado' | 'rejeitado' | 'concluido';
   observacoes?: string;
+  whatsapp?: string;
+  criado_anonimamente?: boolean;
   estoque_origem?: { nome: string };
   estoque_destino?: { nome: string };
   itens?: ItemRequisicao[];
@@ -648,13 +650,23 @@ export default function RequisicoesInternas() {
           <h2 className="text-2xl font-bold text-white">Requisições Internas</h2>
           <p className="text-sm text-gray-600 mt-1">Gerencie requisições de transferência entre estoques</p>
         </div>
-        <button
-          onClick={() => setMostrarFormulario(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="h-5 w-5" />
-          Nova Requisição
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => window.open('/cartaz-requisicao', '_blank')}
+            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+            title="Gerar cartaz com link público para requisições"
+          >
+            <QrCode className="h-5 w-5" />
+            Gerar Cartaz
+          </button>
+          <button
+            onClick={() => setMostrarFormulario(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="h-5 w-5" />
+            Nova Requisição
+          </button>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -714,7 +726,14 @@ export default function RequisicoesInternas() {
                 {requisicoesFiltradas.map((req) => (
                   <tr key={req.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                      {req.numero_requisicao}
+                      <div className="flex items-center gap-2">
+                        {req.numero_requisicao}
+                        {req.criado_anonimamente && (
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full" title="Requisição Pública">
+                            Público
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(req.data_requisicao).toLocaleDateString('pt-BR')}
@@ -815,6 +834,28 @@ export default function RequisicoesInternas() {
                   <label className="block text-sm font-medium text-gray-500 mb-1">Setor</label>
                   <p className="text-white">{requisicaoDetalhes.setor}</p>
                 </div>
+                {requisicaoDetalhes.whatsapp && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">WhatsApp</label>
+                    <a
+                      href={`https://wa.me/55${requisicaoDetalhes.whatsapp.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-green-600 hover:text-green-800 font-medium"
+                    >
+                      {requisicaoDetalhes.whatsapp}
+                    </a>
+                  </div>
+                )}
+                {requisicaoDetalhes.criado_anonimamente && (
+                  <div className="md:col-span-2">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-sm text-blue-800">
+                        <strong>Requisição Pública:</strong> Esta requisição foi criada via formulário público pelo colaborador.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Estoque de Origem</label>
                   <p className="text-white">{requisicaoDetalhes.estoque_origem?.nome || '-'}</p>
