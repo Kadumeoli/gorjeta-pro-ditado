@@ -362,120 +362,36 @@ const DREReport: React.FC = () => {
       const startDate = `${selectedYear}-01-01`;
       const endDate = `${selectedYear}-12-31`;
 
-      const monthStr = selectedMonth !== 'all' ? String(selectedMonth).padStart(2, '0') : null;
-      const monthStart = monthStr ? `${selectedYear}-${monthStr}-01` : null;
-      const lastDay = monthStr ? new Date(Number(selectedYear), Number(selectedMonth), 0).getDate() : null;
-      const monthEnd = monthStr ? `${selectedYear}-${monthStr}-${String(lastDay).padStart(2, '0')}` : null;
-
-      // BUSCAR LANÇAMENTOS DE TODAS AS FONTES (igual à view DRE)
-      const promises = [];
-
-      // 1. Fluxo de Caixa (exceto transferências)
-      let fluxoQuery = supabase
+      // BUSCAR TODOS OS LANÇAMENTOS DO FLUXO DE CAIXA (igual à view DRE)
+      let query = supabase
         .from('fluxo_caixa')
-        .select('id, data, descricao, valor, tipo, categoria_id, centro_custo_id, origem')
+        .select('*')
         .neq('origem', 'transferencia')
-        .gte('data', monthStart || startDate)
-        .lte('data', monthEnd || endDate);
+        .gte('data', startDate)
+        .lte('data', endDate);
+
+      if (selectedMonth !== 'all') {
+        const monthStr = String(selectedMonth).padStart(2, '0');
+        const monthStart = `${selectedYear}-${monthStr}-01`;
+        const lastDay = new Date(Number(selectedYear), Number(selectedMonth), 0).getDate();
+        const monthEnd = `${selectedYear}-${monthStr}-${String(lastDay).padStart(2, '0')}`;
+
+        query = query
+          .gte('data', monthStart)
+          .lte('data', monthEnd);
+      }
 
       if (selectedCostCenter !== 'all') {
-        fluxoQuery = fluxoQuery.eq('centro_custo_id', selectedCostCenter);
+        query = query.eq('centro_custo_id', selectedCostCenter);
       }
-      promises.push(fluxoQuery.order('data'));
 
-      // 2. Contas a Pagar (despesas aprovadas)
-      let contasPagarQuery = supabase
-        .from('contas_pagar')
-        .select('id, data_vencimento, descricao, valor_total, categoria_id, centro_custo_id')
-        .eq('status_aprovacao', 'aprovado')
-        .gte('data_vencimento', monthStart || startDate)
-        .lte('data_vencimento', monthEnd || endDate);
+      const { data: lancamentos, error } = await query
+        .order('data', { ascending: true });
 
-      if (selectedCostCenter !== 'all') {
-        contasPagarQuery = contasPagarQuery.eq('centro_custo_id', selectedCostCenter);
+      if (error) {
+        console.error('Error fetching transactions:', error);
+        throw error;
       }
-      promises.push(contasPagarQuery.order('data_vencimento'));
-
-      // 3. Contas a Receber (receitas)
-      let contasReceberQuery = supabase
-        .from('contas_receber')
-        .select('id, data, descricao, valor_total, categoria_id, centro_custo_id')
-        .gte('data', monthStart || startDate)
-        .lte('data', monthEnd || endDate);
-
-      if (selectedCostCenter !== 'all') {
-        contasReceberQuery = contasReceberQuery.eq('centro_custo_id', selectedCostCenter);
-      }
-      promises.push(contasReceberQuery.order('data'));
-
-      // 4. Pagamentos (estornos)
-      let pagamentosQuery = supabase
-        .from('pagamentos_contas')
-        .select(`
-          id,
-          data_pagamento,
-          valor_pago,
-          contas_pagar!inner(descricao, categoria_id, centro_custo_id)
-        `)
-        .eq('estornado', true)
-        .gte('data_pagamento', monthStart || startDate)
-        .lte('data_pagamento', monthEnd || endDate);
-
-      if (selectedCostCenter !== 'all') {
-        pagamentosQuery = pagamentosQuery.eq('contas_pagar.centro_custo_id', selectedCostCenter);
-      }
-      promises.push(pagamentosQuery.order('data_pagamento'));
-
-      const [fluxoRes, contasPagarRes, contasReceberRes, pagamentosRes] = await Promise.all(promises);
-
-      if (fluxoRes.error) throw fluxoRes.error;
-      if (contasPagarRes.error) throw contasPagarRes.error;
-      if (contasReceberRes.error) throw contasReceberRes.error;
-      if (pagamentosRes.error) throw pagamentosRes.error;
-
-      // Unificar todos os lançamentos
-      const lancamentos = [
-        ...(fluxoRes.data || []).map(l => ({
-          id: l.id,
-          data: l.data,
-          descricao: l.descricao,
-          valor: l.valor,
-          tipo: l.tipo,
-          categoria_id: l.categoria_id,
-          centro_custo_id: l.centro_custo_id,
-          origem: l.origem || 'fluxo_caixa'
-        })),
-        ...(contasPagarRes.data || []).map(l => ({
-          id: l.id,
-          data: l.data_vencimento,
-          descricao: l.descricao,
-          valor: -Math.abs(l.valor_total), // Despesa (negativo)
-          tipo: 'despesa',
-          categoria_id: l.categoria_id,
-          centro_custo_id: l.centro_custo_id,
-          origem: 'conta_pagar'
-        })),
-        ...(contasReceberRes.data || []).map(l => ({
-          id: l.id,
-          data: l.data,
-          descricao: l.descricao,
-          valor: Math.abs(l.valor_total), // Receita (positivo)
-          tipo: 'receita',
-          categoria_id: l.categoria_id,
-          centro_custo_id: l.centro_custo_id,
-          origem: 'conta_receber'
-        })),
-        ...(pagamentosRes.data || []).map(l => ({
-          id: l.id,
-          data: l.data_pagamento,
-          descricao: `Estorno: ${l.contas_pagar.descricao}`,
-          valor: Math.abs(l.valor_pago), // Estorno (positivo - reverte despesa)
-          tipo: 'receita',
-          categoria_id: l.contas_pagar.categoria_id,
-          centro_custo_id: l.contas_pagar.centro_custo_id,
-          origem: 'estorno'
-        }))
-      ].sort((a, b) => a.data.localeCompare(b.data));
 
       // Buscar categorias e centros de custo separadamente
       const { data: categorias } = await supabase
@@ -491,7 +407,7 @@ const DREReport: React.FC = () => {
       const centrosCustoMap = new Map((centrosCusto || []).map(cc => [cc.id, cc]));
 
       // Transformar dados para facilitar acesso
-      const lancamentosTransformados = lancamentos.map(l => {
+      const lancamentosTransformados = (lancamentos || []).map(l => {
         const categoria = l.categoria_id ? categoriasMap.get(l.categoria_id) : null;
         const centroCusto = l.centro_custo_id ? centrosCustoMap.get(l.centro_custo_id) : null;
 
@@ -502,35 +418,6 @@ const DREReport: React.FC = () => {
           centro_custo: centroCusto?.nome || null
         };
       });
-
-      console.log('Lançamentos detalhados:', lancamentosTransformados.length);
-      console.log('  - Fluxo Caixa:', (fluxoRes.data || []).length);
-      console.log('  - Contas a Pagar:', (contasPagarRes.data || []).length);
-      console.log('  - Contas a Receber:', (contasReceberRes.data || []).length);
-      console.log('  - Estornos:', (pagamentosRes.data || []).length);
-      console.log('  - Com categoria:', lancamentosTransformados.filter(l => l.categoria_id).length);
-      console.log('  - SEM categoria:', lancamentosTransformados.filter(l => !l.categoria_id).length);
-
-      // Log específico para Receita Venda de Salão
-      const vendasSalao = lancamentosTransformados.filter(l => l.categoria_nome === 'Receita Venda de Salão');
-      console.log('🔍 Receita Venda de Salão:', {
-        total: vendasSalao.length,
-        soma: vendasSalao.reduce((s, l) => s + Math.abs(l.valor), 0).toFixed(2),
-        maiores: vendasSalao.filter(l => Math.abs(l.valor) > 60000).map(l => ({
-          data: l.data,
-          valor: l.valor,
-          descricao: l.descricao?.substring(0, 30)
-        }))
-      });
-
-      // Log de lançamentos grandes para debug
-      const lancamentosGrandesTotal = lancamentosTransformados.filter(l => Math.abs(l.valor) > 60000);
-      if (lancamentosGrandesTotal.length > 0) {
-        console.log('💰 Total de lançamentos > 60.000:', lancamentosGrandesTotal.length);
-        lancamentosGrandesTotal.forEach(l => {
-          console.log(`  ${l.data} - ${l.descricao?.substring(0, 40)} = R$ ${l.valor} [${l.categoria_nome}]`);
-        });
-      }
 
       return lancamentosTransformados;
     } catch (err) {
@@ -741,7 +628,6 @@ const DREReport: React.FC = () => {
       // Consolidar subcategorias por categoria_id para evitar duplicações
       const subcategoriasConsolidadas = consolidarSubcategorias(group.subcategorias);
 
-      console.log(`Categoria ${group.categoria_raiz_nome}: ${subcategoriasConsolidadas.length} subcategorias consolidadas`);
 
       // Se não há subcategorias, pode ser uma categoria raiz com lançamentos diretos
       if (subcategoriasConsolidadas.length === 0) {
@@ -795,80 +681,28 @@ const DREReport: React.FC = () => {
         // Verificar se é categoria de não classificados
         if (subConsolidada.categoria_nome === 'Lançamentos Não Classificados') {
           // Para não classificados, buscar lançamentos sem categoria do tipo correto
-          console.log(`\n🔍 Buscando lançamentos NÃO CLASSIFICADOS (${group.tipo})...`);
-          console.log(`Total de lançamentos disponíveis: ${lancamentos.length}`);
-          console.log(`Lançamentos sem categoria_id: ${lancamentos.filter(l => !l.categoria_id).length}`);
-
           lancamentosCategoria = lancamentos.filter(l => {
             // Deve não ter categoria
             if (l.categoria_id !== null && l.categoria_id !== undefined) return false;
 
             // Verificar o tipo correto
             const tipoLancamento = l.tipo === 'entrada' ? 'receita' : 'despesa';
-            const match = tipoLancamento === group.tipo;
-
-            if (match) {
-              console.log(`  ✓ ${l.data} - ${l.descricao?.substring(0, 40)} - R$ ${l.valor}`);
-            }
-
-            return match;
+            return tipoLancamento === group.tipo;
           });
-
-          console.log(`✅ Total encontrado: ${lancamentosCategoria.length} lançamentos não classificados`);
-          console.log(`Soma: R$ ${lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0).toFixed(2)}`);
         } else if (subConsolidada.categoria_nome === 'Outros') {
           // Para "Outros", buscar lançamentos diretos na categoria raiz
-          console.log(`\n🔍 Buscando lançamentos "OUTROS" da raiz ${group.categoria_raiz_nome}...`);
-          console.log(`  categoria_raiz_id: ${group.categoria_raiz_id}`);
 
           lancamentosCategoria = lancamentos.filter(l => {
             if (!l.categoria_id) return false;
             if (l.categoria_pai_id !== null) return false;
-            const match = l.categoria_id === group.categoria_raiz_id;
-            if (match) {
-              console.log(`  ✓ ${l.data} - ${l.descricao?.substring(0, 40)} - R$ ${l.valor}`);
-            }
-            return match;
+            return l.categoria_id === group.categoria_raiz_id;
           });
-
-          console.log(`✅ Total encontrado: ${lancamentosCategoria.length} lançamentos diretos na raiz`);
-          console.log(`Soma: R$ ${lancamentosCategoria.reduce((sum, l) => sum + Math.abs(l.valor || 0), 0).toFixed(2)}`);
         } else {
           // Para categorias normais, buscar por categoria_id (todos os centros de custo)
           lancamentosCategoria = lancamentos.filter(l => {
             return l.categoria_id === subConsolidada.categoria_id;
           });
-
-          // Log para debug de lançamentos grandes
-          const lancamentosGrandes = lancamentosCategoria.filter(l => Math.abs(l.valor) > 60000);
-          if (lancamentosGrandes.length > 0) {
-            console.log(`💰 Lançamentos grandes em ${subConsolidada.categoria_nome}:`, lancamentosGrandes.map(l => ({
-              data: l.data,
-              valor: l.valor,
-              descricao: l.descricao?.substring(0, 50)
-            })));
-          }
         }
-
-        // Calcular soma aplicando o sinal correto baseado no tipo
-        // Para receitas: valores positivos
-        // Para despesas: valores negativos (como a view retorna)
-        const somaLancamentos = lancamentosCategoria.reduce((sum, l) => {
-          if (group.tipo === 'receita') {
-            return sum + Math.abs(l.valor || 0);
-          } else {
-            return sum + Math.abs(l.valor || 0);
-          }
-        }, 0);
-
-        // A view retorna valores negativos para despesas, então comparamos valores absolutos
-        const diferenca = Math.abs(somaLancamentos - Math.abs(subConsolidada.valor_total));
-
-        console.log(`\n==== ${subConsolidada.categoria_nome} ====`);
-        console.log(`  Valor esperado (view): R$ ${Math.abs(subConsolidada.valor_total).toFixed(2)}`);
-        console.log(`  Soma lançamentos: R$ ${somaLancamentos.toFixed(2)}`);
-        console.log(`  Diferença: R$ ${diferenca.toFixed(2)} ${diferenca > 1 ? '⚠️' : '✓'}`);
-        console.log(`  Qtd esperada: ${subConsolidada.quantidade_lancamentos} | Qtd encontrada: ${lancamentosCategoria.length}`);
 
         if (lancamentosCategoria.length > 0) {
           // Verificar se precisa de nova página
@@ -903,8 +737,6 @@ const DREReport: React.FC = () => {
             l.centro_custo || '-',
             formatCurrency(Math.abs(l.valor || 0))
           ]);
-
-          console.log(`📄 Adicionando ${lancamentosData.length} lançamentos ao PDF`);
 
           currentY = reportGenerator.addTable(
             ['Data', 'Descrição', 'Centro Custo', 'Valor'],
