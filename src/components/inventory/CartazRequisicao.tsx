@@ -2,6 +2,7 @@ import React from 'react';
 import { Package, Smartphone, CheckCircle, Clock } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
+
 export default function CartazRequisicao() {
   const linkRequisicao = window.location.origin + '/requisicao-estoque';
 
