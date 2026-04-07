@@ -349,14 +349,143 @@ export default function DREReport() {
     doc.text('RESULTADO DO PERÍODO', margin, yPos);
     doc.text(formatCurrency(totais.resultado), pageWidth - margin, yPos, { align: 'right' });
 
-    // Modo detalhado: adicionar resumo de lançamentos
+    // Modo detalhado: adicionar todos os lançamentos agrupados por categoria
     if (modo === 'detalhado') {
-      yPos += 15;
-      doc.setFontSize(10);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Total de lançamentos no período: ${lancamentos.length.toLocaleString('pt-BR')}`, margin, yPos);
-      yPos += 6;
-      doc.text('Para ver todos os lançamentos, consulte o relatório Excel', margin, yPos);
+      // Agrupar lançamentos por tipo (receita/despesa) e categoria
+      const lancamentosPorCategoria = lancamentos.reduce((acc, l) => {
+        const categoriaPrincipal = l.categoria?.categoria_pai?.nome || l.categoria?.nome || 'SEM CATEGORIA';
+        const subcategoria = l.categoria?.categoria_pai?.nome ? l.categoria.nome : null;
+        const chave = `${l.tipo}_${categoriaPrincipal}${subcategoria ? `_${subcategoria}` : ''}`;
+
+        if (!acc[chave]) {
+          acc[chave] = {
+            tipo: l.tipo,
+            categoriaPrincipal,
+            subcategoria,
+            lancamentos: []
+          };
+        }
+        acc[chave].lancamentos.push(l);
+        return acc;
+      }, {} as Record<string, any>);
+
+      // Separar receitas e despesas
+      const receitasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'receita');
+      const despesasDetalhadas = Object.values(lancamentosPorCategoria).filter(g => g.tipo === 'despesa');
+
+      // Adicionar lançamentos de RECEITAS
+      if (receitasDetalhadas.length > 0) {
+        doc.addPage();
+        yPos = 20;
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(5, 150, 105);
+        doc.text('LANÇAMENTOS DE RECEITAS', margin, yPos);
+        yPos += 10;
+
+        receitasDetalhadas.forEach(grupo => {
+          // Verifica se precisa adicionar nova página
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+
+          // Categoria principal
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(0, 0, 0);
+          doc.text(grupo.categoriaPrincipal, margin, yPos);
+          yPos += 7;
+
+          // Subcategoria (se existir)
+          if (grupo.subcategoria) {
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(60, 60, 60);
+            doc.text(`  ${grupo.subcategoria}`, margin + 5, yPos);
+            yPos += 6;
+          }
+
+          // Lançamentos
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(80, 80, 80);
+
+          grupo.lancamentos.forEach((l: Lancamento) => {
+            if (yPos > 280) {
+              doc.addPage();
+              yPos = 20;
+            }
+
+            const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
+            const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+
+            doc.text(`    ${data}`, margin + 10, yPos);
+            doc.text(descricao, margin + 35, yPos);
+            doc.text(formatCurrency(l.valor), pageWidth - margin, yPos, { align: 'right' });
+            yPos += 5;
+          });
+
+          yPos += 3;
+        });
+      }
+
+      // Adicionar lançamentos de DESPESAS
+      if (despesasDetalhadas.length > 0) {
+        doc.addPage();
+        yPos = 20;
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(220, 38, 38);
+        doc.text('LANÇAMENTOS DE DESPESAS', margin, yPos);
+        yPos += 10;
+
+        despesasDetalhadas.forEach(grupo => {
+          // Verifica se precisa adicionar nova página
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+
+          // Categoria principal
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(0, 0, 0);
+          doc.text(grupo.categoriaPrincipal, margin, yPos);
+          yPos += 7;
+
+          // Subcategoria (se existir)
+          if (grupo.subcategoria) {
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(60, 60, 60);
+            doc.text(`  ${grupo.subcategoria}`, margin + 5, yPos);
+            yPos += 6;
+          }
+
+          // Lançamentos
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(80, 80, 80);
+
+          grupo.lancamentos.forEach((l: Lancamento) => {
+            if (yPos > 280) {
+              doc.addPage();
+              yPos = 20;
+            }
+
+            const data = new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR');
+            const descricao = l.descricao.length > 60 ? l.descricao.substring(0, 57) + '...' : l.descricao;
+
+            doc.text(`    ${data}`, margin + 10, yPos);
+            doc.text(descricao, margin + 35, yPos);
+            doc.text(formatCurrency(l.valor), pageWidth - margin, yPos, { align: 'right' });
+            yPos += 5;
+          });
+
+          yPos += 3;
+        });
+      }
     }
 
     doc.save(`DRE_${modo}_${ano}_${mesNome}.pdf`);
