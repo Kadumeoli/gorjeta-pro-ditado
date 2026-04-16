@@ -119,15 +119,38 @@ const ContasReceber: React.FC = () => {
   const handleSaveConta = async () => {
     try {
       setLoading(true); setError(null);
-      const d = {
-        ...formDataConta,
-        valor_total: parseFloat(formDataConta.valor_total.toString()),
-        categoria_id: formDataConta.categoria_id || null,
-        centro_custo_id: formDataConta.centro_custo_id || null,
-        forma_recebimento_id: formDataConta.forma_recebimento_id || null
+
+      // FIX 1: Montar payload APENAS com campos que a tabela aceita no INSERT/UPDATE
+      // saldo_restante é coluna GERADA (valor_total - valor_recebido) — nunca enviar
+      // Campos opcionais vazios viram null (evita erro de UUID inválido)
+      const payload = {
+        cliente_id:           formDataConta.cliente_id || null,
+        descricao:            formDataConta.descricao,
+        valor_total:          parseFloat(formDataConta.valor_total.toString()),
+        data_emissao:         formDataConta.data_emissao || null,
+        data_vencimento:      formDataConta.data_vencimento,
+        categoria_id:         formDataConta.categoria_id         || null,
+        centro_custo_id:      formDataConta.centro_custo_id      || null,
+        forma_recebimento_id: formDataConta.forma_recebimento_id || null,
+        numero_documento:     formDataConta.numero_documento      || null,
+        observacoes:          formDataConta.observacoes           || null,
       };
-      if (editingConta) { const { error } = await supabase.from('contas_receber').update(d).eq('id', editingConta.id); if (error) throw error; }
-      else { const { error } = await supabase.from('contas_receber').insert([d]); if (error) throw error; }
+
+      // FIX 2: Validar cliente_id antes de enviar
+      if (!payload.cliente_id) {
+        setError('Selecione um cliente antes de salvar.');
+        setLoading(false);
+        return;
+      }
+
+      if (editingConta) {
+        const { error } = await supabase.from('contas_receber').update(payload).eq('id', editingConta.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('contas_receber').insert([payload]);
+        if (error) throw error;
+      }
+
       setShowFormConta(false); setEditingConta(null); resetFormConta(); fetchData(); fetchIndicadores();
     } catch (err: any) { setError(err.message); }
     finally { setLoading(false); }
@@ -137,7 +160,19 @@ const ContasReceber: React.FC = () => {
     if (!contaSelecionada) return;
     try {
       setLoading(true); setError(null);
-      const { error } = await supabase.from('recebimentos_contas').insert([{ conta_receber_id: contaSelecionada.id, ...formDataRecebimento, valor_recebimento: parseFloat(formDataRecebimento.valor_recebimento.toString()) }]);
+
+      // FIX 3: Campos opcionais UUID também viram null se vazios
+      const payload = {
+        conta_receber_id:    contaSelecionada.id,
+        valor_recebimento:   parseFloat(formDataRecebimento.valor_recebimento.toString()),
+        data_recebimento:    formDataRecebimento.data_recebimento,
+        forma_pagamento_id:  formDataRecebimento.forma_pagamento_id  || null,
+        conta_bancaria_id:   formDataRecebimento.conta_bancaria_id   || null,
+        numero_comprovante:  formDataRecebimento.numero_comprovante  || null,
+        observacoes:         formDataRecebimento.observacoes          || null,
+      };
+
+      const { error } = await supabase.from('recebimentos_contas').insert([payload]);
       if (error) throw error;
       setShowFormRecebimento(false); setContaSelecionada(null); resetFormRecebimento(); fetchData(); fetchIndicadores();
     } catch (err: any) { setError(err.message); }
